@@ -1,0 +1,91 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a9752b0c8e144801967e6897679604b, type: 3}
+  m_Name: vHierarchy Data
+  m_EditorClassIdentifier: 
+  sceneDatas_byGuid:
+    keys:
+    - ffaa0be70df86e543b5ae825ab9df99c
+    - eff9cd285caf0dc43b9df0215e44009f
+    - 0c8d35f71b5fe7048b1db1cf5719c09d
+    values:
+    - goDatas_byGlobalId:
+        keys:
+        - globalObjectIdString: GlobalObjectId_V1-2-ffaa0be70df86e543b5ae825ab9df99c-2597112197012882521-2339918334622523397
+        - globalObjectIdString: GlobalObjectId_V1-2-ffaa0be70df86e543b5ae825ab9df99c-3170171780741133735-2434409993577478611
+        - globalObjectIdString: GlobalObjectId_V1-2-ffaa0be70df86e543b5ae825ab9df99c-3170171780517287386-0
+        - globalObjectIdString: GlobalObjectId_V1-2-ffaa0be70df86e543b5ae825ab9df99c-4983725299608677535-2764818282318242350
+        - globalObjectIdString: GlobalObjectId_V1-2-ffaa0be70df86e543b5ae825ab9df99c-1833915216-0
+        - globalObjectIdString: GlobalObjectId_V1-2-ffaa0be70df86e543b5ae825ab9df99c-4983725299616132792-0
+        - globalObjectIdString: GlobalObjectId_V1-2-ffaa0be70df86e543b5ae825ab9df99c-409381865-0
+        - globalObjectIdString: GlobalObjectId_V1-2-ffaa0be70df86e543b5ae825ab9df99c-431919864-0
+        - globalObjectIdString: GlobalObjectId_V1-2-ffaa0be70df86e543b5ae825ab9df99c-779090328-0
+        - globalObjectIdString: GlobalObjectId_V1-2-ffaa0be70df86e543b5ae825ab9df99c-1516707248-0
+        - globalObjectIdString: GlobalObjectId_V1-2-ffaa0be70df86e543b5ae825ab9df99c-2235036271807728101-1008508466
+        values:
+        - colorIndex: 7
+          iconNameOrGuid: 
+          isIconRecursive: 0
+          isColorRecursive: 0
+        - colorIndex: 7
+          iconNameOrGuid: 
+          isIconRecursive: 0
+          isColorRecursive: 0
+        - colorIndex: 7
+          iconNameOrGuid: 
+          isIconRecursive: 0
+          isColorRecursive: 0
+        - colorIndex: 7
+          iconNameOrGuid: 
+          isIconRecursive: 0
+          isColorRecursive: 0
+        - colorIndex: 7
+          iconNameOrGuid: 
+          isIconRecursive: 0
+          isColorRecursive: 0
+        - colorIndex: 7
+          iconNameOrGuid: 
+          isIconRecursive: 0
+          isColorRecursive: 0
+        - colorIndex: 7
+          iconNameOrGuid: 
+          isIconRecursive: 0
+          isColorRecursive: 0
+        - colorIndex: 7
+          iconNameOrGuid: 
+          isIconRecursive: 0
+          isColorRecursive: 0
+        - colorIndex: 1
+          iconNameOrGuid: 
+          isIconRecursive: 0
+          isColorRecursive: 1
+        - colorIndex: 7
+          iconNameOrGuid: 
+          isIconRecursive: 0
+          isColorRecursive: 0
+        - colorIndex: 7
+          iconNameOrGuid: 
+          isIconRecursive: 0
+          isColorRecursive: 0
+    - goDatas_byGlobalId:
+        keys: []
+        values: []
+    - goDatas_byGlobalId:
+        keys:
+        - globalObjectIdString: GlobalObjectId_V1-2-0c8d35f71b5fe7048b1db1cf5719c09d-939955047-0
+        values:
+        - colorIndex: 7
+          iconNameOrGuid: 
+          isIconRecursive: 0
+          isColorRecursive: 0
+  bookmarks: []
+  bookmarkedScenePaths: []

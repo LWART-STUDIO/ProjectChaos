@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00eac2b35a98eb449802684393945b2b, type: 3}
+  m_Name: Fireball
+  m_EditorClassIdentifier: 
+  abilityName: Fireball
+  abilityIcon: {fileID: 21300000, guid: 83e15a6f3b8faa648acb90ecd0d5f833, type: 3}
+  abilityDescription: Fireball spell that deals {damage} damage
+  cardToUnlock: {fileID: 0}
+  _abilityContainer:
+    abilityTiers:
+    - rid: 5908792580286709975
+    - rid: 5908792580286709976
+    - rid: 5908792580286709977
+  _abilityLogicPrefab: {fileID: -8052819140762532097, guid: 875eb5b211b120b43a45c101684a3655, type: 3}
+  references:
+    version: 2
+    RefIds:
+    - rid: 5908792580286709975
+      type: {class: FireballAbility, ns: SFAbilitySystem.Demo.Abilities, asm: SFAbilitySystemDemo}
+      data:
+        cooldown: 15
+        castTime: 0.5
+        damage: 20
+        projectileSpeed: 30
+    - rid: 5908792580286709976
+      type: {class: FireballAbility, ns: SFAbilitySystem.Demo.Abilities, asm: SFAbilitySystemDemo}
+      data:
+        cooldown: 12
+        castTime: 0.5
+        damage: 30
+        projectileSpeed: 30
+    - rid: 5908792580286709977
+      type: {class: FireballAbility, ns: SFAbilitySystem.Demo.Abilities, asm: SFAbilitySystemDemo}
+      data:
+        cooldown: 10
+        castTime: 0.5
+        damage: 50
+        projectileSpeed: 30

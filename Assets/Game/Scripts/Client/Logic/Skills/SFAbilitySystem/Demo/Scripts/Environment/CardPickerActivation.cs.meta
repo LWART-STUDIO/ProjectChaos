@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: 87e1064ee7ea30b4a958741f7381b928
+AssetOrigin:
+  serializedVersion: 1
+  productId: 318181
+  packageName: SFAbilitySystem
+  packageVersion: 1.0
+  assetPath: Assets/SFAbilitySystem/Demo/Scripts/Environment/CardPickerActivation.cs
+  uploadId: 752148

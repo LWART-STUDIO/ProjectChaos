@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 14e768e2ea75409499741267cbec986b
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 318181
+  packageName: SFAbilitySystem
+  packageVersion: 1.0
+  assetPath: Assets/SFAbilitySystem/Demo/Cards/Active/Laser.asset
+  uploadId: 752148

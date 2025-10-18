@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 8e1a98b125d67db418b5759b31280d35
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 318181
+  packageName: SFAbilitySystem
+  packageVersion: 1.0
+  assetPath: Assets/SFAbilitySystem/Demo/Materials/Picker.mat
+  uploadId: 752148

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: d707db488091cfc4d810e36d3b4b544e
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 318181
+  packageName: SFAbilitySystem
+  packageVersion: 1.0
+  assetPath: Assets/SFAbilitySystem/Demo/Cards/Active/Fireball.asset
+  uploadId: 752148

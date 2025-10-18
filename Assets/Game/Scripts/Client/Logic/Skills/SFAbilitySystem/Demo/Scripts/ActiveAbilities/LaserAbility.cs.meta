@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: df64d2b77675b884d9d6a13ce6973e4f
+AssetOrigin:
+  serializedVersion: 1
+  productId: 318181
+  packageName: SFAbilitySystem
+  packageVersion: 1.0
+  assetPath: Assets/SFAbilitySystem/Demo/Scripts/ActiveAbilities/LaserAbility.cs
+  uploadId: 752148

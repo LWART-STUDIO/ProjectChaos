@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 7c5f7a7697b4e674082329e0129f2c4a
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 318181
+  packageName: SFAbilitySystem
+  packageVersion: 1.0
+  assetPath: Assets/SFAbilitySystem/Demo/Prefabs/Logic/Fireball/Fireball.prefab
+  uploadId: 752148

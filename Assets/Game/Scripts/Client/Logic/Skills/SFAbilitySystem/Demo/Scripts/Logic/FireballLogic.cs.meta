@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: b4056e6ebe643314ca0059aca71211fe
+AssetOrigin:
+  serializedVersion: 1
+  productId: 318181
+  packageName: SFAbilitySystem
+  packageVersion: 1.0
+  assetPath: Assets/SFAbilitySystem/Demo/Scripts/Logic/FireballLogic.cs
+  uploadId: 752148

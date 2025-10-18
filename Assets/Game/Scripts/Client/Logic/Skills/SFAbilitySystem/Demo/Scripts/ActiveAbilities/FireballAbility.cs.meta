@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: 589e3626ec227454ca0b864698b4009e
+AssetOrigin:
+  serializedVersion: 1
+  productId: 318181
+  packageName: SFAbilitySystem
+  packageVersion: 1.0
+  assetPath: Assets/SFAbilitySystem/Demo/Scripts/ActiveAbilities/FireballAbility.cs
+  uploadId: 752148

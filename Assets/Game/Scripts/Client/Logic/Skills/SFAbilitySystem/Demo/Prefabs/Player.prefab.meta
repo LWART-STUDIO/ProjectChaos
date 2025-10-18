@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 27fa4eafa74b113479b142db83d651f9
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 318181
+  packageName: SFAbilitySystem
+  packageVersion: 1.0
+  assetPath: Assets/SFAbilitySystem/Demo/Prefabs/Player.prefab
+  uploadId: 752148

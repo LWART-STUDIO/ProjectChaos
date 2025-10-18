@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: c48a9d420af70ec468be644941c34de0
+AssetOrigin:
+  serializedVersion: 1
+  productId: 318181
+  packageName: SFAbilitySystem
+  packageVersion: 1.0
+  assetPath: Assets/SFAbilitySystem/Demo/Scripts/Interfaces/IAbilityInject.cs
+  uploadId: 752148

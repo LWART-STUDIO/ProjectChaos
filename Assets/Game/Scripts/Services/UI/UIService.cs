@@ -1,3 +1,4 @@
+using Game.Scripts.Client.UI;
 using Game.Scripts.Services.ResourceLoader;
 using Game.Scripts.Services.StaticService;
 using Sisus.Init;
@@ -13,6 +14,7 @@ namespace Game.Scripts.Services.UI
         private ResourceLoaderService _resourceLoaderService => Service<ResourceLoaderService>.Instance;
 
         private GameCanvas _gameCanvas;
+        private EscMenu _escMenu;
 
         /*public   void LocalAwake()
         {
@@ -24,7 +26,7 @@ namespace Game.Scripts.Services.UI
         public void LocalAwake()
         {
             GetGameCanvas();
-            //throw new System.NotImplementedException();
+            GetEscMenu();
         }
 
         public void LocalStart()
@@ -36,21 +38,30 @@ namespace Game.Scripts.Services.UI
         {
             if(SceneManager.GetActiveScene().name == "MainMenu")
                 return;
-            if (Input.GetKeyDown(KeyCode.Escape))
+            /*if (Input.GetKeyDown(KeyCode.Escape))
             {
-                if (NetworkManager.Singleton.IsHost)
-                {
-                    NetworkManager.Singleton.SceneManager.LoadScene("MainMenu",LoadSceneMode.Single);
-                    Service<ServiceInitor>.Instance.LobbyService.LeaveLobby();
-                    NetworkManager.Singleton.Shutdown();
-                }
-                else
-                {
-                    SceneManager.LoadScene("MainMenu",LoadSceneMode.Single);
-                    Service<ServiceInitor>.Instance.LobbyService.LeaveLobby();
-                    NetworkManager.Singleton.Shutdown();
-                }
+                
                     
+            }*/
+        }
+
+        public void ExitToLobby()
+        {
+            
+        }
+        public void ExitToMenu()
+        {
+            if (NetworkManager.Singleton.IsHost)
+            {
+                NetworkManager.Singleton.SceneManager.LoadScene("MainMenu",LoadSceneMode.Single);
+                Service<ServiceInitor>.Instance.LobbyService.LeaveLobby();
+                NetworkManager.Singleton.Shutdown();
+            }
+            else
+            {
+                SceneManager.LoadScene("MainMenu",LoadSceneMode.Single);
+                Service<ServiceInitor>.Instance.LobbyService.LeaveLobby();
+                NetworkManager.Singleton.Shutdown();
             }
         }
 
@@ -65,6 +76,22 @@ namespace Game.Scripts.Services.UI
                 _gameCanvas = gameCanvas.GetComponent<GameCanvas>();
                 _gameCanvas = Instantiate(_gameCanvas, null);
                 return _gameCanvas;
+            }
+
+            return null;
+
+        }
+        public EscMenu GetEscMenu()
+        {
+            _escMenu = FindFirstObjectByType<EscMenu>();
+            if (_escMenu != null)
+                return _escMenu;
+            GameObject escMenu = _resourceLoaderService.Load<GameObject>(StaticPath.EscMenu);
+            if (escMenu != null)
+            {
+                _escMenu = escMenu.GetComponent<EscMenu>();
+                _escMenu = Instantiate(_escMenu, _gameCanvas.transform);
+                return _escMenu;
             }
 
             return null;

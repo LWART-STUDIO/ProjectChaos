@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: b8b96faeab3944d4684440b43102ac1b
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 318181
+  packageName: SFAbilitySystem
+  packageVersion: 1.0
+  assetPath: Assets/SFAbilitySystem/Demo/Prefabs/Logic/Laser/LaserBeam.prefab
+  uploadId: 752148

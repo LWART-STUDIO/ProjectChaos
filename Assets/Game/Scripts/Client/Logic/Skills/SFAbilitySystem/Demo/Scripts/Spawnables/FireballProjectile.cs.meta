@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: 502cd30752583a04d99c3f73b2d879cb
+AssetOrigin:
+  serializedVersion: 1
+  productId: 318181
+  packageName: SFAbilitySystem
+  packageVersion: 1.0
+  assetPath: Assets/SFAbilitySystem/Demo/Scripts/Spawnables/FireballProjectile.cs
+  uploadId: 752148

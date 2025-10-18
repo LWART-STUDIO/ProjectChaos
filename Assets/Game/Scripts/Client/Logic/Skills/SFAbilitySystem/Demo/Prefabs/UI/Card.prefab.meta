@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: e8db7dd3d6c1ef642ad63d2fb9bc5b57
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 318181
+  packageName: SFAbilitySystem
+  packageVersion: 1.0
+  assetPath: Assets/SFAbilitySystem/Demo/Prefabs/UI/Card.prefab
+  uploadId: 752148

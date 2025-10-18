@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: 45c886f8738abd446aa2bdf1576ebab3
+AssetOrigin:
+  serializedVersion: 1
+  productId: 318181
+  packageName: SFAbilitySystem
+  packageVersion: 1.0
+  assetPath: Assets/SFAbilitySystem/Core/Attributes/ReadOnlyAttribute.cs
+  uploadId: 752148

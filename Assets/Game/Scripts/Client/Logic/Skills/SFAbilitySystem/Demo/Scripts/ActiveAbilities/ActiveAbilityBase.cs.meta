@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: f948ebfb1044afa47bb188ab5c92f276
+AssetOrigin:
+  serializedVersion: 1
+  productId: 318181
+  packageName: SFAbilitySystem
+  packageVersion: 1.0
+  assetPath: Assets/SFAbilitySystem/Demo/Scripts/ActiveAbilities/ActiveAbilityBase.cs
+  uploadId: 752148

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: ae87fbfcfccc5814eb6abd5cd86c2543
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 318181
+  packageName: SFAbilitySystem
+  packageVersion: 1.0
+  assetPath: Assets/SFAbilitySystem/Demo/Cards/Passive/HPBoost.asset
+  uploadId: 752148

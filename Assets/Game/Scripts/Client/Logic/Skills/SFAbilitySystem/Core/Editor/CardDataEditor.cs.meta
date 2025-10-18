@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: bfa42bb4e2277a74d907bd225c2c8be6
+AssetOrigin:
+  serializedVersion: 1
+  productId: 318181
+  packageName: SFAbilitySystem
+  packageVersion: 1.0
+  assetPath: Assets/SFAbilitySystem/Core/Editor/CardDataEditor.cs
+  uploadId: 752148

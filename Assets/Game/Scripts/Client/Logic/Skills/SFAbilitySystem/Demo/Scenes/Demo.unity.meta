@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 8ccf250e5cea417c9189a37227f85c50
+DefaultImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 318181
+  packageName: SFAbilitySystem
+  packageVersion: 1.0
+  assetPath: Assets/SFAbilitySystem/Demo/Scenes/Demo.unity
+  uploadId: 752148

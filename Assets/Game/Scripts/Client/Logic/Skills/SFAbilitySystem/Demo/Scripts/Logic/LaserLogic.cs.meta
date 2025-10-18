@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: db29ba4eb91fb0642bf52ac23911922d
+AssetOrigin:
+  serializedVersion: 1
+  productId: 318181
+  packageName: SFAbilitySystem
+  packageVersion: 1.0
+  assetPath: Assets/SFAbilitySystem/Demo/Scripts/Logic/LaserLogic.cs
+  uploadId: 752148

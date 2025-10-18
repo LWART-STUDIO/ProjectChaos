@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: 87a5c4b0a97eb7d4e8f88798132708f6
+AssetOrigin:
+  serializedVersion: 1
+  productId: 318181
+  packageName: SFAbilitySystem
+  packageVersion: 1.0
+  assetPath: Assets/SFAbilitySystem/Demo/Scripts/Environment/ActivateCardsSelectionOnEnter.cs
+  uploadId: 752148

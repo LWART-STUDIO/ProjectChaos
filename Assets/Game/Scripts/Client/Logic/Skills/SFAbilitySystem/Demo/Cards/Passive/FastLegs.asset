@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b257a0bdef37824486972066832e3fb, type: 3}
+  m_Name: FastLegs
+  m_EditorClassIdentifier: 
+  abilityName: Fast Legs
+  abilityIcon: {fileID: 21300000, guid: 209754bc897c3164aae74a0f4b542164, type: 3}
+  abilityDescription: This ability will make you {speedMultiplier} times faster
+  cardToUnlock: {fileID: 0}
+  _abilityContainer:
+    abilityTiers:
+    - rid: 5908792580286709966
+    - rid: 5908792580286709967
+    - rid: 5908792580286709968
+  references:
+    version: 2
+    RefIds:
+    - rid: 5908792580286709966
+      type: {class: FastLegs, ns: SFAbilitySystem.Demo.Cards, asm: SFAbilitySystemDemo}
+      data:
+        speedMultiplier: 1.2
+    - rid: 5908792580286709967
+      type: {class: FastLegs, ns: SFAbilitySystem.Demo.Cards, asm: SFAbilitySystemDemo}
+      data:
+        speedMultiplier: 1.6
+    - rid: 5908792580286709968
+      type: {class: FastLegs, ns: SFAbilitySystem.Demo.Cards, asm: SFAbilitySystemDemo}
+      data:
+        speedMultiplier: 2

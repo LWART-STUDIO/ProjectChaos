@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: c9a8b8f32d33a2740b74d6488c71b699
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 318181
+  packageName: SFAbilitySystem
+  packageVersion: 1.0
+  assetPath: Assets/SFAbilitySystem/Demo/Resources/CardDatabase.asset
+  uploadId: 752148

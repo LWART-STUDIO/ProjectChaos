@@ -1,0 +1,54 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00eac2b35a98eb449802684393945b2b, type: 3}
+  m_Name: Laser
+  m_EditorClassIdentifier: 
+  abilityName: Laser
+  abilityIcon: {fileID: 21300000, guid: c0b6bc5b334ff4b4096bd9e006c0abad, type: 3}
+  abilityDescription: Deals {damage} damage every {damageTickInterval} seconds
+  cardToUnlock: {fileID: 0}
+  _abilityContainer:
+    abilityTiers:
+    - rid: 5908792580286709963
+    - rid: 5908792580286709964
+    - rid: 5908792580286709965
+  _abilityLogicPrefab: {fileID: 2144639317710531071, guid: 4f43b9438865f0d4cae48ba2d6d1625f, type: 3}
+  references:
+    version: 2
+    RefIds:
+    - rid: 5908792580286709963
+      type: {class: LaserAbility, ns: SFAbilitySystem.Demo.Abilities, asm: SFAbilitySystemDemo}
+      data:
+        cooldown: 15
+        castTime: 0.5
+        damage: 5
+        duration: 5
+        range: 50
+        damageTickInterval: 0.25
+    - rid: 5908792580286709964
+      type: {class: LaserAbility, ns: SFAbilitySystem.Demo.Abilities, asm: SFAbilitySystemDemo}
+      data:
+        cooldown: 12
+        castTime: 0.5
+        damage: 10
+        duration: 5
+        range: 50
+        damageTickInterval: 0.2
+    - rid: 5908792580286709965
+      type: {class: LaserAbility, ns: SFAbilitySystem.Demo.Abilities, asm: SFAbilitySystemDemo}
+      data:
+        cooldown: 10
+        castTime: 0.5
+        damage: 15
+        duration: 5
+        range: 50
+        damageTickInterval: 0.15

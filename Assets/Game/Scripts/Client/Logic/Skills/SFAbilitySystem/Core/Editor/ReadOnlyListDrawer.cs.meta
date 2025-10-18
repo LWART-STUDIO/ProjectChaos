@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: 023612da944c30444899d8dbbc3bc52d
+AssetOrigin:
+  serializedVersion: 1
+  productId: 318181
+  packageName: SFAbilitySystem
+  packageVersion: 1.0
+  assetPath: Assets/SFAbilitySystem/Core/Editor/ReadOnlyListDrawer.cs
+  uploadId: 752148

@@ -11,8 +11,7 @@ Material:
   m_Shader: {fileID: 4800000, guid: efea5148012b2a447aa587dd6544c3ea, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
-  m_ValidKeywords:
-  - _ALPHAPREMULTIPLY_ON
+  m_ValidKeywords: []
   m_InvalidKeywords:
   - TCP2_REFLECTIONS_FRESNEL
   - TCP2_RIM_LIGHTING_LIGHTMASK
@@ -22,7 +21,7 @@ Material:
   m_LightmapFlags: 6
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
+  m_CustomRenderQueue: 2000
   stringTagMap: {}
   disabledShaderPasses: []
   m_LockedProperties: 
@@ -30,7 +29,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BaseMap:
-        m_Texture: {fileID: 2800000, guid: 1f4c65c606069044b88cdaf363a7a2ca, type: 3}
+        m_Texture: {fileID: 2800000, guid: dc9bc71b567f04f4480d4666ff982e39, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
@@ -122,7 +121,7 @@ Material:
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
     - _DirectIntensityOutline: 1
-    - _DstBlend: 10
+    - _DstBlend: 0
     - _DstBlendAlpha: 0
     - _EmissionChannel: 4
     - _EnvironmentReflections: 1
@@ -166,7 +165,7 @@ Material:
     - _ReceiveShadowsOff: 1
     - _ReflectionMapType: 0
     - _ReflectionSmoothness: 0.095
-    - _RenderingMode: 2
+    - _RenderingMode: 0
     - _RimMax: 1
     - _RimMin: 0.5
     - _ShadowColorLightAtten: 1

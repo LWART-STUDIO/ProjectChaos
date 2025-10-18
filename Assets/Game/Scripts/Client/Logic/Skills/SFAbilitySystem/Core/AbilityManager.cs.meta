@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: 3663798070aae7c48a8018ddaa827a37
+AssetOrigin:
+  serializedVersion: 1
+  productId: 318181
+  packageName: SFAbilitySystem
+  packageVersion: 1.0
+  assetPath: Assets/SFAbilitySystem/Core/AbilityManager.cs
+  uploadId: 752148

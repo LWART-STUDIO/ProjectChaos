@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: 74833e74fc4e40f4a93d449ff3fb988f
+AssetOrigin:
+  serializedVersion: 1
+  productId: 318181
+  packageName: SFAbilitySystem
+  packageVersion: 1.0
+  assetPath: Assets/SFAbilitySystem/Core/Editor/AbilityDrawer.cs
+  uploadId: 752148

@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00eac2b35a98eb449802684393945b2b, type: 3}
+  m_Name: Spark
+  m_EditorClassIdentifier: 
+  abilityName: Spark
+  abilityIcon: {fileID: 0}
+  abilityDescription: 
+  cardToUnlock: {fileID: 0}
+  _abilityContainer:
+    abilityTiers:
+    - rid: 7244656127445565805
+  _abilityLogicPrefab: {fileID: 0}
+  references:
+    version: 2
+    RefIds:
+    - rid: 7244656127445565805
+      type: {class: Spark, ns: Game.Scripts.Client.Logic.Skills.Active, asm: Assembly-CSharp}
+      data:
+        cooldown: 1
+        castTime: 0.5
+        damage: 0

@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 4f43b9438865f0d4cae48ba2d6d1625f
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 318181
+  packageName: SFAbilitySystem
+  packageVersion: 1.0
+  assetPath: Assets/SFAbilitySystem/Demo/Prefabs/Logic/Laser/LaserLogic.prefab
+  uploadId: 752148

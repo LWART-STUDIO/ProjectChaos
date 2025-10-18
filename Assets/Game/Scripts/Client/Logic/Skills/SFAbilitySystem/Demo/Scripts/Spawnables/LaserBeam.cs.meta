@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: d4539a7e85dbd5145a14f33e17772557
+AssetOrigin:
+  serializedVersion: 1
+  productId: 318181
+  packageName: SFAbilitySystem
+  packageVersion: 1.0
+  assetPath: Assets/SFAbilitySystem/Demo/Scripts/Spawnables/LaserBeam.cs
+  uploadId: 752148

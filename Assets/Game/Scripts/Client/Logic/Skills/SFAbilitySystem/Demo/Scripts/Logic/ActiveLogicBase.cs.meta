@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: f0ac12fe34650ec4ba1d2c2720489fd9
+AssetOrigin:
+  serializedVersion: 1
+  productId: 318181
+  packageName: SFAbilitySystem
+  packageVersion: 1.0
+  assetPath: Assets/SFAbilitySystem/Demo/Scripts/Logic/ActiveLogicBase.cs
+  uploadId: 752148

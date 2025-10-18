@@ -8,8 +8,10 @@ namespace Game.Scripts.Client.Logic
     public class PlayerSpawner : NetworkBehaviour
     {
         [SerializeField] private GameObject _playerPrefab;
+        [SerializeField] private List<NetPlayerData> _currentPlayers = new List<NetPlayerData>();
         private static PlayerSpawner instance;
         private bool _isStarted;
+        public List<NetPlayerData> CurrentPlayers=>_currentPlayers;
         private void Awake()
         {
             if(instance!=null)
@@ -20,6 +22,7 @@ namespace Game.Scripts.Client.Logic
         public override void OnNetworkSpawn()
         {
             NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SceneLoaded;
+            _currentPlayers=new List<NetPlayerData>();
 
         }
 
@@ -33,11 +36,22 @@ namespace Game.Scripts.Client.Logic
                 {
                     GameObject player = Instantiate(_playerPrefab,transform.position,Quaternion.identity);
                     player.GetComponent<NetworkObject>().SpawnAsPlayerObject(id,true);
+                    NetPlayerData playerData = player.GetComponent<NetPlayerData>();
+                    playerData.PlayerId = id;
+                    playerData.Player = player;
+                    _currentPlayers.Add(playerData);
                 }
                
             }
 
             _isStarted = true;
+        }
+
+        [System.Serializable]
+        public class NetPlayerData
+        {
+            public GameObject Player;
+            public ulong PlayerId;
         }
     }
 }

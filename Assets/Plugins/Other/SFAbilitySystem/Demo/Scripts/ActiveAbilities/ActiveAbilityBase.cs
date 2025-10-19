@@ -8,6 +8,7 @@ namespace SFAbilitySystem.Demo.Abilities
     /// </summary>
     public abstract class ActiveAbilityBase : AbilityBase
     {
+        public string Name;
         /// <summary>
         /// The cooldown time in seconds before this ability can be used again.
         /// Set to 0 for abilities with no cooldown.

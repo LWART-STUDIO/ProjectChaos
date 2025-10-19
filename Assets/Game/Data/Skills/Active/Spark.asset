@@ -18,14 +18,18 @@ MonoBehaviour:
   cardToUnlock: {fileID: 0}
   _abilityContainer:
     abilityTiers:
-    - rid: 7244656127445565805
-  _abilityLogicPrefab: {fileID: 0}
+    - rid: 7244656151194501222
+  _abilityLogicPrefab: {fileID: 8272760581372415538, guid: 9c12e550fea22a8449d5a2e9dc0861a8, type: 3}
   references:
     version: 2
     RefIds:
-    - rid: 7244656127445565805
-      type: {class: Spark, ns: Game.Scripts.Client.Logic.Skills.Active, asm: Assembly-CSharp}
+    - rid: 7244656151194501222
+      type: {class: SparkSkill, ns: Game.Scripts.Client.Logic.Skills.Active, asm: Assembly-CSharp}
       data:
-        cooldown: 1
+        Name: Spark
+        cooldown: 0.1
         castTime: 0.5
-        damage: 0
+        damage: 10
+        speed: 10
+        lifetime: 3
+        distanceFromGround: 0.8

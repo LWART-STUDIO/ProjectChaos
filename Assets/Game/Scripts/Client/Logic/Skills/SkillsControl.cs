@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Game.Scripts.Services.Pool;
 using SFAbilitySystem.Core;
 using SFAbilitySystem.Demo.Abilities;
 using SFAbilitySystem.Demo.Cards;
@@ -17,11 +18,15 @@ namespace Game.Scripts.Client.Logic.Skills
         [SerializeField] private CardDatabase _activeSkillsDatabase;
         [SerializeField] private List<Object> _injectables = new List<Object>(); 
         [SerializeField] private Transform _logicParent;
+        [SerializeField] private Transform _shootPoint;
+        private Dictionary<string, ActiveCardEntry> _currentSkills = new Dictionary<string, ActiveCardEntry>();
+        public Transform ShootPoint => _shootPoint;
         public class ActiveCardEntry
         {
             public CardData card;               // Reference to the card data
             public ActiveAbilityBase ability;   // The ability configuration
             public ActiveAbilityLogicBase logic; // Runtime logic instance
+            public ObjectPool<PoolObject> pool;
             public Image uiElement;              // Associated UI element
         }
 
@@ -34,13 +39,47 @@ namespace Game.Scripts.Client.Logic.Skills
       
         public void Update()
         {
-            
+            SpawnSkills();
         }
 
         public void OnCardsPoolUpdated(AbilityManager abilityManager)
         {
-            
+            if (abilityManager.TryGetCard(out CardData cardData, out ActiveAbilityBase activeAbilityBase))
+            {
+                AddAbility(activeAbilityBase, cardData);
+                Debug.Log(activeAbilityBase.Name);
+            }
         }
+        public void SpawnSkills()
+        {
+            foreach (var kvp in _currentSkills)
+            {
+                if(kvp.Value.logic==null)
+                    continue;
+                if(kvp.Value.logic.CurrentCooldown>0)
+                    return;
+                kvp.Value.logic.PerformAction();
+            }
+
+        }
+
+        public ObjectPool<PoolObject> GetOrCreatePool(string name, GameObject prefab)
+        {
+            if (!_currentSkills.TryGetValue(name, out var entry))
+            {
+                // Создаём новую запись, если её нет
+                entry = new ActiveCardEntry();
+                _currentSkills[name] = entry;
+            }
+
+            if (entry.pool == null)
+            {
+                entry.pool = new ObjectPool<PoolObject>(prefab);
+            }
+
+            return entry.pool;
+        }
+        
 
         public void AddAbility(ActiveAbilityBase abilityBase, CardData cardData)
         {
@@ -59,14 +98,14 @@ namespace Game.Scripts.Client.Logic.Skills
             }
 
             // Check for existing ability
-            /*var existingEntry = _abilityHotkeys.FirstOrDefault(kvp =>
-                kvp.Value != null && kvp.Value.card == cardData).Value;*/
+            var existingEntry = _currentSkills.FirstOrDefault(kvp =>
+                kvp.Value != null && kvp.Value.card == cardData).Value;
 
-            /*if (existingEntry != null)
+            if (existingEntry != null)
             {
                 UpdateExistingAbility(existingEntry, abilityBase, cardData);
                 return;
-            }*/
+            }
 
             // Create new ability instance
             var logicInstance = Instantiate(activeCardData.abilityLogicPrefab, _logicParent);
@@ -100,11 +139,12 @@ namespace Game.Scripts.Client.Logic.Skills
                 card = cardData,
                 ability = abilityBase,
                 logic = logic,
-                uiElement = null//uiElement
+                uiElement = null,
+                pool = null
             };
 
-            //_abilityHotkeys[availableSlot.Key] = newEntry;
-          //  logic.Initialize(availableSlot.Key);
+            _currentSkills[newEntry.card.abilityName] = newEntry;
+            // logic.Initialize(availableSlot.Key);
 
             // Update UI
             /*if (uiElement != null)

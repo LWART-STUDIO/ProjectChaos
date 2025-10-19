@@ -2,7 +2,6 @@ using SFAbilitySystem.Core;
 using SFAbilitySystem.Demo.Abilities;
 using SFAbilitySystem.Demo.Core;
 using System.Collections;
-using Game.Scripts.Client.Logic.Skills;
 using UnityEngine;
 
 namespace SFAbilitySystem.Demo.Logic

@@ -4,7 +4,6 @@ using SFAbilitySystem.Demo.Logic;
 using SFAbilitySystem.Demo.Spawnables;
 using System;
 using System.Collections;
-using Game.Scripts.Client.Logic.Skills;
 using UnityEngine;
 
 namespace SFAbilitySystem.Demo.Cards

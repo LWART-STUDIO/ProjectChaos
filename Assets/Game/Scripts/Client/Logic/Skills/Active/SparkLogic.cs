@@ -1,5 +1,6 @@
 using System;
 using Game.Prefabs.Skills.Active;
+using Game.Scripts.Services.Pool;
 using SFAbilitySystem.Demo.Abilities;
 using SFAbilitySystem.Demo.Interfaces;
 using SFAbilitySystem.Demo.Logic;
@@ -9,15 +10,14 @@ using Object = UnityEngine.Object;
 
 namespace Game.Scripts.Client.Logic.Skills.Active
 {
-    public class SparkLogic : ActiveLogicBase<FireballAbility>,IAbilityInject
+    public class SparkLogic : ActiveLogicBase<SparkSkill>,IAbilityInject
     {
-                
-        [SerializeField] private Projecrile _sparkPrefab;
-        private Transform _spawnPoint;
+        [SerializeField] private GameObject _prefab;
+        private SkillsControl _skillsControl;
 
         protected override void ExecuteAbility()
         {
-            if (_sparkPrefab == null || _spawnPoint == null)
+            if ( _skillsControl == null)
             {
                 Debug.LogError("Spark prefab or spawn point not set!");
                 return;
@@ -27,12 +27,11 @@ namespace Game.Scripts.Client.Logic.Skills.Active
         [Rpc(SendTo.Server)]
         private void SpawnObjectRpc()
         {
-            Projecrile spark = Instantiate(
-                _sparkPrefab,
-                _spawnPoint.position,
-                _spawnPoint.rotation
-            );
-            spark.GetComponent<NetworkObject>().Spawn(true);
+            ObjectPool<PoolObject> pool= _skillsControl.GetOrCreatePool(_activeAbilityBase.Name,_prefab);
+            Projectile spark = pool.PullGameObject(_skillsControl.ShootPoint.position).GetComponent<Projectile>();
+            spark.Setup(_activeAbilityBase.lifetime,_activeAbilityBase.speed,
+                _activeAbilityBase.damage,_activeAbilityBase.distanceFromGround,_skillsControl.ShootPoint.forward);
+          //  spark.GetComponent<NetworkObject>().Spawn(true);
         }
 
         public Type GetDependencyType()
@@ -42,7 +41,7 @@ namespace Game.Scripts.Client.Logic.Skills.Active
 
         public void Inject(Object instance)
         {
-            _spawnPoint = ((SkillsControl)instance).transform;
+            _skillsControl = instance as SkillsControl;
         }
     }
 }

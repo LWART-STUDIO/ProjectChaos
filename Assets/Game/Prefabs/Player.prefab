@@ -159,12 +159,12 @@ MonoBehaviour:
   graphicsFormat: 8
   pixelMultiplier: 2
   ditherRepeatSize: 2
-  lastScreenSize: {x: 926, y: 514}
+  lastScreenSize: {x: 300, y: 417}
   screenSize: {x: 926, y: 514}
   renderTextureSize: {x: 467, y: 261}
   screenHeight: 1080
   uPixelatorCam: {fileID: 908072124584212158}
-  autoDetectCameras: 0
+  autoDetectCameras: 1
   cameraInfos:
   - cam: {fileID: 8704278418441827288}
     snap: 0
@@ -205,13 +205,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15cbbb275cb7ed443bab3be14b1a3a08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  blockedByUI: 1
+  blockedByUI: 0
   autoDetectCameras: 1
   cameraInfos:
   - cam: {fileID: 8704278418441827288}
-    raycastDistance: 0
-    storedEventMask: 0
-  - cam: {fileID: 0}
     raycastDistance: 0
     storedEventMask: 0
 --- !u!114 &780619891242619357
@@ -819,6 +816,7 @@ GameObject:
   - component: {fileID: 5662841752734183848}
   - component: {fileID: 5689247467176865608}
   - component: {fileID: 1375687845446193372}
+  - component: {fileID: 3816633560360396805}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -922,7 +920,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 1
   m_Constraints: 112
-  m_CollisionDetection: 0
+  m_CollisionDetection: 2
 --- !u!114 &8524171511924537702
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1135,6 +1133,18 @@ MonoBehaviour:
   - {fileID: 1375687845446193372}
   _logicParent: {fileID: 9946114029524824}
   _shootPoint: {fileID: 5767112309058253208}
+--- !u!114 &3816633560360396805
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3061972371485958821}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15e6c8da927e82b4e857edebc0f03b9c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3308623319421585094
 GameObject:
   m_ObjectHideFlags: 0

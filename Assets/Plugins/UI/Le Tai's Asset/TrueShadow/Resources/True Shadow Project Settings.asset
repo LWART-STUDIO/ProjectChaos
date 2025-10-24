@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: True Shadow Project Settings
   m_EditorClassIdentifier: 
   useGlobalAngleByDefault: 1
-  globalAngle: 90
+  globalAngle: 120
   showQuickPresetsButtons: 1
   quickPresets:
   - name: xs

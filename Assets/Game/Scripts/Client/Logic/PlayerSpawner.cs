@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Game.Scripts.Client.Logic.Player;
+using Game.Scripts.Server;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -18,25 +19,31 @@ namespace Game.Scripts.Client.Logic
 
         private void Awake()
         {
-            if (instance != null)
+  
+            if (instance != null&&instance != this)
                 Destroy(this.gameObject);
             instance = this;
-            DontDestroyOnLoad(this.gameObject);
+            
+ 
         }
 
-        public override void OnNetworkSpawn()
+        [Rpc(SendTo.Server)]
+        public void SpawnPlayersRpc(ulong id)
         {
-            NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SceneLoaded;
+            if(!IsServer)
+                return;
             _currentPlayers = new List<NetPlayerData>();
             if (IsHost)
             {
                 AttachScenePlayerToHost();
             }
+
+            SceneLoaded(id);
         }
         private void AttachScenePlayerToHost()
         {
             // Найти объект игрока на сцене
-            var existingPlayer = FindObjectOfType<PlayerTag>();
+            var existingPlayer = FindFirstObjectByType<PlayerTag>();
             if (existingPlayer == null)
                 return;
 
@@ -58,31 +65,27 @@ namespace Game.Scripts.Client.Logic
             }
         }
 
-        private void SceneLoaded(string sceneName, LoadSceneMode loadSceneMode, List<ulong> clientsCompleted,
-            List<ulong> clientsTimedOut)
+        private void SceneLoaded(ulong idPlayer)
         {
-            if (_isStarted)
-                return;
+   
             
-
-            // Спавним клиентов (если мы хост) — ты уже это делаешь, оставил как есть, можно добавить хоста если нужно
-            if (IsHost && sceneName == "Game")
+            if (IsHost)
             {
-                foreach (var id in clientsCompleted)
+                foreach (var id in GameSession.Instance.RegistredPlayers)
                 {
-                    if (_currentPlayers.Exists(x => x.PlayerId == id))
+                    if (_currentPlayers.Exists(x => x.PlayerId == id.Value))
                         continue;
-
+                    if(idPlayer!=id.Value)
+                        return;
                     GameObject player = Instantiate(_playerPrefab, transform.position, Quaternion.identity);
-                    player.GetComponent<NetworkObject>().SpawnAsPlayerObject(id, true);
-                    NetPlayerData playerData = player.GetComponent<NetPlayerData>();
-                    playerData.PlayerId = id;
+                    player.GetComponent<NetworkObject>().
+                        SpawnAsPlayerObject(id.Value, true);
+                    NetPlayerData playerData = new NetPlayerData();
+                    playerData.PlayerId = id.Value;
                     playerData.Player = player;
                     _currentPlayers.Add(playerData);
                 }
             }
-
-            _isStarted = true;
         }
 
         [Serializable]

@@ -1,6 +1,7 @@
 using System;
 using Game.Scripts.Services;
 using Game.Scripts.Services.Lobby;
+using Game.Scripts.Services.Scene;
 using Game.Scripts.Services.Steam;
 using Game.Scripts.Services.UI;
 using Sisus.Init;
@@ -21,13 +22,12 @@ namespace Game.Scripts.Client.UI
         {
             _newGameButton.onClick.AddListener(StartNewGame);
             _connectButton.onClick.AddListener(ConnectToLobby);
-            if (_lobbyService is SteamService steam)
-                steam.OnLobbyEntered += OnLobbyEntered;
+            _lobbyService.OnLobbyEntered += OnLobbyEntered;
         }
 
         private void StartNewGame()
         {
-           // Service<UIService>.Instance.GetGameCanvas().GetLobbyUI();
+            Service<UIService>.Instance.GetGameCanvas().GetLobbyUI();
            _lobbyService.CreateLobby();
             
             
@@ -39,6 +39,7 @@ namespace Game.Scripts.Client.UI
             else
             {
                 Service<UIService>.Instance.GetGameCanvas().GetLobbyUI();
+                Service<SceneService>.Instance.LoadScene(SceneMapper.Game);
                 Service<ServiceInitor>.Instance.LobbyService.JoinLobby();
                 _gameCanvas.HideMainMenu();
             }
@@ -46,8 +47,9 @@ namespace Game.Scripts.Client.UI
         }
         private void OnLobbyEntered()
         {
-            Debug.Log("Steam lobby entered, showing lobby UI...");
+            // Debug.Log("Steam lobby entered, showing lobby UI...");
             _gameCanvas.HideMainMenu();
+            Service<SceneService>.Instance.LoadScene(SceneMapper.Game);
             _gameCanvas.GetLobbyUI();
         }
 

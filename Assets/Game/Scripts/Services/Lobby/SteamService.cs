@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using Game.Scripts.Server;
+using Game.Scripts.Services.GameFlow;
+using Game.Scripts.Services.ResourceLoader;
 using Game.Scripts.Services.Steam;
 using Netcode.Transports;
 using SaintsField.Playa;
@@ -7,13 +10,13 @@ using Sisus.Init;
 using Steamworks;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace Game.Scripts.Services.Lobby
 {
-    [Service(typeof(SteamService), LazyInit = true)]
-    public class SteamService : NetworkBehaviour, IService, ILobbyService
+    [Service(typeof(SteamService),FindFromScene = true, LazyInit = true)]
+    public class SteamService : MonoBehaviour, IService, ILobbyService
     {
+        [SerializeField] private GameSession _gameSessionPrefab;
         private Dictionary<ulong, LobbyPlayer> _players = new();
         public event Action<LobbyPlayer> OnPlayerJoined;
         public event Action<LobbyPlayer> OnPlayerLeft;
@@ -23,10 +26,14 @@ namespace Game.Scripts.Services.Lobby
         private Callback<LobbyEnter_t> _onLobbyEntered;
         private Callback<GameLobbyJoinRequested_t> _onLobbyJoinRequest;
         private Callback<LobbyChatUpdate_t> _onLobbyChatUpdate;
+        
+        private ResourceLoaderService _resourceLoader=>Service<ResourceLoaderService>.Instance;
         private bool _wasAwaked;
         private bool _wasStarted;
+        private GameFlowService _gameFlowService=>Service<GameFlowService>.Instance;
+
   
-        public CSteamID LobbyId { get; private set; }
+        public ulong LobbyId { get; private set; }
 
         public void LocalAwake()
         {
@@ -70,7 +77,7 @@ namespace Game.Scripts.Services.Lobby
             _players = new Dictionary<ulong, LobbyPlayer>();
             Debug.Log("🟡 Creating Steam lobby...");
             SteamMatchmaking.CreateLobby(ELobbyType.k_ELobbyTypeFriendsOnly, 4);
-            SteamMatchmaking.SetLobbyData(LobbyId, "HostAddress", SteamUser.GetSteamID().m_SteamID.ToString());
+            SteamMatchmaking.SetLobbyData(new CSteamID(LobbyId), "HostAddress", SteamUser.GetSteamID().m_SteamID.ToString());
             NetworkManager.Singleton.StartHost();
    
         }
@@ -79,8 +86,14 @@ namespace Game.Scripts.Services.Lobby
         {
             if (callback.m_eResult == EResult.k_EResultOK)
             {
-                LobbyId = new CSteamID( callback.m_ulSteamIDLobby);
+                LobbyId = new CSteamID( callback.m_ulSteamIDLobby).m_SteamID;
                 Debug.Log("🟢 Lobby was created: ");
+                if (GameSession.Instance == null)
+                {
+                    var sessionObj = NetworkManager.Singleton.SpawnManager.InstantiateAndSpawn(
+                        _gameSessionPrefab.GetComponent<NetworkObject>());
+                }
+                    
                 return;
             }
             Debug.LogError("❌ Failed to create Steam lobby: " + callback.m_eResult);
@@ -92,7 +105,7 @@ namespace Game.Scripts.Services.Lobby
         {
             Debug.Log($"🟡 Joining Steam lobby {LobbyId}...");
             
-            SteamMatchmaking.JoinLobby(LobbyId);
+            SteamMatchmaking.JoinLobby(new CSteamID(LobbyId));
         }
 
         private void OnLobbyEnteredFunc(LobbyEnter_t callback)
@@ -106,12 +119,12 @@ namespace Game.Scripts.Services.Lobby
                 NetworkManager.Singleton.StartClient();
             }
             
-            LobbyId = new CSteamID(callback.m_ulSteamIDLobby);
+            LobbyId = callback.m_ulSteamIDLobby;
             Debug.Log($"✅ Entered lobby: {LobbyId}");
-            int memberCount = SteamMatchmaking.GetNumLobbyMembers(LobbyId);
+            int memberCount = SteamMatchmaking.GetNumLobbyMembers(new CSteamID(LobbyId));
             for (int i = 0; i < memberCount; i++)
             { 
-                CSteamID memberId = SteamMatchmaking.GetLobbyMemberByIndex(LobbyId, i);
+                CSteamID memberId = SteamMatchmaking.GetLobbyMemberByIndex(new CSteamID(LobbyId), i);
                 if (_players.ContainsKey(memberId.m_SteamID))
                     continue;
                 string memberName = SteamFriends.GetFriendPersonaName(memberId);
@@ -164,10 +177,10 @@ namespace Game.Scripts.Services.Lobby
         
         private void OnDestroy()
         {
-            _onLobbyCreated.Unregister();
-            _onLobbyEntered.Unregister();
-            _onLobbyJoinRequest.Unregister();
-            _onLobbyChatUpdate.Unregister();
+            _onLobbyCreated?.Unregister();
+            _onLobbyEntered?.Unregister();
+            _onLobbyJoinRequest?.Unregister();
+            _onLobbyChatUpdate?.Unregister();
         }
 
         public void LocalUpdate(float deltaTime)
@@ -180,7 +193,7 @@ namespace Game.Scripts.Services.Lobby
         public void LeaveLobby()
         {
            
-            SteamMatchmaking.LeaveLobby(LobbyId);
+            SteamMatchmaking.LeaveLobby(new CSteamID(LobbyId));
             _players = new Dictionary<ulong, LobbyPlayer>();
             NetworkManager.Singleton.Shutdown();
             
@@ -188,8 +201,9 @@ namespace Game.Scripts.Services.Lobby
 
         public void StartGameServer()
         {
-            if(NetworkManager.Singleton.IsHost)
-                NetworkManager.Singleton.SceneManager.LoadScene("Game",LoadSceneMode.Single);
+            if (!NetworkManager.Singleton.IsHost) 
+                return;
+            _gameFlowService.StartGameServerRpc();
         }
     }
 }

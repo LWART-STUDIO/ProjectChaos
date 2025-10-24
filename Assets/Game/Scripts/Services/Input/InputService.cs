@@ -9,8 +9,8 @@ namespace Game.Scripts.Services.Input
 
     // Структура для хранения данных об одном состоянии действия
 
-    [Service]
-    public class InputService : IService
+    [Service(typeof(InputService))]
+    public class InputService:MonoBehaviour , IService
     {
         private bool _playerInputBlocked = false;
         public bool PlayerInputBlocked => _playerInputBlocked;

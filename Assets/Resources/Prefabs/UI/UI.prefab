@@ -332,13 +332,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2154920954988763924, guid: 886deaf3277a57043ad312c0fd03a133, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2262275081887007740, guid: 886deaf3277a57043ad312c0fd03a133, type: 3}
       propertyPath: m_Name
       value: EscMenu
       objectReference: {fileID: 0}
     - target: {fileID: 9003713257592906900, guid: 886deaf3277a57043ad312c0fd03a133, type: 3}
       propertyPath: TransformPosition.y
-      value: -32.730003
+      value: -32.73001
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

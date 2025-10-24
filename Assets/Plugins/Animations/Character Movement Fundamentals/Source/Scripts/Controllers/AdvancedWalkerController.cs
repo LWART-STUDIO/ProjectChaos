@@ -145,6 +145,7 @@ namespace CMF
 
         void FixedUpdate()
 		{
+	
 			ControllerUpdate();
 		}
 

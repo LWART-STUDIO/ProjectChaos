@@ -34,7 +34,7 @@ MonoBehaviour:
         lifetime: 4
         distanceFromGround: 0.8
         size: 0.61
-        count: 1
+        count: 30
         angle: 90
         pierceCount: 0
         wallBounceCount: 1

@@ -49,7 +49,7 @@ namespace Game.Scripts.Client.UI
             {
                 var lobbyID = _lobbyService.LobbyId;
                 byte[] data = System.Text.Encoding.UTF8.GetBytes(message);
-                SteamMatchmaking.SendLobbyChatMsg(lobbyID, data, data.Length);
+                SteamMatchmaking.SendLobbyChatMsg(new CSteamID(lobbyID), data, data.Length);
             }
             else
             {
@@ -89,7 +89,7 @@ namespace Game.Scripts.Client.UI
             _chatBox.OnInputFieldSubmitted -= PlayerChat;
             _lobbyService.OnPlayerJoined -= OnPlayerJoined;
             _lobbyService.OnPlayerLeft -= OnPlayerDisconected;
-            _onLChatCallback.Unregister();
+            _onLChatCallback?.Unregister();
         }
     }
 }

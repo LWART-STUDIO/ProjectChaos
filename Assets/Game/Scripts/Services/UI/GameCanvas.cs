@@ -1,4 +1,5 @@
 using Game.Scripts.Client.UI;
+using Game.Scripts.Client.UI.Lobby;
 using Game.Scripts.Services.ResourceLoader;
 using Game.Scripts.Services.StaticService;
 using Sisus.Init;
@@ -14,14 +15,19 @@ namespace Game.Scripts.Services.UI
 
         public LobbyUI GetLobbyUI()
         {
-            _lobbyUI = FindFirstObjectByType<LobbyUI>();
+            _lobbyUI = FindFirstObjectByType<LobbyUI>(FindObjectsInactive.Include);
             if (_lobbyUI != null)
+            {
+                _lobbyUI.gameObject.SetActive(true);
                 return _lobbyUI;
+            }
+               
             GameObject lobbyUI = _resourceLoaderService.Load<GameObject>(StaticPath.LobbyUI);
             if (lobbyUI != null)
             {
                 _lobbyUI = lobbyUI.GetComponent<LobbyUI>();
-                _lobbyUI = Instantiate(_lobbyUI, transform);
+                _lobbyUI = Instantiate(_lobbyUI, null);
+                _lobbyUI.gameObject.SetActive(true);
                 return _lobbyUI;
             }
             return null;
@@ -31,12 +37,11 @@ namespace Game.Scripts.Services.UI
         {
             if (_lobbyUI == null)
                 GetLobbyUI();
-            Destroy(_lobbyUI.gameObject);
-            _lobbyUI = null;
+            _lobbyUI.gameObject.SetActive(false);
         }
         public MainMenu GetMainMenu()
         {
-            _mainMenu = FindFirstObjectByType<MainMenu>();
+            _mainMenu = FindFirstObjectByType<MainMenu>(FindObjectsInactive.Include);
             if (_mainMenu != null)
                 return _mainMenu;
             GameObject mainMenu = _resourceLoaderService.Load<GameObject>(StaticPath.MainMenu);

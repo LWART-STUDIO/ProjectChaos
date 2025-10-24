@@ -1,29 +1,50 @@
 using System;
+using System.Collections.Generic;
+using Game.Scripts.Server;
+using Game.Scripts.Services.GameFlow;
+using Game.Scripts.Services.ResourceLoader;
 using Game.Scripts.Services.Steam;
 using Sisus.Init;
-using Steamworks;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using UnityEngine;
 
 namespace Game.Scripts.Services.Lobby
 {
-    [Service(typeof(LocalLobbyService),LazyInit = true)]
-    public class LocalLobbyService : MonoBehaviour,IService, ILobbyService
+    [Service(typeof(LocalLobbyService),FindFromScene = true,LazyInit = true)]
+    public class LocalLobbyService : MonoBehaviour, IService, ILobbyService
     {
-        [SerializeField] private CSteamID _lastCreatedLobbyId;
+        [SerializeField] private GameSession _gameSessionPrefab;
+        private Dictionary<ulong, LobbyPlayer> _players = new();
+
         public event Action<LobbyPlayer> OnPlayerJoined;
         public event Action<LobbyPlayer> OnPlayerLeft;
-        public CSteamID LobbyId => _lastCreatedLobbyId;
+        public event Action OnLobbyEntered;
+        private ResourceLoaderService _resourceLoader=>Service<ResourceLoaderService>.Instance;
+        public event Action OnLobbyCreated;
+
         private bool _wasAwaked;
         private bool _wasStarted;
+
+        private GameFlowService _gameFlowService => Service<GameFlowService>.Instance;
+
+        private ulong _hostId;
+        public ulong LobbyId { get; private set; }
+        private NetworkVariable<int> _playerCount = new NetworkVariable<int>(0,NetworkVariableReadPermission.Everyone);
+
         public void LocalAwake()
         {
-            if(_wasAwaked)
+            if (_wasAwaked)
                 return;
+
             NetworkManager network = FindFirstObjectByType<NetworkManager>();
-            network.NetworkConfig.NetworkTransport =
-                network.GetComponent<UnityTransport>();
+            if (network == null)
+            {
+                Debug.LogError("❌ NetworkManager not found in scene!");
+                return;
+            }
+
+            network.NetworkConfig.NetworkTransport = network.GetComponent<UnityTransport>();
             _wasAwaked = true;
         }
 
@@ -31,23 +52,14 @@ namespace Game.Scripts.Services.Lobby
         {
             if (_wasStarted)
                 return;
-            if (NetworkManager.Singleton == null) return;
 
-            // Подписка на подключения других клиентов (только Host будет их видеть)
-            NetworkManager.Singleton.OnClientConnectedCallback += clientId =>
-            {
-                // Игрок присоединился
-               OnClientConnected(clientId);
-            };
+            if (NetworkManager.Singleton == null)
+                return;
 
-            NetworkManager.Singleton.OnClientDisconnectCallback += clientId =>
-            {
-                // Игрок отключился
-                OnLedtLobby(clientId);
-            };
+            NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
+            NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnected;
+
             _wasStarted = true;
-            
-            
         }
 
         public void LocalUpdate(float deltaTime)
@@ -55,30 +67,94 @@ namespace Game.Scripts.Services.Lobby
 
         }
 
+        public void CreateLobby()
+        {
+            _players.Clear();
+            Debug.Log("🟡 Creating Local Lobby...");
+            
+            NetworkManager.Singleton.StartHost();
+            _hostId = NetworkManager.Singleton.LocalClientId;
+            LobbyId = _hostId; // используем hostId как LobbyId
+            if (GameSession.Instance == null)
+            {
+                var sessionObj = NetworkManager.Singleton.SpawnManager.InstantiateAndSpawn(
+                    _gameSessionPrefab.GetComponent<NetworkObject>());
+            }
+            // Создаём игрока-хоста
+            AddPlayer(_hostId);
+
+            OnLobbyCreated?.Invoke();
+            OnLobbyEntered?.Invoke();
+
+            Debug.Log($"🟢 Local lobby created. HostID = {_hostId}");
+        }
+
+        public void JoinLobby()
+        {
+            Debug.Log("🟡 Joining Local Lobby...");
+
+            var transport = NetworkManager.Singleton.GetComponent<UnityTransport>();
+            transport.ConnectionData.Address = "127.0.0.1";
+            transport.ConnectionData.Port = 7778;
+
+            NetworkManager.Singleton.StartClient();
+
+            // При подключении клиент вызовет OnClientConnected()
+        }
+
         public void LeaveLobby()
         {
+            Debug.Log("🔴 Leaving Local Lobby...");
+
+            _players.Clear();
+            NetworkManager.Singleton.Shutdown();
         }
 
         public void StartGameServer()
         {
-            
-        }
+            if (!NetworkManager.Singleton.IsHost)
+                return;
 
-        public void CreateLobby()
-        {
-            _lastCreatedLobbyId = new CSteamID(12345);
-            NetworkManager.Singleton.StartHost();
-            
-   
+            Debug.Log("🚀 Starting local game...");
+            _gameFlowService.StartGameServerRpc();
         }
-        
 
         private void OnClientConnected(ulong clientId)
         {
-            // Создаём фиктивный ник и аватар
+            Debug.Log($"🟢 Player connected: {clientId}");
+            AddPlayer(clientId);
+
+            // Если это не хост — значит клиент успешно вошёл
+            if (clientId == NetworkManager.Singleton.LocalClientId && !NetworkManager.Singleton.IsHost)
+            {
+                OnLobbyEntered?.Invoke();
+            }
+        }
+
+        private void OnClientDisconnected(ulong clientId)
+        {
+            if (!_players.ContainsKey(clientId))
+                return;
+
+            var player = _players[clientId];
+            _players.Remove(clientId);
+
+            Debug.Log($"🔴 Player left lobby: {clientId}");
+            OnPlayerLeft?.Invoke(player);
+        }
+
+        private void AddPlayer(ulong clientId)
+        {
+            if (_players.ContainsKey(clientId))
+                return;
+
             string nick = $"Player_{clientId}";
-            Texture2D avatar = GeneratePlaceholderAvatar(clientId); // метод возвращает Texture2D
-            OnPlayerJoined?.Invoke(new LobbyPlayer(clientId, nick, avatar));
+            Texture2D avatar = GeneratePlaceholderAvatar(clientId);
+
+            var player = new LobbyPlayer(clientId, nick, avatar);
+            _players[clientId] = player;
+
+            OnPlayerJoined?.Invoke(player);
         }
 
         private Texture2D GeneratePlaceholderAvatar(ulong id)
@@ -90,29 +166,6 @@ namespace Game.Scripts.Services.Lobby
                 tex.SetPixel(x, y, col);
             tex.Apply();
             return tex;
-        }
-        public void JoinLobby()
-        {
-            NetworkManager.Singleton.GetComponent<UnityTransport>().ConnectionData.Address = "127.0.0.1";
-            NetworkManager.Singleton.GetComponent<UnityTransport>().ConnectionData.Port = 7777;
-            NetworkManager.Singleton.StartClient();
-            OnClientConnected(NetworkManager.Singleton.LocalClientId);
-        }
-        public void OnLedtLobby(ulong clientId)
-        {
-            string nick = $"Player_{clientId}";
-            Texture2D avatar = GeneratePlaceholderAvatar(clientId); // метод возвращает Texture2D
-            OnPlayerLeft?.Invoke(new LobbyPlayer(clientId, nick, avatar));
-        }
-
-       
-        private void OnApplicationQuit()
-        {
-            // Выключить NGO
-            if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsListening)
-                NetworkManager.Singleton.Shutdown();
-            // Принудительно закрыть приложение
-            Application.Quit();
         }
     }
 }

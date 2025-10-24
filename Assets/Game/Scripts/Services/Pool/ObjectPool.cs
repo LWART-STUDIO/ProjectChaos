@@ -39,7 +39,8 @@ namespace Game.Scripts.Services.Pool
                 t = pooledObjects.Pop();
             else
                 t = GameObject.Instantiate(prefab).GetComponent<T>();
-
+            if(t == null||t.gameObject == null)
+                return null;
             t.gameObject.SetActive(true); //ensure the object is on
             t.Initialize(Push);
 

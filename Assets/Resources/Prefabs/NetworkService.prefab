@@ -27,7 +27,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8322615856345815422}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -49,7 +49,7 @@ MonoBehaviour:
   NetworkManagerExpanded: 0
   NetworkConfig:
     ProtocolVersion: 0
-    NetworkTransport: {fileID: 4971094721843706032}
+    NetworkTransport: {fileID: 1912354573308445713}
     PlayerPrefab: {fileID: 0}
     Prefabs:
       NetworkPrefabsLists:
@@ -61,7 +61,7 @@ MonoBehaviour:
     EnableTimeResync: 0
     TimeResyncInterval: 30
     EnsureNetworkVariableLengthSafety: 0
-    EnableSceneManagement: 1
+    EnableSceneManagement: 0
     ForceSamePrefabs: 1
     RecycleNetworkIds: 1
     NetworkIdRecycleDelay: 120
@@ -114,7 +114,7 @@ MonoBehaviour:
   m_DisconnectTimeoutMS: 30000
   ConnectionData:
     Address: 127.0.0.1
-    Port: 7777
+    Port: 7778
     ServerListenAddress: 127.0.0.1
   DebugSimulator:
     PacketDelayMS: 0

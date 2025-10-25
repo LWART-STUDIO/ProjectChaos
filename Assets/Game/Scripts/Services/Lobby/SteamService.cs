@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Game.Scripts.Client.Logic;
 using Game.Scripts.Server;
 using Game.Scripts.Services.GameFlow;
 using Game.Scripts.Services.ResourceLoader;
@@ -17,6 +18,7 @@ namespace Game.Scripts.Services.Lobby
     public class SteamService : MonoBehaviour, IService, ILobbyService
     {
         [SerializeField] private GameSession _gameSessionPrefab;
+        [SerializeField] private PlayerSpawner _playerSpawnerPrefab;
         private Dictionary<ulong, LobbyPlayer> _players = new();
         public event Action<LobbyPlayer> OnPlayerJoined;
         public event Action<LobbyPlayer> OnPlayerLeft;
@@ -92,6 +94,11 @@ namespace Game.Scripts.Services.Lobby
                 {
                     var sessionObj = NetworkManager.Singleton.SpawnManager.InstantiateAndSpawn(
                         _gameSessionPrefab.GetComponent<NetworkObject>());
+                }
+                if (PlayerSpawner.Instance== null)
+                {
+                    var sessionObj = NetworkManager.Singleton.SpawnManager.InstantiateAndSpawn(
+                        _playerSpawnerPrefab.GetComponent<NetworkObject>());
                 }
                     
                 return;
@@ -196,6 +203,8 @@ namespace Game.Scripts.Services.Lobby
             SteamMatchmaking.LeaveLobby(new CSteamID(LobbyId));
             _players = new Dictionary<ulong, LobbyPlayer>();
             NetworkManager.Singleton.Shutdown();
+            /*if(PlayerSpawner.instance!=null)
+                Destroy(PlayerSpawner.instance.gameObject);*/
             
         }
 

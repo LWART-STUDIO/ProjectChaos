@@ -9,8 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5819350252233971464}
+  - component: {fileID: -8776898048763928144}
   - component: {fileID: 8272760581372415538}
-  - component: {fileID: 685541685355871024}
   m_Layer: 0
   m_Name: SparkLogic
   m_TagString: Untagged
@@ -33,6 +33,31 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &-8776898048763928144
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7942208930443766248}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 3148561713
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
 --- !u!114 &8272760581372415538
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -46,21 +71,3 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _prefab: {fileID: 484321361220539588, guid: ee15083f20890d44c88579dd263875ca, type: 3}
-  _projectileVfxManager: {fileID: 685541685355871024}
---- !u!114 &685541685355871024
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7942208930443766248}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9dcd7be22ed21d949b1644d55dc24dce, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _particlePrefabs:
-  - {fileID: 5004854186026955636, guid: 302b7026e5f5a5742b9eda4960fd58d7, type: 3}
-  - {fileID: 5004854186026955636, guid: 302b7026e5f5a5742b9eda4960fd58d7, type: 3}
-  - {fileID: 5004854186026955636, guid: 302b7026e5f5a5742b9eda4960fd58d7, type: 3}
-  - {fileID: 5004854186026955636, guid: 302b7026e5f5a5742b9eda4960fd58d7, type: 3}

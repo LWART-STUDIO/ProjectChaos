@@ -7,12 +7,13 @@ using SFAbilitySystem.Demo.Cards;
 using SFAbilitySystem.Demo.Core;
 using SFAbilitySystem.Demo.Interfaces;
 using SFAbilitySystem.Demo.UI;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace Game.Scripts.Client.Logic.Skills
 {
-    public class SkillsControl : MonoBehaviour, ICardsPoolUpdated
+    public class SkillsControl : NetworkBehaviour, ICardsPoolUpdated
     {
         [SerializeField] private CardSystem _cardSystem;
         [SerializeField] private CardDatabase _activeSkillsDatabase;
@@ -30,8 +31,10 @@ namespace Game.Scripts.Client.Logic.Skills
             public Image uiElement;              // Associated UI element
         }
 
-        private void Awake()
+        public override void OnNetworkSpawn()
         {
+            if(!IsOwner)
+                return;
             _cardSystem.abilityManager.AddCardsPoolUpdatedCallback(this);
             _cardSystem.abilityManager.AddCard(_activeSkillsDatabase.CardAt(0));
         }
@@ -39,25 +42,31 @@ namespace Game.Scripts.Client.Logic.Skills
       
         public void Update()
         {
-            SpawnSkills();
+            if(!IsOwner)
+                return;
+            SpawnSkillsServerRpc();
         }
 
         public void OnCardsPoolUpdated(AbilityManager abilityManager)
         {
+            if(!IsOwner)
+                return;
             if (abilityManager.TryGetCard(out CardData cardData, out ActiveAbilityBase activeAbilityBase))
             {
                 AddAbility(activeAbilityBase, cardData);
                 Debug.Log(activeAbilityBase.Name);
             }
         }
-        public void SpawnSkills()
+        [ServerRpc(RequireOwnership = false)]
+        public void SpawnSkillsServerRpc()
         {
+            
             foreach (var kvp in _currentSkills)
             {
                 if(kvp.Value.logic==null)
                     continue;
                 if(kvp.Value.logic.CurrentCooldown>0)
-                    return;
+                    continue;
                 kvp.Value.logic.PerformAction();
             }
 
@@ -65,6 +74,7 @@ namespace Game.Scripts.Client.Logic.Skills
 
         public ObjectPool<PoolObject> GetOrCreatePool(string name, GameObject prefab)
         {
+       
             if (!_currentSkills.TryGetValue(name, out var entry))
             {
                 // Создаём новую запись, если её нет

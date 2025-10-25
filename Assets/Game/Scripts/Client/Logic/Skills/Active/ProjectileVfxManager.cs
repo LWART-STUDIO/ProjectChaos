@@ -1,10 +1,12 @@
 using System.Collections.Generic;
+using Game.Prefabs.Skills.Active;
 using UnityEngine;
 
-namespace Game.Prefabs.Skills.Active
+namespace Game.Scripts.Client.Logic.Skills.Active
 {
     public class ProjectileVfxManager : MonoBehaviour
     {
+        public static ProjectileVfxManager Instance { get; private set; }
         [Tooltip("Список партикл-систем (например: след, искры, дым). Каждая будет отображать ВСЕ снаряды.")]
         [SerializeField] private List<ParticleSystem> _particlePrefabs;
 
@@ -17,6 +19,7 @@ namespace Game.Prefabs.Skills.Active
 
         void Awake()
         {
+            Instance = this;
             // Создаём по одной системе на каждый тип эффекта
             _activeSystems.Clear();
             foreach (var prefab in _particlePrefabs)
@@ -38,7 +41,18 @@ namespace Game.Prefabs.Skills.Active
             }
             _maxParticles = 1000;
         }
+        public void RegisterProjectile(Projectile proj)
+        {
+            if (proj != null && !_trackedProjectiles.Contains(proj))
+            {
+                _trackedProjectiles.Add(proj);
+            }
+        }
 
+        public void UnregisterProjectile(Projectile proj)
+        {
+            _trackedProjectiles.Remove(proj);
+        }
         public void TrackProjectile(Projectile proj)
         {
             if (!_trackedProjectiles.Contains(proj))
@@ -47,6 +61,16 @@ namespace Game.Prefabs.Skills.Active
 
         void FixedUpdate()
         {
+            var allProjectiles = FindObjectsByType<Projectile>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            _trackedProjectiles.Clear();
+            foreach (var proj in allProjectiles)
+            {
+                if (proj != null && proj.gameObject.activeInHierarchy)
+                {
+                    _trackedProjectiles.Add(proj);
+                }
+            }
+
             if (_trackedProjectiles.Count == 0 || _activeSystems.Count == 0)
             {
                 ClearAllParticles();

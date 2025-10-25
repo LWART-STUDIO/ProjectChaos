@@ -1,11 +1,9 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using Game.Scripts.Client.Logic.Player;
 using Game.Scripts.Server;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace Game.Scripts.Client.Logic
 {
@@ -13,26 +11,23 @@ namespace Game.Scripts.Client.Logic
     {
         [SerializeField] private GameObject _playerPrefab;
         [SerializeField] private List<NetPlayerData> _currentPlayers = new List<NetPlayerData>();
-        public static PlayerSpawner instance;
+        public static PlayerSpawner Instance{get; private set;}
         private bool _isStarted;
         public List<NetPlayerData> CurrentPlayers => _currentPlayers;
-
-        private void Awake()
+        
+        public override void OnNetworkSpawn()
         {
-  
-            if (instance != null&&instance != this)
-                Destroy(this.gameObject);
-            instance = this;
-            
- 
+            Instance = this;
+            DontDestroyOnLoad(this);
+            if (IsServer)
+            {
+                if(Instance != null&&Instance!= this)
+                    Destroy(gameObject);
+            }
         }
-
-        [Rpc(SendTo.Server)]
-        public void SpawnPlayersRpc(ulong id)
+        [ServerRpc(RequireOwnership = false)]
+        public void SpawnPlayerServerRpc(ulong id)
         {
-            if(!IsServer)
-                return;
-            _currentPlayers = new List<NetPlayerData>();
             if (IsHost)
             {
                 AttachScenePlayerToHost();
@@ -40,6 +35,7 @@ namespace Game.Scripts.Client.Logic
 
             SceneLoaded(id);
         }
+
         private void AttachScenePlayerToHost()
         {
             // Найти объект игрока на сцене
@@ -55,7 +51,7 @@ namespace Game.Scripts.Client.Logic
                 networkObject.SpawnAsPlayerObject(NetworkManager.Singleton.LocalClientId);
             }
 
-            if (!_currentPlayers.Exists(p => p.PlayerId == networkObject.NetworkObjectId))
+            if (!_currentPlayers.Exists(p => p.PlayerId == NetworkManager.Singleton.LocalClientId))
             {
                 var playerData = new NetPlayerData();
                 playerData.PlayerId = NetworkManager.Singleton.LocalClientId;
@@ -67,7 +63,6 @@ namespace Game.Scripts.Client.Logic
 
         private void SceneLoaded(ulong idPlayer)
         {
-   
             
             if (IsHost)
             {
@@ -76,7 +71,7 @@ namespace Game.Scripts.Client.Logic
                     if (_currentPlayers.Exists(x => x.PlayerId == id.Value))
                         continue;
                     if(idPlayer!=id.Value)
-                        return;
+                        continue;
                     GameObject player = Instantiate(_playerPrefab, transform.position, Quaternion.identity);
                     player.GetComponent<NetworkObject>().
                         SpawnAsPlayerObject(id.Value, true);
@@ -101,10 +96,7 @@ namespace Game.Scripts.Client.Logic
             {
                 if (NetworkManager.Singleton == null)
                     return 0;
-                int count = NetworkManager.Singleton.ConnectedClientsIds.Count;
-                if (NetworkManager.Singleton.IsHost)
-                    count++;
-                return count;
+                return NetworkManager.Singleton.ConnectedClientsIds.Count;
             }
         }
 

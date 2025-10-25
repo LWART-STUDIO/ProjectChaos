@@ -95,7 +95,7 @@ namespace CMF
 			{
 				// Клиент не владелец — отключаем локальную физику и управление
 				rb.isKinematic = true;
-				rb.linearVelocity = Vector3.zero;
+				//rb.linearVelocity = Vector3.zero;
 				mover.enabled = false;
 				if (characterInput != null)
 					Destroy(characterInput);
@@ -103,7 +103,6 @@ namespace CMF
 					Destroy(ceilingDetector);
 				if (cameraTransform != null)
 					Destroy(cameraTransform.gameObject);
-				Destroy(this);
 			}
 			else
 			{
@@ -123,6 +122,8 @@ namespace CMF
 
 		void Update()
 		{
+			if (!IsOwner)
+				return;
 			HandleJumpKeyInput();
 		}
 
@@ -145,7 +146,8 @@ namespace CMF
 
         void FixedUpdate()
 		{
-	
+			if (!IsOwner)
+				return;
 			ControllerUpdate();
 		}
 

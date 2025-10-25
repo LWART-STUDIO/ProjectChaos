@@ -14,24 +14,25 @@ namespace Game.Scripts.Client.Logic.Skills.Active
     public class SparkLogic : ActiveLogicBase<SparkSkill>, IAbilityInject
     {
         [SerializeField] private GameObject _prefab;
-        [SerializeField] private ProjectileVfxManager _projectileVfxManager;
+        //[SerializeField] private ProjectileVfxManager _projectileVfxManager;
         private SkillsControl _skillsControl;
 
 
         protected override void ExecuteAbility()
         {
+       
             if (_skillsControl == null)
             {
                 Debug.LogError("Spark prefab or spawn point not set!");
                 return;
             }
 
-            SpawnObjectRpc();
+            SpawnObject();
         }
 
-        [Rpc(SendTo.Server)]
-        private void SpawnObjectRpc()
+        private void SpawnObject()
         {
+
             // Базовые данные
             int projectileCount = _activeAbilityBase.count;
             float angleSpread = _activeAbilityBase.angle;
@@ -52,7 +53,7 @@ namespace Game.Scripts.Client.Logic.Skills.Active
                 // Если всего один снаряд — просто стреляем прямо по baseDir
                 if (projectileCount == 1)
                 {
-                    SpawnProjectile(shootOrigin, baseDir);
+                    SpawnProjectileServerRpc(shootOrigin, baseDir);
                 }
                 else
                 {
@@ -69,14 +70,16 @@ namespace Game.Scripts.Client.Logic.Skills.Active
                         Quaternion rotation = Quaternion.AngleAxis(currentAngle, _skillsControl.ShootPoint.up);
                         Vector3 finalDir = rotation * baseDir;
 
-                        SpawnProjectile(shootOrigin, finalDir);
+                        SpawnProjectileServerRpc(shootOrigin, finalDir);
                     }
                 }
             }
         }
 
-        private void SpawnProjectile(Vector3 position, Vector3 direction)
+        [ServerRpc]
+        private void SpawnProjectileServerRpc(Vector3 position, Vector3 direction)
         {
+            // ВСЁ, что было в SpawnProjectile(), переносим сюда
             ObjectPool<PoolObject> pool = _skillsControl.GetOrCreatePool(_activeAbilityBase.Name, _prefab);
             Projectile spark = pool.PullGameObject(position).GetComponent<Projectile>();
 
@@ -93,10 +96,12 @@ namespace Game.Scripts.Client.Logic.Skills.Active
 
             var netObj = spark.GetComponent<NetworkObject>();
             if (!netObj.IsSpawned)
-                netObj.Spawn(true);
-            if (_projectileVfxManager != null)
-                _projectileVfxManager.TrackProjectile(spark);
+                netObj.Spawn(destroyWithScene: false); // ← destroyWithScene: false
+
+            // УБИРАЕМ: _projectileVfxManager.TrackProjectile(spark);
+            // Визуал будет обрабатываться автоматически на клиенте
         }
+        
 
 
         public Type GetDependencyType()

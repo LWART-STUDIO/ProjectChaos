@@ -46,3 +46,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _useSteam: 0
   _debugHost: 0
+  _playerSpawner: {fileID: 1474358457218432831, guid: 626c32ad645c51e4faffa76e04be6fc0, type: 3}

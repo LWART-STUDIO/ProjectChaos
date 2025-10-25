@@ -12,7 +12,7 @@ namespace Game.Scripts.Client.Logic.Enemy
         [SerializeField] private float _spawnRadius = 5f;  
         private float _raycastDistance = float.MaxValue; 
         
-        private PlayerSpawner _playerSpawner=>PlayerSpawner.instance;
+        private PlayerSpawner _playerSpawner=>PlayerSpawner.Instance;
         private Coroutine _spawnCoroutine;
         private int _currentPlayerIndex;
         private int _maxAttempts = 10;    
@@ -20,6 +20,8 @@ namespace Game.Scripts.Client.Logic.Enemy
 
         private void Update()
         {
+            if(_playerSpawner==null)
+                return;
             if (_playerSpawner.CurrentPlayers == null || _playerSpawner.CurrentPlayers.Count == 0)
                 return;
             if(_spawnCoroutine != null)

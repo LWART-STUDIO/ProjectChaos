@@ -1,9 +1,11 @@
 using System.Collections;
+using Unity.Collections;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace Game.Prefabs.Skills.Active
 {
-    public class Projectile : MonoBehaviour
+    public class Projectile : NetworkBehaviour
     {
         private bool _setUp = false;
         private float _lifetime;
@@ -26,6 +28,8 @@ namespace Game.Prefabs.Skills.Active
         
         public float Size=>_size;
         public float LifeTime=>_lifetime;
+        public NetworkVariable<FixedString64Bytes> SkinId = 
+            new NetworkVariable<FixedString64Bytes>(new FixedString64Bytes("default"));
 
         private void Awake()
         {

@@ -46,6 +46,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _gameSessionPrefab: {fileID: 1567788829572828879, guid: 865c79da1dfecbf459241115530a15cb, type: 3}
+  _playerSpawnerPrefab: {fileID: 1474358457218432831, guid: 626c32ad645c51e4faffa76e04be6fc0, type: 3}
 --- !u!114 &7185578493430192682
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -59,3 +60,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _gameSessionPrefab: {fileID: 1567788829572828879, guid: 865c79da1dfecbf459241115530a15cb, type: 3}
+  _playerSpawnerPrefab: {fileID: 1474358457218432831, guid: 626c32ad645c51e4faffa76e04be6fc0, type: 3}

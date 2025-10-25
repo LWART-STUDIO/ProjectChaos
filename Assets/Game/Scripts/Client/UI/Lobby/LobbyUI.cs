@@ -120,6 +120,8 @@ namespace Game.Scripts.Client.UI.Lobby
             _lobbyService.OnPlayerLeft-= OnPlayerLeft;
             _coppyButton?.onClick.RemoveListener(CoppyID);
             _lobbyExitButton?.onClick.RemoveListener(LeaveLobby);
+            if (GameSession.Instance != null)
+                GameSession.Instance.IsGameStarted.OnValueChanged -= (_, _) => UpdatePlayButton();
         }
 
         private void OnPlayClicked()
@@ -135,7 +137,14 @@ namespace Game.Scripts.Client.UI.Lobby
                 GameSession.Instance?.JoinGame();
             }
             Service<UIService>.Instance.GetGameCanvas().HideLobbyUI();
-            PlayerSpawner.instance.SpawnPlayersRpc(NetworkManager.Singleton.LocalClientId);
+            if (PlayerSpawner.Instance != null)
+            {
+                PlayerSpawner.Instance.SpawnPlayerServerRpc(NetworkManager.Singleton.LocalClientId);
+            }
+            else
+            {
+                Debug.Log("PlayerSpawner.instance don't exist");
+            }
             Cursor.visible = false;
         }
         

@@ -1,4 +1,5 @@
 using System.Linq;
+using Game.Scripts.Client.Logic;
 using Game.Scripts.Services.Input;
 using Game.Scripts.Services.Lobby;
 using Game.Scripts.Services.ResourceLoader;
@@ -65,7 +66,6 @@ namespace Game.Scripts.Services
             if(_sceneService == null)
                 _sceneService = Service<SceneService>.Instance;
             _sceneService.LocalAwake();
-           
 
         }
         private void Start()
@@ -92,6 +92,7 @@ namespace Game.Scripts.Services
             }
                
 #endif
+           
 
         }
 
@@ -102,6 +103,7 @@ namespace Game.Scripts.Services
             _lobbyService.LocalUpdate(Time.deltaTime);
             _uiService.LocalUpdate(Time.deltaTime);
         }
+
        
     }
 }

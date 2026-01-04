@@ -11,18 +11,28 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b1dfca40bf97cbd41a14c6c5a28e98af, type: 3}
   m_Name: SaintsFieldConfig
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier: SaintsField.Runtime::SaintsField.Utils.SaintsFieldConfig
+  resizableTextAreaMinRowOverride: 0
   resizableTextAreaMinRow: 3
   validateInputLoopCheckUIToolkit: 0
   disableOnValueChangedWatchArrayFieldUIToolkit: 0
-  foldoutSpaceImGui: 13
+  getComponentExpOverride: 0
   getComponentExp: 72
+  getComponentInChildrenExpOverride: 0
   getComponentInChildrenExp: 72
+  getComponentInParentExpOverride: 0
   getComponentInParentExp: 72
+  getComponentInParentsExpOverride: 0
   getComponentInParentsExp: 72
+  getComponentInSceneExpOverride: 0
   getComponentInSceneExp: 72
+  getPrefabWithComponentExpOverride: 0
   getPrefabWithComponentExp: 72
+  getScriptableObjectExpOverride: 0
   getScriptableObjectExp: 72
+  getByXPathExpOverride: 0
   getByXPathExp: 0
+  foldoutSpaceImGui: 13
   getComponentByPathExp: 76
   findComponentExp: 72
+  setupWindowPopOnce: 0

@@ -132,7 +132,7 @@ namespace HTraceAO.Scripts.Passes.URP
 #endif //UNITY_2023_1_OR_NEWER
 				};
 
-				CoreUtils.DrawRendererList(context, cmd, context.CreateRendererList(renderList));
+				CoreUtils.DrawRendererList(cmd, context.CreateRendererList(renderList));
 
 #if !UNITY_2023_1_OR_NEWER
 			// Prior to 2023 camera motion vectors are rendered directly on objects, so we will finish mv calculation here and won't execute camera mv

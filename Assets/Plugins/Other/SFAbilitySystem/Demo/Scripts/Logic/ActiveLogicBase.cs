@@ -15,7 +15,7 @@ namespace SFAbilitySystem.Demo.Logic
     {
         [Header("Ability Settings")]
         [Tooltip("Current cooldown time from the ability configuration")]
-        [SerializeField] protected float CooldownTime => _activeAbilityBase.cooldown;
+        protected float CooldownTime => _activeAbilityBase.cooldown;
 
         [Tooltip("Casting time from the ability configuration")]
         protected float _castTime => _activeAbilityBase.castTime;

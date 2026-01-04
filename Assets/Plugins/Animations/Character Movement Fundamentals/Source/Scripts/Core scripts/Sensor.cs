@@ -45,7 +45,6 @@ namespace CMF
 		private Collider col;
 
 		//Enum describing different types of ground detection methods;
-		[SerializeField]
 		public enum CastType
 		{
 			Raycast,

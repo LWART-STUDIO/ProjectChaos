@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using Game.Scripts.Services.Waves;
-using ProjectDawn.Navigation.Hybrid;
 using UnityEngine;
 
 namespace Game.Scripts.Client.Logic.Enemy
@@ -44,10 +43,7 @@ namespace Game.Scripts.Client.Logic.Enemy
                         if (spawnPos.HasValue)
                         {
                             GameObject newEnemy =Instantiate(enemy, spawnPos.Value, Quaternion.identity);
-                            var crowed = _playerSpawner.CurrentPlayers[_currentPlayerIndex].Player
-                                .GetComponent<CrowdGroupAuthoring>();
-                            newEnemy.GetComponent<AgentSetDestination>()
-                                .SetTarget(_playerSpawner.CurrentPlayers[_currentPlayerIndex].Player.transform,crowed);
+                 
                             spawned = true;
                         }
                         else

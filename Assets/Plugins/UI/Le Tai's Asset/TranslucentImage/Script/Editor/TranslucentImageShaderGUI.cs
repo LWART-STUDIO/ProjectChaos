@@ -21,7 +21,7 @@ public class TranslucentImageShaderGUI : ShaderGUI
             if (skipUnimportants && prop.name == "_StencilComp")
                 break;
 
-            if ((prop.flags & MaterialProperty.PropFlags.HideInInspector) != 0)
+            if ((prop.propertyFlags & UnityEngine.Rendering.ShaderPropertyFlags.HideInInspector) != 0)
                 continue;
 
             switch (prop.name)

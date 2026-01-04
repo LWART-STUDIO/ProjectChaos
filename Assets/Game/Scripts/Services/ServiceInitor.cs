@@ -7,7 +7,7 @@ using Game.Scripts.Services.Scene;
 using Game.Scripts.Services.StaticService;
 using Game.Scripts.Services.UI;
 using Sisus.Init;
-using Unity.Multiplayer.Playmode;
+
 using Unity.Netcode;
 using UnityEngine;
 
@@ -83,7 +83,7 @@ namespace Game.Scripts.Services
                         return;
                    
                     _uiService.GetGameCanvas().GetLobbyUI();
-                    if(CurrentPlayer.IsMainEditor)
+                    if(Unity.Multiplayer.PlayMode.CurrentPlayer.IsMainEditor)
                         _lobbyService.CreateLobby();
                     else
                         _lobbyService.JoinLobby();

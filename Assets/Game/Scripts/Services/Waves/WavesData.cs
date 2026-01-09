@@ -58,7 +58,8 @@ namespace Game.Scripts.Services.Waves
 
                 if (newWave.EnemiesToSpawn.Count > 0)
                 {
-                    newWave.SpawnInterval = (float)newWave.WaveDuration / newWave.EnemiesToSpawn.Count;
+                    float minInterval = Mathf.Lerp(2.0f, 0.4f, (float)(i - 1) / Mathf.Max(1, _totalWaves - 1));
+                    newWave.SpawnInterval = minInterval;
                 }
                 else
                 {

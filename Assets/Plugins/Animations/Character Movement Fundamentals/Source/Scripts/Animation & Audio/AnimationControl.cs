@@ -1,14 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using PurrNet;
 using UnityEngine;
 
 namespace CMF
 {
 	//This script controls the character's animation by passing velocity values and other information ('isGrounded') to an animator component;
-	public class AnimationControl : MonoBehaviour {
+	public class AnimationControl : NetworkBehaviour {
 
 		Controller controller;
-		Animator animator;
+		NetworkAnimator animator;
 		Transform animatorTransform;
 		Transform tr;
 
@@ -25,7 +26,7 @@ namespace CMF
 		//Setup;
 		void Awake () {
 			controller = GetComponent<Controller>();
-			animator = GetComponentInChildren<Animator>();
+			animator = GetComponentInChildren<NetworkAnimator>();
 			animatorTransform = animator.transform;
 
 			tr = transform;

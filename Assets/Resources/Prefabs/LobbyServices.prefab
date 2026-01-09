@@ -9,8 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6879221529424137459}
-  - component: {fileID: 1840963681055445344}
-  - component: {fileID: 7185578493430192682}
   m_Layer: 0
   m_Name: LobbyServices
   m_TagString: Untagged
@@ -33,31 +31,3 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1840963681055445344
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6923087974581645550}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2d60ec81aa3874a4da31c71873599ac9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _gameSessionPrefab: {fileID: 1567788829572828879, guid: 865c79da1dfecbf459241115530a15cb, type: 3}
-  _playerSpawnerPrefab: {fileID: 1474358457218432831, guid: 626c32ad645c51e4faffa76e04be6fc0, type: 3}
---- !u!114 &7185578493430192682
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6923087974581645550}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e2a61b7cbd877a9438a65e81ba137a53, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _gameSessionPrefab: {fileID: 1567788829572828879, guid: 865c79da1dfecbf459241115530a15cb, type: 3}
-  _playerSpawnerPrefab: {fileID: 1474358457218432831, guid: 626c32ad645c51e4faffa76e04be6fc0, type: 3}

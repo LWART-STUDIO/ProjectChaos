@@ -1,8 +1,14 @@
+using System;
 using Game.Scripts.Client.UI;
+using Game.Scripts.Client.UI.Game;
+using Game.Scripts.Client.UI.Game.EndGamePanel;
+using Game.Scripts.Client.UI.Game.PlayerUI;
 using Game.Scripts.Services.ResourceLoader;
+using Game.Scripts.Services.Scene;
 using Game.Scripts.Services.StaticService;
+using PurrNet;
 using Sisus.Init;
-using Unity.Netcode;
+using Steamworks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -15,6 +21,11 @@ namespace Game.Scripts.Services.UI
 
         private GameCanvas _gameCanvas;
         private EscMenu _escMenu;
+        private LevelUpPanel _levelUpPanel;
+        private PlayerInGameUI _playerInGameUI;
+        private EndGamePanel _endGamePanel;
+        private PlayerSkillTree  _playerSkillTree;
+        public LevelUpPanel LevelUpPanel => GetLevelUpPanel();
 
         /*public   void LocalAwake()
         {
@@ -36,33 +47,24 @@ namespace Game.Scripts.Services.UI
 
         public void LocalUpdate(float deltaTime)
         {
-            if(SceneManager.GetActiveScene().name == "MainMenu")
+            if (SceneManager.GetActiveScene().name == "MainMenu")
                 return;
             /*if (Input.GetKeyDown(KeyCode.Escape))
             {
-                
-                    
+
+
             }*/
         }
 
         public void ExitToLobby()
         {
-            
+
         }
+
         public void ExitToMenu()
         {
-            if (NetworkManager.Singleton.IsHost)
-            {
-                NetworkManager.Singleton.SceneManager.LoadScene("MainMenu",LoadSceneMode.Single);
-                Service<ServiceInitor>.Instance.LobbyService.LeaveLobby();
-                NetworkManager.Singleton.Shutdown();
-            }
-            else
-            {
-                SceneManager.LoadScene("MainMenu",LoadSceneMode.Single);
-                Service<ServiceInitor>.Instance.LobbyService.LeaveLobby();
-                NetworkManager.Singleton.Shutdown();
-            }
+            Service<SceneService>.Instance.LoadScene(SceneMapper.LobbySample);
+            Cursor.visible = true;
         }
 
         public GameCanvas GetGameCanvas()
@@ -81,6 +83,7 @@ namespace Game.Scripts.Services.UI
             return null;
 
         }
+
         public EscMenu GetEscMenu()
         {
             _escMenu = FindFirstObjectByType<EscMenu>();
@@ -92,6 +95,71 @@ namespace Game.Scripts.Services.UI
                 _escMenu = escMenu.GetComponent<EscMenu>();
                 _escMenu = Instantiate(_escMenu, _gameCanvas.transform);
                 return _escMenu;
+            }
+
+            return null;
+
+        }
+
+        public LevelUpPanel GetLevelUpPanel()
+        {
+            _levelUpPanel = FindFirstObjectByType<LevelUpPanel>(FindObjectsInactive.Include);
+            if (_levelUpPanel != null)
+                return _levelUpPanel;
+            GameObject levelUpPanel = _resourceLoaderService.Load<GameObject>(StaticPath.LevelUpMenu);
+            if (levelUpPanel != null)
+            {
+                _levelUpPanel = levelUpPanel.GetComponent<LevelUpPanel>();
+                _levelUpPanel = Instantiate(_levelUpPanel, _gameCanvas.transform);
+                return _levelUpPanel;
+            }
+
+            return null;
+
+        }
+        public PlayerInGameUI GetPlayerInGameUI()
+        {
+            _playerInGameUI = FindFirstObjectByType<PlayerInGameUI>(FindObjectsInactive.Include);
+            if (_playerInGameUI != null)
+                return _playerInGameUI;
+            GameObject playerInGameUI = _resourceLoaderService.Load<GameObject>(StaticPath.PlayerInGameUI);
+            if (playerInGameUI != null)
+            {
+                _playerInGameUI = playerInGameUI.GetComponent<PlayerInGameUI>();
+                _playerInGameUI = Instantiate(_playerInGameUI, _gameCanvas.transform);
+                return _playerInGameUI;
+            }
+
+            return null;
+
+        }
+        public EndGamePanel GetEndGamePanel()
+        {
+            _endGamePanel = FindFirstObjectByType<EndGamePanel>(FindObjectsInactive.Include);
+            if (_endGamePanel != null)
+                return _endGamePanel;
+            GameObject endGamePanel = _resourceLoaderService.Load<GameObject>(StaticPath.EndGamePanel);
+            if (endGamePanel != null)
+            {
+                _endGamePanel = endGamePanel.GetComponent<EndGamePanel>();
+                _endGamePanel = Instantiate(_endGamePanel, _gameCanvas.transform);
+                return _endGamePanel;
+            }
+
+            return null;
+
+        }
+        public PlayerSkillTree GetPlayerSkillTree()
+        {
+            _playerSkillTree = FindFirstObjectByType<PlayerSkillTree>(FindObjectsInactive.Include);
+            if (_playerSkillTree != null)
+                return _playerSkillTree;
+            GameObject playerSkillTree = _resourceLoaderService.Load<GameObject>(StaticPath.PlayerSkillTree);
+            if (playerSkillTree != null)
+            {
+                _playerSkillTree = playerSkillTree.GetComponent<PlayerSkillTree>();
+                _playerSkillTree = Instantiate(_playerSkillTree, _gameCanvas.transform);
+                return _playerSkillTree;
             }
 
             return null;

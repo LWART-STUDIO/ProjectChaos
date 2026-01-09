@@ -1,13 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
-using Unity.Netcode;
+using PurrNet;
 
 namespace CMF
 {
 	//This script handles all physics, collision detection and ground detection;
 	//It expects a movement velocity (via 'SetVelocity') every 'FixedUpdate' frame from an external script (like a controller script) to work;
 	//It also provides several getter methods for important information (whether the mover is grounded, the current surface normal [...]);
-	public class Mover : MonoBehaviour {
+	public class Mover : NetworkBehaviour {
 
 		//Collider variables;
 		[Header("Mover Options :")]
@@ -51,14 +51,23 @@ namespace CMF
 		Transform tr;
 		Sensor sensor;
 
-		void Awake()
+		protected override void OnSpawned(bool asServer)
 		{
+			base.OnSpawned(asServer);
+			if(!isOwner)
+				return;
 			Setup();
 
 			//Initialize sensor;
 			sensor = new Sensor(this.tr, col);
 			RecalculateColliderDimensions();
 			RecalibrateSensor();
+			
+		}
+
+		void Awake()
+		{
+			
 		}
 
 		void Reset () {
@@ -67,6 +76,8 @@ namespace CMF
 
 		void OnValidate()
 		{
+			if(!isOwner)
+				return;
 			//Recalculate collider dimensions;
 			if(this.gameObject.activeInHierarchy)
 				RecalculateColliderDimensions();
@@ -111,6 +122,8 @@ namespace CMF
 		//Draw debug information if debug mode is enabled;
 		void LateUpdate()
 		{
+			if(!isOwner)
+				return;
 			if(isInDebugMode)
 				sensor.DrawDebug();
 		}

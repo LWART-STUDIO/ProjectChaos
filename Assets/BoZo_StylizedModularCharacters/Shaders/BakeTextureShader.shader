@@ -3,6 +3,9 @@ Shader "BoZo/BakeTexture"
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
+        _NormalMap ("NormalMap", 2D) = "bump" {}
+
+        _ShowNormalMap("ShowNormalMap", Range(0, 1)) = 0
 
         [Header(Colors Options)]
         [Space(10)]
@@ -38,20 +41,25 @@ Shader "BoZo/BakeTexture"
     }
     SubShader
     {
-            Tags { "RenderType"="Opaque" "LightMode"="ForwardBase" }
+        Tags { "RenderType"="Opaque" "Queue"="Geometry" }
         Pass
         {
             Name "BakeTexture"
-            Tags {"LightMode"="ForwardBase"}
+            Tags { "LightMode" = "UniversalForward" }
             Cull Off
 
             HLSLPROGRAM
             #pragma vertex vert
             #pragma fragment frag
-            #include "UnityCG.cginc"
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 
-            sampler2D _MainTex;
-            float4 _MainTex_ST;
+            TEXTURE2D(_MainTex);
+            SAMPLER(sampler_MainTex);
+
+            TEXTURE2D(_NormalMap);
+            SAMPLER(sampler_NormalMap);
+
+            float _ShowNormalMap;
 
             //BaseColor
             float4 _Color_1;
@@ -110,6 +118,16 @@ Shader "BoZo/BakeTexture"
                 OUT.uv1 = IN.uv1;
                 OUT.vertexColor = IN.vertexColor;
                 return OUT;
+            }
+
+            float4 UnpackNormalCustom(float4 packedNormal)
+            {
+                float3 normal;
+                normal.x = packedNormal.a * 2.0 - 1.0;
+                normal.y = packedNormal.g * 2.0 - 1.0;
+                normal.z = sqrt(1.0 - saturate(dot(normal.xy, normal.xy)));
+                
+                return float4 (normal,1);
             }
 
             float4 ApplyPattern(float4 tex, float flatTexture, float mask, Varyings i)
@@ -182,15 +200,19 @@ Shader "BoZo/BakeTexture"
 
             half4 frag(Varyings IN) : SV_Target
             {
-                float4 map = tex2D(_MainTex, IN.uv);
+                half4 map = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, IN.uv);
                 half4 flat = map.x + map.y + map.z;
                 half4 tex = CustomColors(map, IN.vertexColor); 
                 tex = ApplyPattern(tex,flat,map.r,IN);
                 tex = ApplyDecal(tex,flat,map.r,IN);
-                //tex = lerp(tex,decal,decal.a);
-                float steppedMask = step(0.01, map.x);
-                //return float4(steppedMask,steppedMask,steppedMask,steppedMask);
-                return tex;
+
+                float4 packedNormal = SAMPLE_TEXTURE2D(_NormalMap,sampler_NormalMap, IN.uv);
+                float4 n = UnpackNormalCustom(packedNormal);
+                n = float4(n * 0.5 + 0.5);
+
+                float4 final = lerp(tex, n, _ShowNormalMap);
+
+                return final;
             }
             ENDHLSL
         }

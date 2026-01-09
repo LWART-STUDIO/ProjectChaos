@@ -1,3 +1,4 @@
+using Game.Scripts.Server;
 using Game.Scripts.Services.Input;
 using Game.Scripts.Services.UI;
 using Michsky.MUIP;
@@ -26,6 +27,11 @@ namespace Game.Scripts.Client.UI
         public void ExitToMenu()
         {
             CloseWindow();
+            ConnectionStarter connectionStarter = FindAnyObjectByType<ConnectionStarter>();
+            if (connectionStarter != null&& connectionStarter.IsFromLobby)
+            {
+                connectionStarter.LeaveLobby();
+            }
             _uiService.ExitToMenu();
         }
         public void ExitToLobby()

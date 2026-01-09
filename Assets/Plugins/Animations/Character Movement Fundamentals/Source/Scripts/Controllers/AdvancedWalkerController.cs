@@ -57,6 +57,8 @@ namespace CMF
 
 		[Tooltip("Whether to calculate and apply momentum relative to the controller's transform.")]
 		public bool useLocalMomentum = false;
+		
+		private bool _spawned = false;
 
 		//Enum describing basic controller states; 
 		public enum ControllerState
@@ -72,9 +74,15 @@ namespace CMF
 
 		[Tooltip("Optional camera transform used for calculating movement direction. If assigned, character movement will take camera view into account.")]
 		public Transform cameraTransform;
-		
-		//Get references to all necessary components;
-		void Awake () {
+
+		protected override void OnSpawned()
+		{
+			base.OnSpawned();
+			if(isOwner)
+				cameraTransform.gameObject.SetActive(true);
+			_spawned = true;
+			if(!isOwner)
+				return;
 			mover = GetComponent<Mover>();
 			tr = transform;
 			characterInput = GetComponent<CharacterInput>();
@@ -86,34 +94,12 @@ namespace CMF
 			Setup();
 		}
 
-		public override void OnNetworkSpawn()
-		{
-			var rb = GetComponent<Rigidbody>();
-			if (mover == null) mover = GetComponent<Mover>();
-
-			if (!IsOwner)
-			{
-				// Клиент не владелец — отключаем локальную физику и управление
-				rb.isKinematic = true;
-				//rb.linearVelocity = Vector3.zero;
-				mover.enabled = false;
-				if (characterInput != null)
-					Destroy(characterInput);
-				if (ceilingDetector != null)
-					Destroy(ceilingDetector);
-				if (cameraTransform != null)
-					Destroy(cameraTransform.gameObject);
-			}
-			else
-			{
-				// Владелец — включаем физику и гарантировано обнуляем импульсы
-				rb.isKinematic = false;
-				rb.linearVelocity = Vector3.zero;
-				rb.angularVelocity = Vector3.zero;
-				SetMomentum(Vector3.zero); // обнуляем внутренний momentum
-			}
-
+		//Get references to all necessary components;
+		void Awake () {
+		
 		}
+
+		
 
 		//This function is called right after Awake(); It can be overridden by inheriting scripts;
 		protected virtual void Setup()
@@ -122,7 +108,9 @@ namespace CMF
 
 		void Update()
 		{
-			if (!IsOwner)
+			if(!_spawned)
+				return;
+			if(!isOwner)
 				return;
 			HandleJumpKeyInput();
 		}
@@ -146,7 +134,9 @@ namespace CMF
 
         void FixedUpdate()
 		{
-			if (!IsOwner)
+			if(!_spawned)
+				return;
+			if(!isOwner)
 				return;
 			ControllerUpdate();
 		}

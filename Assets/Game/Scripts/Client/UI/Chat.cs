@@ -1,9 +1,6 @@
 using System;
 using Game.Scripts.Services;
-using Game.Scripts.Services.Lobby;
-using Game.Scripts.Services.Steam;
 using Sisus.Init;
-using Steamworks;
 using UnityEngine;
 using TankAndHealerStudioAssets;
 
@@ -14,8 +11,8 @@ namespace Game.Scripts.Client.UI
         [SerializeField] private UltimateChatBox _chatBox;
         private string _userName="PlayerName";
         public Action<string> OnUserSendMessage;
-        private ILobbyService _lobbyService=>Service<ServiceInitor>.Instance.LobbyService;
-        private Callback<LobbyChatMsg_t> _onLChatCallback;
+
+        //private Callback<LobbyChatMsg_t> _onLChatCallback;
         public void SetUserName(string userName)
         {
             _userName = userName;
@@ -24,28 +21,17 @@ namespace Game.Scripts.Client.UI
         {
             
             _chatBox.OnInputFieldSubmitted += PlayerChat;
-            _lobbyService.OnPlayerJoined += OnPlayerJoined;
-            _lobbyService.OnPlayerLeft += OnPlayerDisconected;
-            if (_lobbyService is SteamService)
-            {
-                _onLChatCallback = Callback<LobbyChatMsg_t>.Create(OnLChatCallback);
-              
-            }
+          //  _lobbyService.OnPlayerJoined += OnPlayerJoined;
+          //  _lobbyService.OnPlayerLeft += OnPlayerDisconected;
+          
         }
 
-        private void OnPlayerJoined(LobbyPlayer callback)
-        {
-            _chatBox.RegisterChat("[System]",$"Игрок {callback.Name} присоеденился.",UltimateChatBoxStyles.noticeMessage);
-        }
-        private void OnPlayerDisconected(LobbyPlayer callback)
-        {
-            _chatBox.RegisterChat("[System]",$"Игрок {callback.Name} покинул нас.",UltimateChatBoxStyles.noticeMessage);
-        }
+   
         private void PlayerChat(string message)
         {
             
             OnUserSendMessage?.Invoke(message);
-            if (_lobbyService is SteamService)
+            /*if (_lobbyService is SteamService)
             {
                 var lobbyID = _lobbyService.LobbyId;
                 byte[] data = System.Text.Encoding.UTF8.GetBytes(message);
@@ -54,13 +40,13 @@ namespace Game.Scripts.Client.UI
             else
             {
                 _chatBox.RegisterChat(_userName,message,UltimateChatBoxStyles.boldUsername);
-            }
+            }*/
                 
         }
 
-        private void OnLChatCallback(LobbyChatMsg_t callback)
+        /*private void OnLChatCallback(LobbyChatMsg_t callback)
         {
-            CSteamID userID;
+            /*CSteamID userID;
             byte[] data = new byte[4096];
             EChatEntryType chatEntryType;
             int dataSize = SteamMatchmaking.GetLobbyChatEntry(
@@ -73,11 +59,11 @@ namespace Game.Scripts.Client.UI
             );
 
             string message = System.Text.Encoding.UTF8.GetString(data, 0, dataSize);
-            string senderName = SteamFriends.GetFriendPersonaName(userID);
+            string senderName = SteamFriends.GetFriendPersonaName(userID);#1#
 
             // Отображаем в UI
             SteamChat(senderName, message);
-        }
+        }*/
         public void SteamChat(string userName,string message)
         {
 
@@ -87,9 +73,9 @@ namespace Game.Scripts.Client.UI
         private void OnDestroy()
         {
             _chatBox.OnInputFieldSubmitted -= PlayerChat;
-            _lobbyService.OnPlayerJoined -= OnPlayerJoined;
-            _lobbyService.OnPlayerLeft -= OnPlayerDisconected;
-            _onLChatCallback?.Unregister();
+            /*_lobbyService.OnPlayerJoined -= OnPlayerJoined;
+            _lobbyService.OnPlayerLeft -= OnPlayerDisconected;*/
+           // _onLChatCallback?.Unregister();
         }
     }
 }

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
-using Unity.VisualScripting;
 using System.Collections;
 using TMPro;
 using System.Linq;
@@ -70,19 +69,16 @@ namespace Bozo.ModularCharacters
             outfits.Clear();
             OutfitDataBase.Clear();
 
-            var ob = Resources.LoadAll("", typeof(Outfit));
-            var textureObjects = Resources.LoadAll("", typeof(TexturePackage));
+            var ob = Resources.LoadAll<Outfit>("");
+            var textureObjects = Resources.LoadAll<TexturePackage>("");
             foreach (var item in ob)
             {
-                if (OutfitDataBase.ContainsKey(item.name)) continue;
-
-                var outfit = item.GameObject().GetComponent<Outfit>();
-                if (!outfit.showCharacterCreator) continue;
-                OutfitDataBase.Add(item.name, item.GameObject().GetComponent<Outfit>());
+                if (!item.showCharacterCreator) continue;
+                OutfitDataBase.Add(item.name, item.GetComponent<Outfit>());
             }
             foreach (var item in textureObjects)
             {
-                textures.Add(item.GameObject().GetComponent<TexturePackage>());
+                textures.Add(item.GetComponent<TexturePackage>());
             }
 
             GenerateOutfitSelection();

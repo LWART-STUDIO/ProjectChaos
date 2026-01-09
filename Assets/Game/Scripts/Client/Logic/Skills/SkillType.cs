@@ -2,6 +2,7 @@
 {
     public enum SkillType
     {
-        
+        None =0,
+        Projectile=1,
     }
 }

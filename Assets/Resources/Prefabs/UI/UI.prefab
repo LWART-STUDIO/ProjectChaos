@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5239710121174523743}
   - component: {fileID: 247471612215188825}
   - component: {fileID: 3699291975147351521}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: EventSystem
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -89,7 +89,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6827097094456580258}
   - component: {fileID: 353243518539537527}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Flexalon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -140,7 +140,7 @@ GameObject:
   - component: {fileID: 2439014432327275332}
   - component: {fileID: 4698417894178043455}
   - component: {fileID: 2132360619017825130}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: UI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -262,11 +262,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 879314106846040736, guid: 886deaf3277a57043ad312c0fd03a133, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 879314106846040736, guid: 886deaf3277a57043ad312c0fd03a133, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 879314106846040736, guid: 886deaf3277a57043ad312c0fd03a133, type: 3}
       propertyPath: m_AnchorMin.x
@@ -278,11 +278,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 879314106846040736, guid: 886deaf3277a57043ad312c0fd03a133, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 1958.7148
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 879314106846040736, guid: 886deaf3277a57043ad312c0fd03a133, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 1058.6534
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 879314106846040736, guid: 886deaf3277a57043ad312c0fd03a133, type: 3}
       propertyPath: m_LocalPosition.x
@@ -314,11 +314,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 879314106846040736, guid: 886deaf3277a57043ad312c0fd03a133, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 979.3574
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 879314106846040736, guid: 886deaf3277a57043ad312c0fd03a133, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 529.3267
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 879314106846040736, guid: 886deaf3277a57043ad312c0fd03a133, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -332,17 +332,9 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 2154920954988763924, guid: 886deaf3277a57043ad312c0fd03a133, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 2262275081887007740, guid: 886deaf3277a57043ad312c0fd03a133, type: 3}
       propertyPath: m_Name
       value: EscMenu
-      objectReference: {fileID: 0}
-    - target: {fileID: 9003713257592906900, guid: 886deaf3277a57043ad312c0fd03a133, type: 3}
-      propertyPath: TransformPosition.y
-      value: -32.73001
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

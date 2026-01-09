@@ -1,15 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using PurrNet;
 using UnityEngine;
 
 namespace CMF
 {
 	//This script handles and plays audio cues like footsteps, jump and land audio clips based on character movement speed and events; 
-	public class AudioControl : MonoBehaviour {
+	public class AudioControl : NetworkBehaviour {
 
 		//References to components;
 		Controller controller;
-		Animator animator;
+		NetworkAnimator animator;
 		Mover mover;
 		Transform tr;
 		public AudioSource audioSource;
@@ -39,12 +40,17 @@ namespace CMF
 		public AudioClip[] footStepClips;
 		public AudioClip jumpClip;
 		public AudioClip landClip;
+		private bool _spawned = false;
 
 		//Setup;
-		void Start () {
+		protected override void OnSpawned()
+		{
+			base.OnSpawned();
+			enabled = isOwner;
+			
 			//Get component references;
 			controller = GetComponent<Controller>();
-			animator = GetComponentInChildren<Animator>();
+			animator = GetComponentInChildren<NetworkAnimator>();
 			mover = GetComponent<Mover>();
 			tr = transform;
 
@@ -54,11 +60,18 @@ namespace CMF
 
 			if(!animator)
 				useAnimationBasedFootsteps = false;
+			_spawned = true;
 		}
 		
 		//Update;
 		void Update () {
 
+			if(!_spawned)
+				return;
+			if(!isOwner)
+				return;
+			if(controller==null)
+				return;
 			//Get controller velocity;
 			Vector3 _velocity = controller.GetVelocity();
 
@@ -67,7 +80,7 @@ namespace CMF
 
 			FootStepUpdate(_horizontalVelocity.magnitude);
 		}
-
+		[ObserversRpc(runLocally: true)]
 		void FootStepUpdate(float _movementSpeed)
 		{
 			float _speedThreshold = 0.05f;
@@ -100,15 +113,19 @@ namespace CMF
 				}
 			}
 		}
-
+		[ObserversRpc(runLocally: true)]
 		void PlayFootstepSound(float _movementSpeed)
 		{
+			if(!_spawned)
+				return;
 			int _footStepClipIndex = Random.Range(0, footStepClips.Length);
 			audioSource.PlayOneShot(footStepClips[_footStepClipIndex], audioClipVolume + audioClipVolume * Random.Range(-relativeRandomizedVolumeRange, relativeRandomizedVolumeRange));
 		}
-
+		[ObserversRpc(runLocally: true)]
 		void OnLand(Vector3 _v)
 		{
+			if(!_spawned)
+				return;
 			//Only trigger sound if downward velocity exceeds threshold;
 			if(VectorMath.GetDotProduct(_v, tr.up) > -landVelocityThreshold)
 				return;
@@ -116,9 +133,11 @@ namespace CMF
 			//Play land audio clip;
 			audioSource.PlayOneShot(landClip, audioClipVolume);
 		}
-
+		[ObserversRpc(runLocally: true)]
 		void OnJump(Vector3 _v)
 		{
+			if(!_spawned)
+				return;
 			//Play jump audio clip;
 			audioSource.PlayOneShot(jumpClip, audioClipVolume);
 		}

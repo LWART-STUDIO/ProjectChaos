@@ -1,0 +1,16 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cdbf4611f527f1f49b147d6ef2a4d7fa, type: 3}
+  m_Name: Mage
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.Client.Logic.Player.PlayerClassConfig
+  classType: 0
+  prefab: {fileID: 214271761532775238, guid: a3e4a15fbbe207b4583fd5124dce9e8d, type: 3}

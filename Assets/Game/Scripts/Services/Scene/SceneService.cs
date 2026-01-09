@@ -48,7 +48,7 @@ namespace Game.Scripts.Services.Scene
         {
             //For switchSceneByKeyBoard
             if (UnityEngine.Input.GetKeyDown(KeyCode.Alpha0))
-                LoadScene(SceneMapper.MainMenu);
+                LoadScene(SceneMapper.LobbySample);
             else if (UnityEngine.Input.GetKeyDown(KeyCode.Alpha1))
                 LoadScene(SceneMapper.Game);
 

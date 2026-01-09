@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Bozo.ModularCharacters
 {
@@ -46,8 +47,11 @@ namespace Bozo.ModularCharacters
         [SerializeField] bool MirrorTransform;
         private Transform mirror;
 
+        private bool initalized;
+
         private void Awake()
         {
+
         }
 
         private void Start()
@@ -57,6 +61,7 @@ namespace Bozo.ModularCharacters
 
         public void Init()
         {
+            if (initalized) return;
             system = GetComponentInParent<OutfitSystem>();
             initalPosition = transform.localPosition;
 
@@ -74,6 +79,8 @@ namespace Bozo.ModularCharacters
                 mirror = bones[boneName];
                 initalMirrorPosition = mirror.localPosition;
             }
+
+            initalized = true;
         }
 
         public void SetScale(float x, float y, float z, float v) 
@@ -108,6 +115,8 @@ namespace Bozo.ModularCharacters
 
         public void Apply()
         {
+            if (!initalized) Init();
+
             if (usePosition) ApplyPosition();
             if (useRotation) ApplyRotation();
             if (useScale) ApplyScale();

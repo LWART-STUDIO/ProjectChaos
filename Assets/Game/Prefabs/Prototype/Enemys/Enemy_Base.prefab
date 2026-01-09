@@ -9,11 +9,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8938450240552127687}
-  - component: {fileID: 3306303114883505022}
-  - component: {fileID: 3230340345218442156}
-  - component: {fileID: 6226680043609188863}
-  - component: {fileID: 989241852388080227}
-  - component: {fileID: 2740708499675054838}
+  - component: {fileID: 6265585724353146765}
+  - component: {fileID: 4197522856928316799}
+  - component: {fileID: 5753413937424566927}
+  - component: {fileID: 9106263823997635096}
+  - component: {fileID: 9060703235407567913}
+  - component: {fileID: 2127135950359571955}
   m_Layer: 7
   m_Name: Enemy_Base
   m_TagString: Untagged
@@ -37,7 +38,7 @@ Transform:
   - {fileID: 4323828641140493070}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3306303114883505022
+--- !u!114 &6265585724353146765
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -46,17 +47,25 @@ MonoBehaviour:
   m_GameObject: {fileID: 178846807476514020}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 825ee44755f2e4846a6229365ed8d44c, type: 3}
+  m_Script: {fileID: 11500000, guid: b5ee31f8690a0344eaa8dd88e5c0cc91, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: 
-  MotionType: 3
-  Speed: 3.5
-  Acceleration: 8
-  AngularSpeed: 120
-  StoppingDistance: 0.1
-  AutoBreaking: 1
-  m_Layers: 1
---- !u!114 &3230340345218442156
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
+  _isSetup: 0
+  _prefabId: -2147483648
+  _componentIndex: -2147483648
+  _shouldBePooled: 0
+  _parent: {fileID: 0}
+  _invertedPathToNearestParent: 
+  _directChildren: []
+  _networkRules: {fileID: 0}
+  _visitiblityRules: {fileID: 0}
+  _expFOrKill: 1
+  _health: 10
+  _maxHealth: 10
+  _maxHealthDefault: 10
+  _maxHealthMultiplayer: 1
+  _maxHealthFlatModifier: 0
+--- !u!114 &4197522856928316799
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -65,12 +74,70 @@ MonoBehaviour:
   m_GameObject: {fileID: 178846807476514020}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fed5c6dd07c7d6e4f857b420fa8f559a, type: 3}
+  m_Script: {fileID: 11500000, guid: f353e66e985f4f44092b12c13a53a9d5, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: 
-  Radius: 0.5
-  Height: 2
---- !u!114 &6226680043609188863
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyMovment
+  _isSetup: 0
+  _prefabId: -2147483648
+  _componentIndex: -2147483648
+  _shouldBePooled: 0
+  _parent: {fileID: 0}
+  _invertedPathToNearestParent: 
+  _directChildren: []
+  _networkRules: {fileID: 0}
+  _visitiblityRules: {fileID: 0}
+  _speed: 150
+--- !u!136 &5753413937424566927
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 178846807476514020}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0, y: 1, z: 0}
+--- !u!54 &9106263823997635096
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 178846807476514020}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 1
+  m_Constraints: 116
+  m_CollisionDetection: 0
+--- !u!114 &9060703235407567913
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -79,11 +146,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 178846807476514020}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ed36afb314b833149b4779d0bfe39738, type: 3}
+  m_Script: {fileID: 11500000, guid: 1565ff73cfdaf674890d00521faf853e, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: 
-  m_Group: {fileID: 0}
---- !u!114 &989241852388080227
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.Client.Logic.Enemy.EnemyAttackMelee
+  _damage: 10
+--- !u!114 &2127135950359571955
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -92,27 +159,28 @@ MonoBehaviour:
   m_GameObject: {fileID: 178846807476514020}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6d72058503702eb42aca97d680e69de1, type: 3}
+  m_Script: {fileID: 11500000, guid: 817fe5016bd0a2a49a95b6eb338bb132, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: 
-  m_Layers: -1
---- !u!114 &2740708499675054838
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 178846807476514020}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: de170d7e47da6264d8b365fd6eac5c89, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _agentAuthoring: {fileID: 3306303114883505022}
-  _agentCrowdPathingAuthoring: {fileID: 6226680043609188863}
-  Target: {fileID: 0}
-  Radius: 0
-  EveryFrame: 1
+  m_EditorClassIdentifier: PurrNet.Runtime::PurrNet.NetworkTransform
+  _isSetup: 0
+  _prefabId: -2147483648
+  _componentIndex: -2147483648
+  _shouldBePooled: 0
+  _parent: {fileID: 0}
+  _invertedPathToNearestParent: 
+  _directChildren: []
+  _networkRules: {fileID: 0}
+  _visitiblityRules: {fileID: 0}
+  _syncPosition: 1
+  _syncRotation: 1
+  _syncScale: 1
+  _syncParent: 1
+  _interpolateSettings: 7
+  _minBufferSize: 1
+  _maxBufferSize: 2
+  _characterControllerPatch: 0
+  _ownerAuth: 1
+  _interpolationTiming: 0
 --- !u!1 &2242408342064567050
 GameObject:
   m_ObjectHideFlags: 0
@@ -174,6 +242,8 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -195,7 +265,9 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}

@@ -10,5 +10,9 @@ namespace Game.Scripts.Services.StaticService
       public static string MainMenu = "Prefabs/UI/MainMenu";
       public static string GameSession = "Prefabs/GameSession";
       public static string EscMenu = "Prefabs/UI/EscMenu";
+      public static string LevelUpMenu = "Prefabs/UI/LevelUpMenu";
+      public static string PlayerInGameUI = "Prefabs/UI/PlayerInGameUI";
+      public static string EndGamePanel = "Prefabs/UI/EndGamePanel";
+      public static string PlayerSkillTree = "Prefabs/UI/PlayerSkillTree";
    }
 }

@@ -26,6 +26,15 @@ Shader "LWART/EnvShader"
 		_RampSmoothing ("Smoothing", Range(0.001,1)) = 0.5
 		[TCP2Separator]
 		
+		// --- ADD START: Dissolve Properties ---
+		[TCP2Header(Dissolve)]
+		[NoScaleOffset] _MaskNoiseMap ("Mask Noise Map", 2D) = "white" {} // DRM обычно использует собственные вычисления, но для интеграции может понадобиться
+		[HDR] _MaskEdgeColor ("Mask Edge Color", Color) = (1,1,1,1)
+		_AlphaClipThreshold ("Alpha Clip Threshold", Range(0.0, 1.0)) = 0.5
+		[ToggleUI] _InvertDissolveEffect ("Invert Dissolve Effect", Float) = 0.0
+		[TCP2Separator]
+		// --- ADD END ---
+		
 		// Injection Point: 'Properties/End'
 
 		[ToggleOff(_RECEIVE_SHADOWS_OFF)] _ReceiveShadowsOff ("Receive Shadows", Float) = 1
@@ -39,7 +48,7 @@ Shader "LWART/EnvShader"
 		Tags
 		{
 			"RenderPipeline" = "UniversalPipeline"
-			"RenderType"="Opaque"
+			"RenderType"="TransparentCutout"
 			// Injection Point: 'SubShader/Tags'
 		}
 
@@ -69,6 +78,9 @@ Shader "LWART/EnvShader"
 
 		#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 		#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
+		// --- ADD START: Include DRM Dissolve ---
+		#include "Assets/Plugins/VFX/Amazing Assets/Dynamic Radial Masks/Shaders/CGINC/HeightField/DynamicRadialMasks_HeightField_1_Advanced_Normalized_ID1_Global.cginc" // Убедитесь, что путь правильный
+		// --- ADD END ---
 
 		// Injection Point: 'Include Files'
 
@@ -76,6 +88,9 @@ Shader "LWART/EnvShader"
 
 		// Shader Properties
 		TCP2_TEX2D_WITH_SAMPLER(_BaseMap);
+		// --- ADD START: Dissolve Textures ---
+		TCP2_TEX2D_WITH_SAMPLER(_MaskNoiseMap); // Добавляем текстуру шума для диссольва (если используется)
+		// --- ADD END ---
 		// Injection Point: 'Variables/Outside CBuffer'
 
 		CBUFFER_START(UnityPerMaterial)
@@ -87,6 +102,11 @@ Shader "LWART/EnvShader"
 			float _RampSmoothing;
 			fixed4 _SColor;
 			fixed4 _HColor;
+			// --- ADD START: Dissolve Variables ---
+			fixed4 _MaskEdgeColor;
+			float _AlphaClipThreshold;
+			float _InvertDissolveEffect; // 0 или 1
+			// --- ADD END ---
 			// Injection Point: 'Variables/Inside CBuffer'
 		CBUFFER_END
 
@@ -127,6 +147,9 @@ Shader "LWART/EnvShader"
 			// -------------------------------------
 			// Material keywords
 			#pragma shader_feature_local _ _RECEIVE_SHADOWS_OFF
+			// --- ADD START: Dissolve Keyword ---
+			#pragma shader_feature_local _ALPHATEST_ON
+			// --- ADD END ---
 
 			// -------------------------------------
 			// Universal Render Pipeline keywords
@@ -204,6 +227,9 @@ Shader "LWART/EnvShader"
 
 				// world position
 				output.worldPosAndFog = float4(vertexInput.positionWS.xyz, 0);
+				// --- ADD START: Store World Position ---
+				//output.worldPos = vertexInput.positionWS.xyz;
+				// --- ADD END ---
 
 				// normal
 				output.normal = normalize(vertexNormalInput.normalWS);
@@ -237,6 +263,11 @@ Shader "LWART/EnvShader"
 				float3 __shadowColor = ( _SColor.rgb );
 				float3 __highlightColor = ( _HColor.rgb );
 
+				// --- ADD START: Dissolve Sampling ---
+				// Сэмплируем шумовую карту (если используется, хотя DRM обычно использует вычисления)
+				half4 noiseSample = TCP2_TEX2D_SAMPLE(_MaskNoiseMap, _MaskNoiseMap, input.pack0.xy);
+				half noiseValue = noiseSample.r; // Используем красный канал как шум
+				// --- ADD END ---
 				// main texture
 				half3 albedo = __albedo.rgb;
 				half alpha = __alpha;
@@ -244,6 +275,15 @@ Shader "LWART/EnvShader"
 				half3 emission = half3(0,0,0);
 				
 				albedo *= __mainColor.rgb;
+					// --- ADD START: Calculate DRM Dissolve Mask ---
+				// Вычисляем маску диссольва DRM
+				float dissolveMask = DynamicRadialMasks_HeightField_1_Advanced_Normalized_ID1_Global(positionWS, noiseValue);
+
+				// Применяем инверсию, если нужно
+				if (_InvertDissolveEffect > 0.5) {
+				    dissolveMask = 1.0 - dissolveMask;
+				}
+				// --- ADD END ---
 
 				// main light: direction, color, distanceAttenuation, shadowAttenuation
 			#if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR)
@@ -355,7 +395,19 @@ Shader "LWART/EnvShader"
 
 				// apply ambient
 				color += indirectDiffuse;
+				
+				// --- ADD START: Apply Dissolve ---
+				// Проверяем маску диссольва против порога
+				clip(dissolveMask - _AlphaClipThreshold);
 
+				// Добавляем цвет края диссольва к эмиссии
+				// Маска 0 означает "растворённый", 1 означает "цельный". Нам нужно наоборот для края.
+				// Поэтому (1 - dissolveMask) показывает область края.
+				half3 dissolveEdgeMask = saturate(1.0 - abs(dissolveMask - _AlphaClipThreshold) / max(0.001, _RampSmoothing)); // Используем _RampSmoothing как ширину края, или отдельное свойство
+				emission += dissolveEdgeMask * _MaskEdgeColor.rgb;
+				// --- ADD END ---
+
+				
 				// Premultiply blending
 				#if defined(_ALPHAPREMULTIPLY_ON)
 					color.rgb *= alpha;
@@ -399,6 +451,9 @@ Shader "LWART/EnvShader"
 				float3 normalWS : TEXCOORD0;
 			#endif
 				float2 pack0 : TEXCOORD1; /* pack0.xy = texcoord0 */
+				// --- ADD START: Pass World Position for Shadow/Depth ---
+				float3 worldPos : TEXCOORD2; // Передаём worldPos для DRM в ShadowCaster
+				// --- ADD END ---
 				// Injection Point: 'Depth + Shadow Caster Pass/Varyings'
 			#if defined(DEPTH_ONLY_PASS)
 				UNITY_VERTEX_INPUT_INSTANCE_ID
@@ -445,9 +500,15 @@ Shader "LWART/EnvShader"
 					#if defined(DEPTH_NORMALS_PASS)
 						float3 normalWS = TransformObjectToWorldNormal(input.normal);
 						output.normalWS = normalWS; // already normalized in TransformObjectToWorldNormal
+				// --- ADD START: Store World Position in Depth/Shadow Pass ---
+						output.worldPos = TransformObjectToWorld(input.vertex.xyz);
+					// --- ADD END ---
 					#endif
 				#elif defined(SHADOW_CASTER_PASS)
 					output.positionCS = GetShadowPositionHClip(input);
+				// --- ADD START: Store World Position in Shadow Pass ---
+					output.worldPos = TransformObjectToWorld(input.vertex.xyz);
+					// --- ADD END ---
 				#else
 					output.positionCS = float4(0,0,0,0);
 				#endif
@@ -469,6 +530,24 @@ Shader "LWART/EnvShader"
 				#endif
 
 				// Injection Point: 'Depth + Shadow Caster Pass/Fragment Shader/Start'
+					// --- ADD START: Apply Dissolve Logic in Shadow/Depth Pass ---
+				// Сэмплируем шумовую карту (если используется)
+				half4 noiseSample = TCP2_TEX2D_SAMPLE(_MaskNoiseMap, _MaskNoiseMap, input.pack0.xy);
+				half noiseValue = noiseSample.r;
+
+				// Вычисляем маску диссольва DRM
+				float dissolveMask = DynamicRadialMasks_HeightField_1_Advanced_Normalized_ID1_Global(input.worldPos, noiseValue);
+
+				// Применяем инверсию, если нужно (берём из материала, если не доступно в этом проходе, используем константу или передайте через varyings)
+				// ПРЕДПОЛОЖЕНИЕ: _InvertDissolveEffect доступен в этом проходе (он в CBUFFER)
+				if (_InvertDissolveEffect > 0.5) {
+				    dissolveMask = 1.0 - dissolveMask;
+				}
+
+				// Проверяем маску диссольва против порога
+				clip(dissolveMask - _AlphaClipThreshold);
+				// --- ADD END ---
+
 
 				// Shader Properties Sampling
 				float4 __albedo = ( TCP2_TEX2D_SAMPLE(_BaseMap, _BaseMap, input.pack0.xy).rgba );

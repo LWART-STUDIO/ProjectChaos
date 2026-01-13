@@ -12,11 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f441f874eb58ad04c87dbbab2cf1261f, type: 3}
   m_Name: IntIncDamage
   m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.Client.Logic.Player.Stats.TreeStat
-  id: 1
-  icon: {fileID: 0}
-  description: "10% \u0443\u0432\u0435\u043B\u0438\u0447\u0435\u043D\u0438\u0435
-    \u0443\u0440\u043E\u043D\u0430  \n"
+  icon: {fileID: 21300000, guid: 4ded43ed340414b3fa6b22aa9300f14d, type: 3}
+  description: "12% \u0443\u0432\u0435\u043B\u0438\u0447\u0435\u043D\u0438\u0435
+    \u0434\u043B\u0438\u0442\u0435\u043B\u044C\u043D\u043E\u0441\u0442\u0438  \n"
   bonuses:
   - {fileID: 11400000, guid: 8f0ad9729431b364f9d91783169ae185, type: 2}
-  - {fileID: 11400000, guid: 8f0ad9729431b364f9d91783169ae185, type: 2}
-  links: []

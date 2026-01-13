@@ -1,7 +1,10 @@
 using System;
+using CompassNavigatorPro;
 using Game.Scripts.Client.Logic.Game;
+using Game.Scripts.Client.UI.Game.World;
 using PurrNet;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class EnemyHealth : NetworkBehaviour
 {
@@ -11,6 +14,7 @@ public class EnemyHealth : NetworkBehaviour
     [SerializeField] private float _maxHealthDefault = 100;
     [SerializeField] private float _maxHealthMultiplayer = 1f;
     [SerializeField] private float _maxHealthFlatModifier = 0;
+    [SerializeField] private CompassProPOI _compassProPOI;
         
 
     public float Health => _health;
@@ -26,6 +30,7 @@ public class EnemyHealth : NetworkBehaviour
         base.OnSpawned();
         _maxHealth=(_maxHealthDefault+_maxHealthFlatModifier)*_maxHealthMultiplayer;
         _health = _maxHealth;
+        _compassProPOI.id=Random.Range(100,10000000);
       
     }
 
@@ -35,6 +40,14 @@ public class EnemyHealth : NetworkBehaviour
         _maxHealth=(_maxHealthDefault+_maxHealthFlatModifier)*_maxHealthMultiplayer;
         _health = _maxHealth;
         
+    }
+    [Client]
+    private void ShowDamageClientRpc(float amount, Vector3 hitPosition)
+    {
+        if (DamagePopupSpawner.Instance == null)
+            return;
+
+        DamagePopupSpawner.Instance.Spawn(amount, hitPosition);
     }
 
     private void SetLayerRecursively(GameObject obj, int layer)
@@ -48,6 +61,7 @@ public class EnemyHealth : NetworkBehaviour
     public void ChangeHealth(float amount)
     {
         _health = Mathf.Clamp(_health + amount, 0, _maxHealth);
+        ShowDamageClientRpc(amount, transform.position);
         if(_health==0)
             Die();
     }
@@ -62,6 +76,12 @@ public class EnemyHealth : NetworkBehaviour
     {
         _maxHealthMultiplayer +=  amount;
         _maxHealth=(_maxHealthDefault+_maxHealthFlatModifier)*_maxHealthMultiplayer;
+    }
+    [ServerRpc(requireOwnership:false)]
+    public void Upgrade(float amount)
+    {
+        _maxHealth+=amount;
+        ChangeHealth(amount);
     }
 
     private void Die()

@@ -1,0 +1,114 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 717b1d923707d674baa3874182372b39, type: 3}
+  m_Name: FireAreaData
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.Client.Logic.Skills.Area.FireAreaSkillData
+  skillId: FireArea
+  skillName: "\u0410\u0443\u0440\u0430 \u041F\u043B\u0430\u043C\u0435\u043D\u0438"
+  levelDescriptions:
+  - "\u0423\u0440\u043E\u0432\u0435\u043D\u044C 1"
+  - "\u0423\u0440\u043E\u0432\u0435\u043D\u044C 2"
+  - "\u0423\u0440\u043E\u0432\u0435\u043D\u044C 3"
+  - "\u0423\u0440\u043E\u0432\u0435\u043D\u044C 4"
+  - "\u0423\u0440\u043E\u0432\u0435\u043D\u044C 5"
+  - "\u0423\u0440\u043E\u0432\u0435\u043D\u044C 6"
+  - "\u0423\u0440\u043E\u0432\u0435\u043D\u044C 7"
+  - "\u0423\u0440\u043E\u0432\u0435\u043D\u044C 8"
+  - "\u0423\u0440\u043E\u0432\u0435\u043D\u044C 9"
+  - "\u0423\u0440\u043E\u0432\u0435\u043D\u044C 10"
+  icon: {fileID: 21300000, guid: bea524c022b68442b9a660aefdd8c3a1, type: 3}
+  prefab: {fileID: 8376601374886026760, guid: 1fdacee12648bae4698c89310ef734b3, type: 3}
+  _levels:
+  - damage: 30
+    cooldown: 0.4
+    size: 0.3
+    speed: 1
+    duration: 2
+    distanceFromGround: -1.7
+  - damage: 63.165977
+    cooldown: 0.4
+    size: 0.3
+    speed: 1
+    duration: 2
+    distanceFromGround: -1.7
+  - damage: 152.06859
+    cooldown: 0.4
+    size: 0.3
+    speed: 1
+    duration: 2
+    distanceFromGround: -1.7
+  - damage: 280.81482
+    cooldown: 0.4
+    size: 0.3
+    speed: 1
+    duration: 2
+    distanceFromGround: -1.7
+  - damage: 433.51166
+    cooldown: 0.4
+    size: 0.3
+    speed: 1
+    duration: 2
+    distanceFromGround: -1.7
+  - damage: 594.2662
+    cooldown: 0.4
+    size: 0.3
+    speed: 1
+    duration: 2
+    distanceFromGround: -1.7
+  - damage: 747.18524
+    cooldown: 0.4
+    size: 0.3
+    speed: 1
+    duration: 2
+    distanceFromGround: -1.7
+  - damage: 876.37585
+    cooldown: 0.4
+    size: 0.3
+    speed: 1
+    duration: 2
+    distanceFromGround: -1.7
+  - damage: 965.9451
+    cooldown: 0.4
+    size: 0.3
+    speed: 1
+    duration: 2
+    distanceFromGround: -1.7
+  - damage: 1000
+    cooldown: 0.4
+    size: 0.3
+    speed: 1
+    duration: 2
+    distanceFromGround: -1.7
+  _damageCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 30
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1000
+      inSlope: 9
+      outSlope: 9
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4

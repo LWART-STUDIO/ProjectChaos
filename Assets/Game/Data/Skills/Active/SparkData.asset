@@ -15,18 +15,494 @@ MonoBehaviour:
   skillId: Spark
   skillName: "\u0418\u0441\u043A\u0440\u0430"
   levelDescriptions:
-  - 1 prog
-  - 2 prog
+  - "\u0423\u0440\u043E\u0432\u0435\u043D\u044C 1"
+  - "\u0423\u0440\u043E\u0432\u0435\u043D\u044C 2"
+  - "\u0423\u0440\u043E\u0432\u0435\u043D\u044C 3"
+  - "\u0423\u0440\u043E\u0432\u0435\u043D\u044C 4"
+  - "\u0423\u0440\u043E\u0432\u0435\u043D\u044C 5"
+  - "\u0423\u0440\u043E\u0432\u0435\u043D\u044C 6"
+  - "\u0423\u0440\u043E\u0432\u0435\u043D\u044C 7"
+  - "\u0423\u0440\u043E\u0432\u0435\u043D\u044C 8"
+  - "\u0423\u0440\u043E\u0432\u0435\u043D\u044C 9"
+  - "\u0423\u0440\u043E\u0432\u0435\u043D\u044C 10"
+  - "\u0423\u0440\u043E\u0432\u0435\u043D\u044C 11"
+  - "\u0423\u0440\u043E\u0432\u0435\u043D\u044C 12"
+  - "\u0423\u0440\u043E\u0432\u0435\u043D\u044C 13"
+  - "\u0423\u0440\u043E\u0432\u0435\u043D\u044C 14"
+  - "\u0423\u0440\u043E\u0432\u0435\u043D\u044C 15"
+  - "\u0423\u0440\u043E\u0432\u0435\u043D\u044C 16"
+  - "\u0423\u0440\u043E\u0432\u0435\u043D\u044C 17"
+  - "\u0423\u0440\u043E\u0432\u0435\u043D\u044C 18"
+  - "\u0423\u0440\u043E\u0432\u0435\u043D\u044C 19"
+  - "\u0423\u0440\u043E\u0432\u0435\u043D\u044C 20"
+  - "\u0423\u0440\u043E\u0432\u0435\u043D\u044C 21"
+  - "\u0423\u0440\u043E\u0432\u0435\u043D\u044C 22"
+  - "\u0423\u0440\u043E\u0432\u0435\u043D\u044C 23"
+  - "\u0423\u0440\u043E\u0432\u0435\u043D\u044C 24"
+  - "\u0423\u0440\u043E\u0432\u0435\u043D\u044C 25"
+  - "\u0423\u0440\u043E\u0432\u0435\u043D\u044C 26"
+  - "\u0423\u0440\u043E\u0432\u0435\u043D\u044C 27"
+  - "\u0423\u0440\u043E\u0432\u0435\u043D\u044C 28"
+  - "\u0423\u0440\u043E\u0432\u0435\u043D\u044C 29"
+  - "\u0423\u0440\u043E\u0432\u0435\u043D\u044C 30"
+  - "\u0423\u0440\u043E\u0432\u0435\u043D\u044C 31"
+  - "\u0423\u0440\u043E\u0432\u0435\u043D\u044C 32"
+  - "\u0423\u0440\u043E\u0432\u0435\u043D\u044C 33"
+  - "\u0423\u0440\u043E\u0432\u0435\u043D\u044C 34"
+  - "\u0423\u0440\u043E\u0432\u0435\u043D\u044C 35"
+  - "\u0423\u0440\u043E\u0432\u0435\u043D\u044C 36"
+  - "\u0423\u0440\u043E\u0432\u0435\u043D\u044C 37"
+  - "\u0423\u0440\u043E\u0432\u0435\u043D\u044C 38"
+  - "\u0423\u0440\u043E\u0432\u0435\u043D\u044C 39"
+  - "\u0423\u0440\u043E\u0432\u0435\u043D\u044C 40"
   icon: {fileID: 21300000, guid: 86766f21c485647b9ae046ffbe58a64a, type: 3}
-  prefab: {fileID: 3063897899975297524, guid: a9d19bb8265eff145b3e9fe336ca1219, type: 3}
+  prefab: {fileID: 9062069604841552986, guid: a9d19bb8265eff145b3e9fe336ca1219, type: 3}
+  _damageCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 14
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 3816
+      inSlope: 9
+      outSlope: 9
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  _projectileCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 4
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 26
+      inSlope: 3.75
+      outSlope: 3.75
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   _levels:
-  - projectileCount: 3
-    damage: 10
-    cooldown: 1.5
-    speed: 50
+  - projectileCount: 4
+    damage: 14
+    cooldown: 0.65
+    speed: 42
     size: 0.5
     pierceCount: 0
     wallBounceCount: 1
     distanceFromGround: 0.5
-    duration: 10
-    angleSpread: 60
+    duration: 2
+    angleSpread: 45
+  - projectileCount: 4
+    damage: 21.36506
+    cooldown: 0.65
+    speed: 42
+    size: 0.5
+    pierceCount: 0
+    wallBounceCount: 1
+    distanceFromGround: 0.5
+    duration: 2
+    angleSpread: 45
+  - projectileCount: 4
+    damage: 42.948097
+    cooldown: 0.65
+    speed: 42
+    size: 0.5
+    pierceCount: 0
+    wallBounceCount: 1
+    distanceFromGround: 0.5
+    duration: 2
+    angleSpread: 45
+  - projectileCount: 4
+    damage: 77.98089
+    cooldown: 0.65
+    speed: 42
+    size: 0.5
+    pierceCount: 0
+    wallBounceCount: 1
+    distanceFromGround: 0.5
+    duration: 2
+    angleSpread: 45
+  - projectileCount: 5
+    damage: 125.69521
+    cooldown: 0.65
+    speed: 42
+    size: 0.5
+    pierceCount: 0
+    wallBounceCount: 1
+    distanceFromGround: 0.5
+    duration: 2
+    angleSpread: 45
+  - projectileCount: 5
+    damage: 185.32288
+    cooldown: 0.65
+    speed: 42
+    size: 0.5
+    pierceCount: 0
+    wallBounceCount: 1
+    distanceFromGround: 0.5
+    duration: 2
+    angleSpread: 45
+  - projectileCount: 5
+    damage: 256.09558
+    cooldown: 0.65
+    speed: 42
+    size: 0.5
+    pierceCount: 0
+    wallBounceCount: 1
+    distanceFromGround: 0.5
+    duration: 2
+    angleSpread: 45
+  - projectileCount: 5
+    damage: 337.2452
+    cooldown: 0.65
+    speed: 42
+    size: 0.5
+    pierceCount: 0
+    wallBounceCount: 1
+    distanceFromGround: 0.5
+    duration: 2
+    angleSpread: 45
+  - projectileCount: 6
+    damage: 428.00345
+    cooldown: 0.65
+    speed: 42
+    size: 0.5
+    pierceCount: 0
+    wallBounceCount: 1
+    distanceFromGround: 0.5
+    duration: 2
+    angleSpread: 45
+  - projectileCount: 6
+    damage: 527.6022
+    cooldown: 0.65
+    speed: 42
+    size: 0.5
+    pierceCount: 0
+    wallBounceCount: 1
+    distanceFromGround: 0.5
+    duration: 2
+    angleSpread: 45
+  - projectileCount: 7
+    damage: 635.2732
+    cooldown: 0.65
+    speed: 42
+    size: 0.5
+    pierceCount: 0
+    wallBounceCount: 1
+    distanceFromGround: 0.5
+    duration: 2
+    angleSpread: 45
+  - projectileCount: 8
+    damage: 750.2481
+    cooldown: 0.65
+    speed: 42
+    size: 0.5
+    pierceCount: 0
+    wallBounceCount: 1
+    distanceFromGround: 0.5
+    duration: 2
+    angleSpread: 45
+  - projectileCount: 8
+    damage: 871.75885
+    cooldown: 0.65
+    speed: 42
+    size: 0.5
+    pierceCount: 0
+    wallBounceCount: 1
+    distanceFromGround: 0.5
+    duration: 2
+    angleSpread: 45
+  - projectileCount: 9
+    damage: 999.03705
+    cooldown: 0.65
+    speed: 42
+    size: 0.5
+    pierceCount: 0
+    wallBounceCount: 1
+    distanceFromGround: 0.5
+    duration: 2
+    angleSpread: 45
+  - projectileCount: 10
+    damage: 1131.3147
+    cooldown: 0.65
+    speed: 42
+    size: 0.5
+    pierceCount: 0
+    wallBounceCount: 1
+    distanceFromGround: 0.5
+    duration: 2
+    angleSpread: 45
+  - projectileCount: 10
+    damage: 1267.8234
+    cooldown: 0.65
+    speed: 42
+    size: 0.5
+    pierceCount: 0
+    wallBounceCount: 1
+    distanceFromGround: 0.5
+    duration: 2
+    angleSpread: 45
+  - projectileCount: 11
+    damage: 1407.795
+    cooldown: 0.65
+    speed: 42
+    size: 0.5
+    pierceCount: 0
+    wallBounceCount: 1
+    distanceFromGround: 0.5
+    duration: 2
+    angleSpread: 45
+  - projectileCount: 12
+    damage: 1550.4614
+    cooldown: 0.65
+    speed: 42
+    size: 0.5
+    pierceCount: 0
+    wallBounceCount: 1
+    distanceFromGround: 0.5
+    duration: 2
+    angleSpread: 45
+  - projectileCount: 13
+    damage: 1695.0541
+    cooldown: 0.65
+    speed: 42
+    size: 0.5
+    pierceCount: 0
+    wallBounceCount: 1
+    distanceFromGround: 0.5
+    duration: 2
+    angleSpread: 45
+  - projectileCount: 14
+    damage: 1840.8053
+    cooldown: 0.65
+    speed: 42
+    size: 0.5
+    pierceCount: 0
+    wallBounceCount: 1
+    distanceFromGround: 0.5
+    duration: 2
+    angleSpread: 45
+  - projectileCount: 14
+    damage: 1986.9464
+    cooldown: 0.65
+    speed: 42
+    size: 0.5
+    pierceCount: 0
+    wallBounceCount: 1
+    distanceFromGround: 0.5
+    duration: 2
+    angleSpread: 45
+  - projectileCount: 15
+    damage: 2132.7095
+    cooldown: 0.65
+    speed: 42
+    size: 0.5
+    pierceCount: 0
+    wallBounceCount: 1
+    distanceFromGround: 0.5
+    duration: 2
+    angleSpread: 45
+  - projectileCount: 16
+    damage: 2277.3257
+    cooldown: 0.65
+    speed: 42
+    size: 0.5
+    pierceCount: 0
+    wallBounceCount: 1
+    distanceFromGround: 0.5
+    duration: 2
+    angleSpread: 45
+  - projectileCount: 17
+    damage: 2420.0276
+    cooldown: 0.65
+    speed: 42
+    size: 0.5
+    pierceCount: 0
+    wallBounceCount: 1
+    distanceFromGround: 0.5
+    duration: 2
+    angleSpread: 45
+  - projectileCount: 18
+    damage: 2560.0466
+    cooldown: 0.65
+    speed: 42
+    size: 0.5
+    pierceCount: 0
+    wallBounceCount: 1
+    distanceFromGround: 0.5
+    duration: 2
+    angleSpread: 45
+  - projectileCount: 18
+    damage: 2696.6145
+    cooldown: 0.65
+    speed: 42
+    size: 0.5
+    pierceCount: 0
+    wallBounceCount: 1
+    distanceFromGround: 0.5
+    duration: 2
+    angleSpread: 45
+  - projectileCount: 19
+    damage: 2828.963
+    cooldown: 0.65
+    speed: 42
+    size: 0.5
+    pierceCount: 0
+    wallBounceCount: 1
+    distanceFromGround: 0.5
+    duration: 2
+    angleSpread: 45
+  - projectileCount: 20
+    damage: 2956.324
+    cooldown: 0.65
+    speed: 42
+    size: 0.5
+    pierceCount: 0
+    wallBounceCount: 1
+    distanceFromGround: 0.5
+    duration: 2
+    angleSpread: 45
+  - projectileCount: 21
+    damage: 3077.9292
+    cooldown: 0.65
+    speed: 42
+    size: 0.5
+    pierceCount: 0
+    wallBounceCount: 1
+    distanceFromGround: 0.5
+    duration: 2
+    angleSpread: 45
+  - projectileCount: 21
+    damage: 3193.0107
+    cooldown: 0.65
+    speed: 42
+    size: 0.5
+    pierceCount: 0
+    wallBounceCount: 1
+    distanceFromGround: 0.5
+    duration: 2
+    angleSpread: 45
+  - projectileCount: 22
+    damage: 3300.8003
+    cooldown: 0.65
+    speed: 42
+    size: 0.5
+    pierceCount: 0
+    wallBounceCount: 1
+    distanceFromGround: 0.5
+    duration: 2
+    angleSpread: 45
+  - projectileCount: 23
+    damage: 3400.5293
+    cooldown: 0.65
+    speed: 42
+    size: 0.5
+    pierceCount: 0
+    wallBounceCount: 1
+    distanceFromGround: 0.5
+    duration: 2
+    angleSpread: 45
+  - projectileCount: 23
+    damage: 3491.4294
+    cooldown: 0.65
+    speed: 42
+    size: 0.5
+    pierceCount: 0
+    wallBounceCount: 1
+    distanceFromGround: 0.5
+    duration: 2
+    angleSpread: 45
+  - projectileCount: 24
+    damage: 3572.7327
+    cooldown: 0.65
+    speed: 42
+    size: 0.5
+    pierceCount: 0
+    wallBounceCount: 1
+    distanceFromGround: 0.5
+    duration: 2
+    angleSpread: 45
+  - projectileCount: 24
+    damage: 3643.6711
+    cooldown: 0.65
+    speed: 42
+    size: 0.5
+    pierceCount: 0
+    wallBounceCount: 1
+    distanceFromGround: 0.5
+    duration: 2
+    angleSpread: 45
+  - projectileCount: 25
+    damage: 3703.4763
+    cooldown: 0.65
+    speed: 42
+    size: 0.5
+    pierceCount: 0
+    wallBounceCount: 1
+    distanceFromGround: 0.5
+    duration: 2
+    angleSpread: 45
+  - projectileCount: 25
+    damage: 3751.3804
+    cooldown: 0.65
+    speed: 42
+    size: 0.5
+    pierceCount: 0
+    wallBounceCount: 1
+    distanceFromGround: 0.5
+    duration: 2
+    angleSpread: 45
+  - projectileCount: 25
+    damage: 3786.6143
+    cooldown: 0.65
+    speed: 42
+    size: 0.5
+    pierceCount: 0
+    wallBounceCount: 1
+    distanceFromGround: 0.5
+    duration: 2
+    angleSpread: 45
+  - projectileCount: 25
+    damage: 3808.4102
+    cooldown: 0.65
+    speed: 42
+    size: 0.5
+    pierceCount: 0
+    wallBounceCount: 1
+    distanceFromGround: 0.5
+    duration: 2
+    angleSpread: 45
+  - projectileCount: 26
+    damage: 3816
+    cooldown: 0.65
+    speed: 42
+    size: 0.5
+    pierceCount: 0
+    wallBounceCount: 1
+    distanceFromGround: 0.5
+    duration: 2
+    angleSpread: 45

@@ -79,7 +79,7 @@ namespace GIGA.AutoRadialLayout
         public void Set(RadialLayout from, RadialLayoutNode to)
         {
             this.fromLayout = from;
-            this.from = null;
+            this.from = to.transform.parent.GetComponentInParent<RadialLayoutNode>();
             this.to = to;
 
             this.name = $"link_{from.name}->{to.name}";

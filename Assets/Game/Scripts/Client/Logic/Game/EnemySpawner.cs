@@ -1,5 +1,6 @@
 using System.Collections;
-using System.Linq;
+using System.Collections.Generic;
+using Game.Scripts.Client.Logic.Enemy;
 using Game.Scripts.Client.Logic.Player;
 using Game.Scripts.Services.Waves;
 using PurrNet;
@@ -7,100 +8,142 @@ using UnityEngine;
 
 namespace Game.Scripts.Client.Logic.Game
 {
-       public class EnemySpawner : NetworkBehaviour
+    public class EnemySpawner : NetworkBehaviour
     {
+        [Header("Waves")]
         [SerializeField] private WavesData _data;
-        [SerializeField] private float _spawnRadius = 5f;  
-        private float _raycastDistance = float.MaxValue; 
-        
-        private Coroutine _spawnCoroutine;
-        private PlayerID _currentPlayerId;
-        private int _maxAttempts = 10;
-        private bool _firstLaunch=true;
 
+        [Header("Spawn")]
+        [SerializeField] private float _spawnRadius = 5f;
+        [SerializeField] private int _maxAttempts = 10;
+        [SerializeField] private float _groundRayHeight = 5f;
+        [SerializeField] private float _ceilingCheckHeight = 2f;
+
+        [Header("Layers")]
+        [SerializeField] private LayerMask _groundLayer;
+
+        private Coroutine _spawnCoroutine;
+
+        private int _waveIndex;
+        private int _difficultyLevel = 1;
+
+        private int _playerIndex;
 
         protected override void OnSpawned()
         {
             base.OnSpawned();
-            enabled =isServer;
-        }
-        
-        private void Update()
-        {
+            enabled = isServer;
+
+            _waveIndex = 0;
+            _difficultyLevel = 1;
+            _playerIndex = 0;
+
             if (!isServer)
                 return;
-            if (PlayerHealth.AllPlayers==null || PlayerHealth.AllPlayers.Count == 0)
-                return;
-            if(_spawnCoroutine != null)
-                return;
-            if(networkManager.players.Count<=0)
-                return;
-            _spawnCoroutine = StartCoroutine(SpawnWaves());
-
+            _spawnCoroutine = StartCoroutine(SpawnLoop());
         }
 
-        private IEnumerator SpawnWaves()
+        #region Spawn Loop
+
+        private IEnumerator SpawnLoop()
         {
-            foreach (var wave in _data.Waves)
+            while (true)
             {
-                foreach (var enemy in wave.EnemiesToSpawn)
+                if (PlayerHealth.AllPlayers==null || PlayerHealth.AllPlayers.Count == 0)
+                    yield return null;
+                if(networkManager.players.Count<=0)
+                    yield return null;
+                Wave wave = GetCurrentWave();
+
+                yield return SpawnWave(wave);
+
+                _waveIndex++;
+                _difficultyLevel++;
+            }
+        }
+
+        private Wave GetCurrentWave()
+        {
+            if (_waveIndex < _data.Waves.Count)
+                return _data.Waves[_waveIndex];
+
+            // бесконечные волны — последняя волна
+            return _data.Waves[_data.Waves.Count - 1];
+        }
+
+        private IEnumerator SpawnWave(Wave wave)
+        {
+            if (PlayerHealth.AllPlayers == null || PlayerHealth.AllPlayers.Count == 0)
+                yield break;
+
+            foreach (var enemyPrefab in wave.EnemiesToSpawn)
+            {
+                foreach (var player in PlayerHealth.AllPlayers.Values)
                 {
-                    for (int attempt = 0; attempt < 100; attempt++) // защита от бесконечности
+                    Vector3? spawnPos = FindValidSpawnPosition(player.transform.position);
+
+                    if (spawnPos.HasValue)
                     {
-                        Vector3 playerPos = PlayerHealth.AllPlayers[SelectPlayer()].transform.position;
-                        Vector3? spawnPos = FindValidSpawnPosition(playerPos);
-                        if (spawnPos.HasValue)
-                        {
-                            GameObject newEnemy = Instantiate(enemy, spawnPos.Value, Quaternion.identity);
-                            yield return new WaitForSeconds(wave.SpawnInterval);
-                            break; // ✅ выходим из цикла
-                        }
+                        SpawnEnemy(enemyPrefab, spawnPos.Value);
+                        yield return new WaitForSeconds(wave.SpawnInterval);
+                    }
+                    else
+                    {
                         yield return null;
                     }
                 }
             }
-
-            _spawnCoroutine = null;
         }
+
+        #endregion
+
+        #region Spawn Helpers
+
+        private void SpawnEnemy(GameObject prefab, Vector3 position)
+        {
+            GameObject enemy = Instantiate(prefab, position, Quaternion.identity);
+
+            if (enemy.TryGetComponent(out EnemyUpgrader upgrader))
+                upgrader.UpgradeEnemy(_difficultyLevel);
+        }
+
         private Vector3? FindValidSpawnPosition(Vector3 playerPosition)
         {
-            for (int attempt = 0; attempt < _maxAttempts; attempt++)
+            for (int i = 0; i < _maxAttempts; i++)
             {
-                // Генерируем случайную точку в круге вокруг игрока (на плоскости XZ)
-                Vector2 randomCircle = UnityEngine.Random.insideUnitCircle * _spawnRadius;
-                Vector3 candidate = playerPosition + new Vector3(randomCircle.x, 0f, randomCircle.y);
+                // Случайный угол
+                float angle = Random.Range(0f, 360f) * Mathf.Deg2Rad;
 
-                // Проверяем вниз: есть ли земля?
-                if (Physics.Raycast(candidate + Vector3.up * 5f, Vector3.down, out RaycastHit hitDown, _raycastDistance, 1<<6))
-                {
-                    // Опционально: проверяем вверх — нет ли потолка слишком близко?
-                    // (если нужно, чтобы враг не застревал)
-                    if (!Physics.Raycast(hitDown.point, Vector3.up, 2f, 1<<6))
-                    {
-                        // Возвращаем точку **на поверхности земли**
-                        return hitDown.point;
-                    }
-                }
+                // Точка на окружности радиуса _spawnRadius
+                Vector3 candidate = playerPosition + new Vector3(
+                    Mathf.Cos(angle) * _spawnRadius,
+                    0f,
+                    Mathf.Sin(angle) * _spawnRadius
+                );
+
+                // Проверяем землю
+                if (!Physics.Raycast(
+                        candidate + Vector3.up * _groundRayHeight,
+                        Vector3.down,
+                        out RaycastHit groundHit,
+                        Mathf.Infinity,
+                        _groundLayer))
+                    continue;
+
+                // Проверяем потолок
+                if (Physics.Raycast(
+                        groundHit.point,
+                        Vector3.up,
+                        _ceilingCheckHeight,
+                        _groundLayer))
+                    continue;
+
+                return groundHit.point;
             }
 
-            // Не удалось найти валидную позицию
-            return null;
+            return null; // не нашли валидную точку
         }
 
-        private PlayerID SelectPlayer()
-        {
-            if (_firstLaunch)
-            {
-                _currentPlayerId = networkManager.players[0];
-                _firstLaunch = false;  
-                return _currentPlayerId;
-            }
-            var playerIds = PlayerHealth.AllPlayers.Keys.ToList();
-            int currentIndex = playerIds.IndexOf(_currentPlayerId);
-            int nextIndex = (currentIndex + 1) % playerIds.Count;
-            _currentPlayerId = playerIds[nextIndex];
-            return _currentPlayerId;
-        }
+        #endregion
     }
 }
-

@@ -14,13 +14,16 @@ namespace Game.Scripts.Client.Logic.Skills.Projectiles.Spark
         [SerializeField] private SimpleProjectile _projectile;
         private SparkData.LevelData _levelData;
         private float _lastCastTime;
-        private ObjectPool<SimpleProjectile> _projectilePool;
         private float _damage => _levelData.damage * stats.GetStatValue(StatBonus.Damage);
+        private int _pirce => (int)(_levelData.pierceCount + stats.GetStatValue(StatBonus.Pirce));
+        private int _wallBounce => (int)(_levelData.wallBounceCount + stats.GetStatValue(StatBonus.WallBounce));
+        private float _duration => (_levelData.duration * stats.GetStatValue(StatBonus.SkillDuration));
+        private float _speed => (_levelData.speed * stats.GetStatValue(StatBonus.SkillSpeed));
+        private int _projectileCount => (int)(_levelData.projectileCount + stats.GetStatValue(StatBonus.Projectile));
         protected override void OnInitialize()
         {
-            var sparkData = (SparkData)data;
+            var sparkData = data as SparkData;
             _levelData = sparkData.GetLevelData(level);
-            _projectilePool = new ObjectPool<SimpleProjectile>(_projectile.gameObject,10);
         }
 
         public override void Tick()
@@ -34,16 +37,16 @@ namespace Game.Scripts.Client.Logic.Skills.Projectiles.Spark
             if (_shootRight) directions.Add(transform.right);
             foreach (var baseDir in directions)
             {
-                if (_levelData.projectileCount == 1)
+                if (_projectileCount == 1)
                 {
                     SpawnProjectile(baseDir);
                 }
                 else
                 {
                     float totalAngle = _levelData.angleSpread;
-                    float angleStep = (_levelData.projectileCount > 1) ? totalAngle / (_levelData.projectileCount - 1) : 0f;
+                    float angleStep = (_projectileCount > 1) ? totalAngle / (_projectileCount- 1) : 0f;
                     float startAngle = -totalAngle / 2f;
-                    for (int i = 0; i < _levelData.projectileCount; i++)
+                    for (int i = 0; i < _projectileCount; i++)
                     {
                         float currentAngle = startAngle + angleStep * i;
                         // Поворачиваем базовое направление вокруг оси "вверх" локального ShootPoint
@@ -60,9 +63,9 @@ namespace Game.Scripts.Client.Logic.Skills.Projectiles.Spark
         private void SpawnProjectile(Vector3 direction)
         {
             direction.Normalize();
-            var projectile = _projectilePool.Pull(shootPoint.position, Quaternion.LookRotation(direction));
-            projectile.Initialize(_damage, _levelData.speed, _levelData.distanceFromGround,
-                _levelData.size, _levelData.pierceCount, _levelData.wallBounceCount, _levelData.duration);
+            var projectile = Instantiate(_projectile,shootPoint.position, Quaternion.LookRotation(direction));
+            projectile.Initialize(_damage, _speed, _levelData.distanceFromGround,
+                _levelData.size, _pirce, _wallBounce, _duration);
         }
     }
 }

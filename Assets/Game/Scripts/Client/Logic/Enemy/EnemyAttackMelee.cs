@@ -18,5 +18,10 @@ namespace Game.Scripts.Client.Logic.Enemy
             _lastAttackTime = Time.time;
             playerHealth.ChangeHealth(-_damage);
         }
+
+        public void Upgrade(float value)
+        {
+            _damage += (int)value;
+        }
     }
 }

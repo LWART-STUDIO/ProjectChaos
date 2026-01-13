@@ -22,7 +22,9 @@ namespace Michsky.MUIP
         public bool useIn3D = false;
 
         TooltipManager tpManager;
+        private UIManagerTooltip _uiManagerTooltip;
         [HideInInspector] public Animator tooltipAnimator;
+        
 
         void Start()
         {
@@ -39,7 +41,9 @@ namespace Michsky.MUIP
 
             if (tooltipRect != null)
             {
+       
                 tpManager = tooltipRect.GetComponentInParent<TooltipManager>();
+                _uiManagerTooltip=tpManager.GetComponent<UIManagerTooltip>();
                 tooltipAnimator = tooltipRect.GetComponentInParent<Animator>();
             }
 
@@ -49,11 +53,13 @@ namespace Michsky.MUIP
 
         public void ProcessEnter()
         {
+            
             if (tooltipRect == null)
                 return;
-
+            if(string.IsNullOrEmpty(description))
+                return;
             descriptionText.text = description;
-          
+            //_uiManagerTooltip.CollectDescriptionText(description);
             tpManager.allowUpdate = true;
             tpManager.currentTooltip = this;
          
@@ -70,6 +76,8 @@ namespace Michsky.MUIP
                 StartCoroutine("UpdateLayoutPosition");
         }
 
+        
+
         public void ProcessExit()
         {
             if (tooltipRect == null)
@@ -84,11 +92,11 @@ namespace Michsky.MUIP
             }
 
             else { tooltipAnimator.Play("Out"); }
-
             tpManager.allowUpdate = false;
         }
 
-        public void OnPointerEnter(PointerEventData eventData) { ProcessEnter(); }
+        public void OnPointerEnter(PointerEventData eventData) { if (eventData.pointerCurrentRaycast.gameObject != gameObject)
+            return;ProcessEnter(); }
         public void OnPointerExit(PointerEventData eventData) { ProcessExit(); }
 
 #if !UNITY_IOS && !UNITY_ANDROID

@@ -256,7 +256,7 @@ MonoBehaviour:
     m_Bits: 64
   canBeTransparent:
     serializedVersion: 2
-    m_Bits: 23
+    m_Bits: 22
 --- !u!81 &4551208160306017308
 AudioListener:
   m_ObjectHideFlags: 0
@@ -533,6 +533,7 @@ MonoBehaviour:
   _playerStatsHolder: {fileID: 6099233058785804499}
   _initialSkills:
   - {fileID: 11400000, guid: fcbb496c3f4edab45921bee5d0f99c58, type: 2}
+  - {fileID: 11400000, guid: 71af2e49a76d4a4428617b6bb3492746, type: 2}
 --- !u!136 &5717128302619671715
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -713,6 +714,31 @@ MonoBehaviour:
   _stats:
   - bonus: 0
     baseValue: 1
+    flat: 0
+    incPercent: 0
+    morePercent: 0
+  - bonus: 1
+    baseValue: 0
+    flat: 0
+    incPercent: 0
+    morePercent: 0
+  - bonus: 5
+    baseValue: 0
+    flat: 0
+    incPercent: 0
+    morePercent: 0
+  - bonus: 3
+    baseValue: 1
+    flat: 0
+    incPercent: 0
+    morePercent: 0
+  - bonus: 4
+    baseValue: 1
+    flat: 0
+    incPercent: 0
+    morePercent: 0
+  - bonus: 2
+    baseValue: 0
     flat: 0
     incPercent: 0
     morePercent: 0

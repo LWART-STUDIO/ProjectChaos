@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
@@ -13,6 +14,7 @@ namespace Michsky.MUIP
         [Header("Resources")]
         [SerializeField] private Image background;
         [SerializeField] private TextMeshProUGUI text;
+        private Coroutine _textCollector=null;
 
         void Awake()
         {
@@ -25,12 +27,31 @@ namespace Michsky.MUIP
                 UpdateTooltip();
                 this.enabled = false;
             }
+            _textCollector=null;
         }
 
         void Update()
         {
             if (UIManagerAsset == null) { return; }
             if (UIManagerAsset.enableDynamicUpdate == true) { UpdateTooltip(); }
+        }
+        public void CollectDescriptionText(string text)
+        {
+            if (_textCollector == null)
+            {
+                this.text.text = text;
+                _textCollector=StartCoroutine(CollectTextTimer());
+                return;
+            }
+            //this.text.text += $"\n{text}";
+
+        }
+
+        private IEnumerator CollectTextTimer()
+        {
+            yield return new WaitForSecondsRealtime(0.1f);
+            _textCollector = null;
+
         }
 
         void UpdateTooltip()

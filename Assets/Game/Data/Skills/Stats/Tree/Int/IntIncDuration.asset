@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f441f874eb58ad04c87dbbab2cf1261f, type: 3}
+  m_Name: IntIncDuration
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.Client.Logic.Player.Stats.TreeStat
+  icon: {fileID: 21300000, guid: cd444da3097c849d59ec551844d6b3f5, type: 3}
+  description: "12% \u0443\u0432\u0435\u043B\u0438\u0447\u0435\u043D\u0438\u0435
+    \u0434\u043B\u0438\u0442\u0435\u043B\u044C\u043D\u043E\u0441\u0442\u0438  \n"
+  bonuses:
+  - {fileID: 11400000, guid: 27c86c1e40a939947a66a474e9a020da, type: 2}

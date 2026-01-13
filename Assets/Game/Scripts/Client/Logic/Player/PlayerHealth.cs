@@ -58,8 +58,13 @@ namespace Game.Scripts.Client.Logic.Player
             if (owner.HasValue)
                 _allPlayers[owner.Value] = this;
             _health.onChanged += OnHealthChanged;
-            if (isOwner) 
+            if (isOwner)
+            {
                 Service<UIService>.Instance.GetPlayerInGameUI().UpdateHealth(_health.value);
+                Service<UIService>.Instance.GetPlayerInGameUI().SetPlayerCompas(transform.GetComponentInChildren<Camera>());
+                
+            }
+                
                 
       
         }

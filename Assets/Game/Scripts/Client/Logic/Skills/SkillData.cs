@@ -12,7 +12,7 @@ namespace Game.Scripts.Client.Logic.Skills
     {
         public string skillId;
         public string skillName;
-        [SerializeField] private List<string> levelDescriptions = new List<string>();
+        [SerializeField] protected List<string> levelDescriptions = new List<string>();
         public Sprite icon;
         public Skill prefab;
         public int maxLevel=>levelDescriptions.Count-1;

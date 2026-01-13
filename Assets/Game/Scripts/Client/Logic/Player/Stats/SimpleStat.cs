@@ -24,5 +24,11 @@ namespace Game.Scripts.Client.Logic.Player.Stats
     public enum StatBonus
     {
         Damage = 0,
+        Pirce = 1,
+        Projectile = 2,
+        SkillSpeed = 3,
+        SkillDuration = 4,
+        WallBounce = 5,
+       
     }
 }

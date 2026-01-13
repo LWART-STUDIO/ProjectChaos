@@ -379,6 +379,8 @@ namespace Michsky.MUIP
 
         public void OnPointerEnter(PointerEventData eventData)
         {
+            if (eventData.pointerCurrentRaycast.gameObject != gameObject)
+                return;
             if (isInteractable == false) { return; }
             if (enableButtonSounds == true && useHoverSound == true && soundSource != null) { soundSource.PlayOneShot(hoverSound); }
             if (animationSolution == AnimationSolution.ScriptBased) { StartCoroutine("SetHighlight"); }

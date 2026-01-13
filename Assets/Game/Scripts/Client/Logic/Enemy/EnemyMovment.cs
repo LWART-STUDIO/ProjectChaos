@@ -1,18 +1,19 @@
 using System;
 using Game.Scripts.Client.Logic.Player;
+using ProjectDawn.Navigation.Hybrid;
 using PurrNet;
 using UnityEngine;
-[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(AgentAuthoring))]
 public class EnemyMovment : NetworkBehaviour,ITick
 {
-    [SerializeField] private float _speed;
-    private Rigidbody _rigidbody;
+    private AgentAuthoring _agent;
     private PlayerHealth _targetPlayer;
     private float _lastPlayerCheck;
 
     private void Awake()
     {
-        TryGetComponent(out _rigidbody);
+        _agent = transform.GetComponent<AgentAuthoring>();
+
     }
     protected override void OnSpawned()
     {
@@ -35,12 +36,11 @@ public class EnemyMovment : NetworkBehaviour,ITick
             return;
         if(!_targetPlayer)
             return;
-        var targetPosition = _targetPlayer.transform.position;
-        var direction = (targetPosition - transform.position).normalized;
-        direction.y = 0;
-        _rigidbody.linearVelocity = direction * _speed *Time.fixedDeltaTime;
-        var lookRotation = Quaternion.LookRotation(direction);
-        _rigidbody.MoveRotation(Quaternion.Slerp(_rigidbody.rotation, lookRotation, Time.fixedDeltaTime*10f));
+        var body = _agent.EntityBody;
+        body.Destination = _targetPlayer.transform.position;;
+        body.IsStopped = false;
+        _agent.EntityBody = body;
+
     }
 
     public void OnTick(float delta)

@@ -38,7 +38,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 9.1}
+  m_SizeDelta: {x: 100, y: 2}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!222 &9201987541074882346
 CanvasRenderer:
@@ -61,7 +61,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.38431376, g: 0.38431376, b: 0.38431376, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -115,8 +115,8 @@ MonoBehaviour:
   fromId: 0
   toId: 0
   line: {fileID: 3323324433389391624}
-  inactiveColor: {r: 0.5566038, g: 0.5566038, b: 0.5566038, a: 1}
-  activeColor: {r: 1, g: 0.88550174, b: 0, a: 1}
+  inactiveColor: {r: 0.38431376, g: 0.38431376, b: 0.38431376, a: 1}
+  activeColor: {r: 0.7169812, g: 0, b: 0, a: 1}
 --- !u!1 &9133654775620762672
 GameObject:
   m_ObjectHideFlags: 0
@@ -187,7 +187,7 @@ MonoBehaviour:
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 0
-  m_FillAmount: 1
+  m_FillAmount: 0
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0

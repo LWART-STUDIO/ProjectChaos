@@ -28,72 +28,72 @@ MonoBehaviour:
   icon: {fileID: 21300000, guid: bea524c022b68442b9a660aefdd8c3a1, type: 3}
   prefab: {fileID: 8376601374886026760, guid: 1fdacee12648bae4698c89310ef734b3, type: 3}
   _levels:
-  - damage: 30
+  - damage: 3
     cooldown: 0.4
     size: 0.3
     speed: 1
     duration: 2
-    distanceFromGround: -1.7
-  - damage: 63.165977
+    distanceFromGround: -1.6
+  - damage: 23.374487
     cooldown: 0.4
-    size: 0.3
+    size: 0.48888892
     speed: 1
     duration: 2
-    distanceFromGround: -1.7
-  - damage: 152.06859
+    distanceFromGround: -1.6
+  - damage: 77.99589
     cooldown: 0.4
-    size: 0.3
+    size: 0.67777777
     speed: 1
     duration: 2
-    distanceFromGround: -1.7
-  - damage: 280.81482
+    distanceFromGround: -1.6
+  - damage: 157.11111
     cooldown: 0.4
-    size: 0.3
+    size: 0.86666673
     speed: 1
     duration: 2
-    distanceFromGround: -1.7
-  - damage: 433.51166
+    distanceFromGround: -1.6
+  - damage: 250.96707
     cooldown: 0.4
-    size: 0.3
+    size: 1.0555556
     speed: 1
     duration: 2
-    distanceFromGround: -1.7
-  - damage: 594.2662
+    distanceFromGround: -1.6
+  - damage: 349.81073
     cooldown: 0.4
-    size: 0.3
+    size: 1.2444446
     speed: 1
     duration: 2
-    distanceFromGround: -1.7
-  - damage: 747.18524
+    distanceFromGround: -1.6
+  - damage: 443.88892
     cooldown: 0.4
-    size: 0.3
+    size: 1.4333334
     speed: 1
     duration: 2
-    distanceFromGround: -1.7
-  - damage: 876.37585
+    distanceFromGround: -1.6
+  - damage: 523.44855
     cooldown: 0.4
-    size: 0.3
+    size: 1.6222224
     speed: 1
     duration: 2
-    distanceFromGround: -1.7
-  - damage: 965.9451
+    distanceFromGround: -1.6
+  - damage: 578.73663
     cooldown: 0.4
-    size: 0.3
+    size: 1.8111115
     speed: 1
     duration: 2
-    distanceFromGround: -1.7
-  - damage: 1000
+    distanceFromGround: -1.6
+  - damage: 600
     cooldown: 0.4
-    size: 0.3
+    size: 2
     speed: 1
     duration: 2
-    distanceFromGround: -1.7
+    distanceFromGround: -1.6
   _damageCurve:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 30
+      value: 3
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -102,10 +102,34 @@ MonoBehaviour:
       outWeight: 0
     - serializedVersion: 3
       time: 1
-      value: 1000
+      value: 600
       inSlope: 9
       outSlope: 9
       tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  _sizeCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0.3
+      inSlope: 0
+      outSlope: 1.7
+      tangentMode: 69
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 2
+      inSlope: 1.7
+      outSlope: 9
+      tangentMode: 69
       weightedMode: 0
       inWeight: 0
       outWeight: 0

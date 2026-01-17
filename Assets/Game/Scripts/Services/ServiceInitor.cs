@@ -1,10 +1,12 @@
 using System.Linq;
 using Game.Scripts.Client.Logic;
+using Game.Scripts.Client.Logic.Game;
 using Game.Scripts.Services.Input;
 using Game.Scripts.Services.ResourceLoader;
 using Game.Scripts.Services.Scene;
 using Game.Scripts.Services.StaticService;
 using Game.Scripts.Services.UI;
+using SaintsField.Playa;
 using Sisus.Init;
 
 using UnityEngine;
@@ -14,6 +16,7 @@ namespace Game.Scripts.Services
     [Service(typeof(ServiceInitor),FindFromScene = true,LazyInit = true)]
     public class ServiceInitor : MonoBehaviour<UIService,InputService>
     {
+        private LevelManager _levelManager;
         private UIService _uiService;
         private InputService _inputService;
         private ResourceLoaderService _resourceLoaderService;
@@ -48,6 +51,16 @@ namespace Game.Scripts.Services
             _inputService.LocalStart();
             _uiService.LocalStart();
 
+        }
+
+        [Button]
+        public void UpdateExp()
+        {
+            if(_levelManager == null)
+                _levelManager = FindAnyObjectByType<LevelManager>();
+            if(_levelManager == null)
+                return;
+            _levelManager.ApplyExpCurve();
         }
 
         private void Update()

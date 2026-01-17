@@ -167,7 +167,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.1
-  far clip plane: 1000
+  far clip plane: 10000
   field of view: 90
   orthographic: 0
   orthographic size: 5
@@ -289,6 +289,7 @@ GameObject:
   - component: {fileID: -5620278497402304747}
   - component: {fileID: 8392370936070210518}
   - component: {fileID: 6099233058785804499}
+  - component: {fileID: 4739656466912853954}
   m_Layer: 10
   m_Name: Player
   m_TagString: Untagged
@@ -309,6 +310,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 1378492776056485629}
   - {fileID: 4977515663957557084}
   - {fileID: 5930921376150215952}
   m_Father: {fileID: 0}
@@ -465,6 +467,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15e6c8da927e82b4e857edebc0f03b9c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _isSetup: 0
+  _prefabId: -2147483648
+  _componentIndex: -2147483648
+  _shouldBePooled: 0
+  _parent: {fileID: 0}
+  _invertedPathToNearestParent: 
+  _directChildren: []
+  _networkRules: {fileID: 0}
+  _visitiblityRules: {fileID: 0}
+  _compassProPOI: {fileID: 1378492776066393175}
 --- !u!114 &214271761532775238
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -742,6 +754,28 @@ MonoBehaviour:
     flat: 0
     incPercent: 0
     morePercent: 0
+--- !u!114 &4739656466912853954
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3061972371485958821}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10920de733946ba46985c5e11502e2f2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.Client.Logic.Player.PlayerCameraProvider
+  _isSetup: 0
+  _prefabId: -2147483648
+  _componentIndex: -2147483648
+  _shouldBePooled: 0
+  _parent: {fileID: 0}
+  _invertedPathToNearestParent: 
+  _directChildren: []
+  _networkRules: {fileID: 0}
+  _visitiblityRules: {fileID: 0}
+  _camera: {fileID: 8704278418441827288}
 --- !u!1 &3308623319421585094
 GameObject:
   m_ObjectHideFlags: 0
@@ -1046,6 +1080,171 @@ MonoBehaviour:
   invertHorizontalInput: 0
   invertVerticalInput: 0
   mouseInputMultiplier: 0.01
+--- !u!1001 &1378492776056868719
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 7297526087742664670}
+    m_Modifications:
+    - target: {fileID: 105238, guid: 68ba53a8493e94ec2b84b54871115f6a, type: 3}
+      propertyPath: m_Name
+      value: CompassPOI
+      objectReference: {fileID: 0}
+    - target: {fileID: 407954, guid: 68ba53a8493e94ec2b84b54871115f6a, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 407954, guid: 68ba53a8493e94ec2b84b54871115f6a, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 407954, guid: 68ba53a8493e94ec2b84b54871115f6a, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 407954, guid: 68ba53a8493e94ec2b84b54871115f6a, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 407954, guid: 68ba53a8493e94ec2b84b54871115f6a, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 407954, guid: 68ba53a8493e94ec2b84b54871115f6a, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 407954, guid: 68ba53a8493e94ec2b84b54871115f6a, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 407954, guid: 68ba53a8493e94ec2b84b54871115f6a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 407954, guid: 68ba53a8493e94ec2b84b54871115f6a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 407954, guid: 68ba53a8493e94ec2b84b54871115f6a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 11463480, guid: 68ba53a8493e94ec2b84b54871115f6a, type: 3}
+      propertyPath: id
+      value: 1029583637
+      objectReference: {fileID: 0}
+    - target: {fileID: 11463480, guid: 68ba53a8493e94ec2b84b54871115f6a, type: 3}
+      propertyPath: title
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 11463480, guid: 68ba53a8493e94ec2b84b54871115f6a, type: 3}
+      propertyPath: priority
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 11463480, guid: 68ba53a8493e94ec2b84b54871115f6a, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 11463480, guid: 68ba53a8493e94ec2b84b54871115f6a, type: 3}
+      propertyPath: visibility
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 11463480, guid: 68ba53a8493e94ec2b84b54871115f6a, type: 3}
+      propertyPath: tintColor.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11463480, guid: 68ba53a8493e94ec2b84b54871115f6a, type: 3}
+      propertyPath: tintColor.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11463480, guid: 68ba53a8493e94ec2b84b54871115f6a, type: 3}
+      propertyPath: tintColor.g
+      value: 0.19758391
+      objectReference: {fileID: 0}
+    - target: {fileID: 11463480, guid: 68ba53a8493e94ec2b84b54871115f6a, type: 3}
+      propertyPath: tintColor.r
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 11463480, guid: 68ba53a8493e94ec2b84b54871115f6a, type: 3}
+      propertyPath: visitedText
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 11463480, guid: 68ba53a8493e94ec2b84b54871115f6a, type: 3}
+      propertyPath: canBeVisited
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 11463480, guid: 68ba53a8493e94ec2b84b54871115f6a, type: 3}
+      propertyPath: iconNonVisited
+      value: 
+      objectReference: {fileID: 21300000, guid: c825e21f9f6174b32872b8373f69de13, type: 3}
+    - target: {fileID: 11463480, guid: 68ba53a8493e94ec2b84b54871115f6a, type: 3}
+      propertyPath: miniMapIconScale
+      value: 1.73
+      objectReference: {fileID: 0}
+    - target: {fileID: 11463480, guid: 68ba53a8493e94ec2b84b54871115f6a, type: 3}
+      propertyPath: miniMapShowCircle
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 11463480, guid: 68ba53a8493e94ec2b84b54871115f6a, type: 3}
+      propertyPath: miniMapVisibility
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11463480, guid: 68ba53a8493e94ec2b84b54871115f6a, type: 3}
+      propertyPath: miniMapClampPosition
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11463480, guid: 68ba53a8493e94ec2b84b54871115f6a, type: 3}
+      propertyPath: showOnScreenIndicator
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 11463480, guid: 68ba53a8493e94ec2b84b54871115f6a, type: 3}
+      propertyPath: showOffScreenIndicator
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11463480, guid: 68ba53a8493e94ec2b84b54871115f6a, type: 3}
+      propertyPath: miniMapCurrentIconScale
+      value: 0.865
+      objectReference: {fileID: 0}
+    - target: {fileID: 11463480, guid: 68ba53a8493e94ec2b84b54871115f6a, type: 3}
+      propertyPath: visibleDistanceOverride
+      value: 10000000
+      objectReference: {fileID: 0}
+    - target: {fileID: 11463480, guid: 68ba53a8493e94ec2b84b54871115f6a, type: 3}
+      propertyPath: onScreenIndicatorShowTitle
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 11463480, guid: 68ba53a8493e94ec2b84b54871115f6a, type: 3}
+      propertyPath: onScreenIndicatorShowDistance
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 11463480, guid: 68ba53a8493e94ec2b84b54871115f6a, type: 3}
+      propertyPath: miniMapCircleAnimationWhenAppears
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 68ba53a8493e94ec2b84b54871115f6a, type: 3}
+--- !u!4 &1378492776056485629 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 407954, guid: 68ba53a8493e94ec2b84b54871115f6a, type: 3}
+  m_PrefabInstance: {fileID: 1378492776056868719}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1378492776066393175 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 11463480, guid: 68ba53a8493e94ec2b84b54871115f6a, type: 3}
+  m_PrefabInstance: {fileID: 1378492776056868719}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 78ba861a214074aa4bdac708dcacc9fe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &8019247270918603045
 PrefabInstance:
   m_ObjectHideFlags: 0

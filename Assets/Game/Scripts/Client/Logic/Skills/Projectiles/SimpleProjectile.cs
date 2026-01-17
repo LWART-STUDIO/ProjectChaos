@@ -1,4 +1,5 @@
 using System;
+using Game.Scripts.Client.Logic.Enemy;
 using Game.Scripts.Services.Pool;
 using PurrNet;
 using UnityEngine;
@@ -16,9 +17,11 @@ namespace Game.Scripts.Client.Logic.Skills.Projectiles
         [SerializeField] private float _heightAmplitude = 1f;
         [SerializeField] private float _sideAmplitude = 1f;
         [SerializeField] private bool _randomizeTrajectoryStart;
+        
 
         private float _trajectoryTime;
         private float _trajectoryPhaseOffset;
+        private EnemyHealth _cashedEnemy =null;
 
         [Header("Stats")]
         private float _damage;
@@ -202,12 +205,22 @@ namespace Game.Scripts.Client.Logic.Skills.Projectiles
             if (Physics.Raycast(
                     position + Vector3.up * 10f,
                     Vector3.down,
+                    out RaycastHit hit2,
+                    50f,
+                    _wallLayer))
+            {
+                return hit2.point.y + _distanceFromGround + _radius;
+            }
+            if (Physics.Raycast(
+                    position + Vector3.up * 10f,
+                    Vector3.down,
                     out RaycastHit hit,
                     50f,
                     _groundLayer))
             {
                 return hit.point.y + _distanceFromGround + _radius;
             }
+         
 
             return transform.position.y;
         }
@@ -225,6 +238,9 @@ namespace Game.Scripts.Client.Logic.Skills.Projectiles
             {
                 if (hit.collider.TryGetComponent(out EnemyHealth enemy) && enemy.isSpawned)
                 {
+                    if(_cashedEnemy==enemy)
+                        return;
+                    _cashedEnemy = enemy;
                     enemy.ChangeHealth(-_damage);
                 }
 
@@ -245,7 +261,7 @@ namespace Game.Scripts.Client.Logic.Skills.Projectiles
                 }
 
                 _currentWallBounceCountLeft--;
-
+                _cashedEnemy = null;
                 Vector3 hitPos = hit.point + hit.normal * (_radius + 0.01f);
 
                 _startPositionXZ = new Vector3(hitPos.x, 0f, hitPos.z);

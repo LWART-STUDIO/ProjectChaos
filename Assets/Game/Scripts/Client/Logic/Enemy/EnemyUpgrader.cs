@@ -9,8 +9,8 @@ namespace Game.Scripts.Client.Logic.Enemy
 
         public void UpgradeEnemy(int value)
         {
-            _enemyHealth.Upgrade(value*2f);
-            _enemyAttackMelee.Upgrade(value * 2f);
+            _enemyHealth.Upgrade(value);
+            _enemyAttackMelee.Upgrade(value);
         }
     }
 }

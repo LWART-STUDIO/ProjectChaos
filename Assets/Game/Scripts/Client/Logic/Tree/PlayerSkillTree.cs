@@ -31,7 +31,7 @@ public class PlayerSkillTree : MonoBehaviour
     
     private Vector2 _lastMousePos;
     private float _currentZoom = 1f;
-    private float defaultZoom = 1f;
+    private float defaultZoom = 2f;
     private Vector2 defaultPosition=Vector2.zero;
     
 

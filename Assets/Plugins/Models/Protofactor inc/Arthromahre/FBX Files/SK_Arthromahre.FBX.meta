@@ -3,7 +3,12 @@ guid: f5c62aa5dde885344ab7852c2c6ff001
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_Arthromahre
+    second: {fileID: 2100000, guid: e97ebcbc45f8b9d409b8be2ccbfbb761, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

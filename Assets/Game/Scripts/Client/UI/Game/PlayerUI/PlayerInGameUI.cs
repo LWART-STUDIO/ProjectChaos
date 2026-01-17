@@ -1,3 +1,4 @@
+using System.Collections;
 using CompassNavigatorPro;
 using Game.Scripts.Services.UI;
 using Sisus.Init;
@@ -17,10 +18,13 @@ namespace Game.Scripts.Client.UI.Game.PlayerUI
             _healthText.text = health.ToString();
         }
 
-        public void SetPlayerCompas(Camera camera)
+        public void SetPlayerCompas(Transform playerTransform)
         {
-            _compassPro.cameraMain = camera;
-            _compassPro.follow = camera.transform;
+            _compassPro.cameraMain = playerTransform.GetComponentInChildren<Camera>();
+            _compassPro.follow = playerTransform;
+
         }
+
+      
     }
 }

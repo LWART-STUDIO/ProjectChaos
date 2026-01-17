@@ -1,10 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Game.Scripts.Client.Logic.Enemy;
 using Game.Scripts.Client.Logic.Player;
 using Game.Scripts.Services.Waves;
 using PurrNet;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace Game.Scripts.Client.Logic.Game
 {
@@ -13,21 +15,30 @@ namespace Game.Scripts.Client.Logic.Game
         [Header("Waves")]
         [SerializeField] private WavesData _data;
 
-        [Header("Spawn")]
-        [SerializeField] private float _spawnRadius = 5f;
+        [Header("Spawn Area")]
+        [SerializeField] private float _spawnRadius = 6f;
         [SerializeField] private int _maxAttempts = 10;
-        [SerializeField] private float _groundRayHeight = 5f;
-        [SerializeField] private float _ceilingCheckHeight = 2f;
 
-        [Header("Layers")]
-        [SerializeField] private LayerMask _groundLayer;
+        [Header("Pressure Control")]
+        [SerializeField] private int _maxAliveEnemies = 50;
 
-        private Coroutine _spawnCoroutine;
+        [Header("Batch Spawn")]
+        [SerializeField] private int _minBatchSize = 2;
+        [SerializeField] private int _maxBatchSize = 5;
+        [SerializeField] private float _batchInterval = 0.5f;
+        [Header("Wave Flow")]
+        [SerializeField] private int _earlyNextWaveThreshold = 3;
 
         private int _waveIndex;
-        private int _difficultyLevel = 1;
+        private int _difficultyLevel;
+        private int _roundRobinIndex;
+        private int _aliveEnemies;
 
-        private int _playerIndex;
+        private Coroutine _spawnRoutine;
+
+        // =========================
+        // Lifecycle
+        // =========================
 
         protected override void OnSpawned()
         {
@@ -36,26 +47,46 @@ namespace Game.Scripts.Client.Logic.Game
 
             _waveIndex = 0;
             _difficultyLevel = 1;
-            _playerIndex = 0;
+            _roundRobinIndex = 0;
+            _aliveEnemies = 0;
 
-            if (!isServer)
-                return;
-            _spawnCoroutine = StartCoroutine(SpawnLoop());
+            EnemyHealth.onEnemyKilled += OnEnemyKilled;
         }
 
-        #region Spawn Loop
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+            EnemyHealth.onEnemyKilled -= OnEnemyKilled;
+        }
+
+        public void StartSpawning()
+        {
+            if (!isServer || _spawnRoutine != null)
+                return;
+
+            _spawnRoutine = StartCoroutine(SpawnLoop());
+        }
+
+        // =========================
+        // Main Loop
+        // =========================
 
         private IEnumerator SpawnLoop()
         {
             while (true)
             {
-                if (PlayerHealth.AllPlayers==null || PlayerHealth.AllPlayers.Count == 0)
+                if (!HasAlivePlayers())
+                {
                     yield return null;
-                if(networkManager.players.Count<=0)
-                    yield return null;
-                Wave wave = GetCurrentWave();
+                    continue;
+                }
 
+                Wave wave = GetCurrentWave();
                 yield return SpawnWave(wave);
+
+                // ожидание завершения волны
+                while (_aliveEnemies > _earlyNextWaveThreshold)
+                    yield return null;
 
                 _waveIndex++;
                 _difficultyLevel++;
@@ -67,83 +98,123 @@ namespace Game.Scripts.Client.Logic.Game
             if (_waveIndex < _data.Waves.Count)
                 return _data.Waves[_waveIndex];
 
-            // бесконечные волны — последняя волна
-            return _data.Waves[_data.Waves.Count - 1];
+            // бесконечные волны
+            return _data.Waves[^1];
         }
+
+        // =========================
+        // Wave Spawn
+        // =========================
 
         private IEnumerator SpawnWave(Wave wave)
         {
-            if (PlayerHealth.AllPlayers == null || PlayerHealth.AllPlayers.Count == 0)
-                yield break;
+            Queue<GameObject> spawnQueue = BuildSpawnQueue(wave);
 
-            foreach (var enemyPrefab in wave.EnemiesToSpawn)
+            while (spawnQueue.Count > 0)
             {
-                foreach (var player in PlayerHealth.AllPlayers.Values)
-                {
-                    Vector3? spawnPos = FindValidSpawnPosition(player.transform.position);
+                // ждём свободные слоты
+                while (_aliveEnemies >= _maxAliveEnemies)
+                    yield return null;
 
-                    if (spawnPos.HasValue)
-                    {
-                        SpawnEnemy(enemyPrefab, spawnPos.Value);
-                        yield return new WaitForSeconds(wave.SpawnInterval);
-                    }
-                    else
-                    {
-                        yield return null;
-                    }
+                int desiredBatch = Random.Range(_minBatchSize, _maxBatchSize + 1);
+                int availableSlots = _maxAliveEnemies - _aliveEnemies;
+                int actualBatch = Mathf.Min(desiredBatch, availableSlots);
+
+                // если нет места — ждём дальше
+                if (actualBatch <= 0)
+                {
+                    yield return null;
+                    continue;
                 }
+
+                for (int i = 0; i < actualBatch && spawnQueue.Count > 0; i++)
+                {
+                    SpawnNextEnemy(spawnQueue.Dequeue());
+                }
+
+                yield return new WaitForSeconds(_batchInterval);
             }
         }
 
-        #endregion
+        // =========================
+        // Spawn helpers
+        // =========================
 
-        #region Spawn Helpers
+        private Queue<GameObject> BuildSpawnQueue(Wave wave)
+        {
+            int playerCount = PlayerHealth.AllPlayers.Count;
+            int multiplier = Mathf.Max(1, playerCount);
 
-        private void SpawnEnemy(GameObject prefab, Vector3 position)
+            Queue<GameObject> queue = new();
+
+            foreach (var enemy in wave.EnemiesToSpawn)
+            {
+                for (int i = 0; i < multiplier; i++)
+                    queue.Enqueue(enemy);
+            }
+
+            return queue;
+        }
+
+        private void SpawnNextEnemy(GameObject prefab)
+        {
+            var players = PlayerHealth.AllPlayers.Values.ToList();
+            if (players.Count == 0)
+                return;
+
+            PlayerHealth target = players[_roundRobinIndex];
+            _roundRobinIndex = (_roundRobinIndex + 1) % players.Count;
+
+            Vector3? pos = FindValidSpawnPosition(target.transform.position);
+            if (!pos.HasValue)
+                return;
+
+            InstantiateEnemy(prefab, pos.Value);
+        }
+
+        private void InstantiateEnemy(GameObject prefab, Vector3 position)
         {
             GameObject enemy = Instantiate(prefab, position, Quaternion.identity);
+            _aliveEnemies++;
 
             if (enemy.TryGetComponent(out EnemyUpgrader upgrader))
                 upgrader.UpgradeEnemy(_difficultyLevel);
+        }
+
+        // =========================
+        // Event handlers
+        // =========================
+
+        private void OnEnemyKilled(EnemyHealth enemy)
+        {
+            _aliveEnemies = Mathf.Max(0, _aliveEnemies - 1);
+        }
+
+        // =========================
+        // Utils
+        // =========================
+
+        private bool HasAlivePlayers()
+        {
+            return PlayerHealth.AllPlayers != null &&
+                   PlayerHealth.AllPlayers.Count > 0 &&
+                   networkManager.players.Count > 0;
         }
 
         private Vector3? FindValidSpawnPosition(Vector3 playerPosition)
         {
             for (int i = 0; i < _maxAttempts; i++)
             {
-                // Случайный угол
-                float angle = Random.Range(0f, 360f) * Mathf.Deg2Rad;
+                float angle = Random.Range(0f, Mathf.PI * 2f);
+                Vector3 candidate =
+                    playerPosition +
+                    new Vector3(Mathf.Cos(angle), 0f, Mathf.Sin(angle)) * _spawnRadius;
 
-                // Точка на окружности радиуса _spawnRadius
-                Vector3 candidate = playerPosition + new Vector3(
-                    Mathf.Cos(angle) * _spawnRadius,
-                    0f,
-                    Mathf.Sin(angle) * _spawnRadius
-                );
-
-                // Проверяем землю
-                if (!Physics.Raycast(
-                        candidate + Vector3.up * _groundRayHeight,
-                        Vector3.down,
-                        out RaycastHit groundHit,
-                        Mathf.Infinity,
-                        _groundLayer))
-                    continue;
-
-                // Проверяем потолок
-                if (Physics.Raycast(
-                        groundHit.point,
-                        Vector3.up,
-                        _ceilingCheckHeight,
-                        _groundLayer))
-                    continue;
-
-                return groundHit.point;
+                if (NavMesh.SamplePosition(candidate, out NavMeshHit hit, 5f, NavMesh.AllAreas))
+                    return hit.position;
             }
 
-            return null; // не нашли валидную точку
+            return null;
         }
-
-        #endregion
     }
 }

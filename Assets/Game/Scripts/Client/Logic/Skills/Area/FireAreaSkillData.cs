@@ -19,6 +19,7 @@ namespace Game.Scripts.Client.Logic.Skills.Area
         }
         [SerializeField] private List<LevelData> _levels =  new List<LevelData>();
         [SerializeField] private AnimationCurve _damageCurve = AnimationCurve.Linear(0, 1, 1, 10);
+        [SerializeField] private AnimationCurve _sizeCurve = AnimationCurve.Linear(0, 1, 1, 10);
         public LevelData GetLevelData(int level)=>_levels[Mathf.Clamp(level,0,_levels.Count-1)];
         [Button]
         public void ApplyDamageCurve()
@@ -31,6 +32,20 @@ namespace Game.Scripts.Client.Logic.Skills.Area
                 float t = i / (float)(count - 1); // 0..1 по всем уровням
                 LevelData ld = _levels[i];
                 ld.damage = _damageCurve.Evaluate(t);
+                _levels[i] = ld;
+            }
+        }
+        [Button]
+        public void ApplySizeCurve()
+        {
+            int count = _levels.Count;
+            if (count == 0) return;
+
+            for (int i = 0; i < count; i++)
+            {
+                float t = i / (float)(count - 1); // 0..1 по всем уровням
+                LevelData ld = _levels[i];
+                ld.size = _sizeCurve.Evaluate(t);
                 _levels[i] = ld;
             }
         }

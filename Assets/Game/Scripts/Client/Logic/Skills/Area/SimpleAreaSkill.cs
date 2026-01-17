@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Game.Scripts.Client.Logic.Enemy;
 using Game.Scripts.Services.Pool;
 using PurrNet;
 using UnityEngine;
@@ -16,7 +17,7 @@ namespace Game.Scripts.Client.Logic.Skills.Area
         private float _distanceFromGround;
         private float _lastAttackTime = 0;
         private readonly HashSet<EnemyHealth> _enemiesInArea = new();
-        private static readonly List<EnemyHealth> _damageBuffer = new();
+        private readonly List<EnemyHealth> _damageBuffer = new();
         
 
         public void Initialize(float damage,
@@ -92,9 +93,7 @@ namespace Game.Scripts.Client.Logic.Skills.Area
             }
 
             foreach (var enemy in _damageBuffer)
-            {
                 enemy.ChangeHealth(-_damage);
-            }
         }
         
 

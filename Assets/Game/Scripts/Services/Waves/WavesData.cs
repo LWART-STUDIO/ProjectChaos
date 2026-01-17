@@ -7,35 +7,42 @@ namespace Game.Scripts.Services.Waves
     [System.Serializable]
     public class Wave
     {
-        // Номер волны (для удобства)
+        [Header("Info")]
         public int WaveNumber;
 
-        // Список врагов для этой волны
-        public List<GameObject> EnemiesToSpawn = new List<GameObject>();
+        [Header("Difficulty")]
+        public int WaveValue;              // Бюджет сложности
+        public int TargetEnemyCount;       // Желаемое количество врагов
+        public int WaveDuration;           // Длительность волны (сек)
 
-        // Продолжительность волны (в секундах)
-        public int WaveDuration;
+        [Header("Spawn")]
+        public float SpawnInterval;         // Интервал спауна (рассчитан)
+        public List<GameObject> EnemiesToSpawn = new();
 
-        // Интервал спауна (рассчитывается автоматически)
-        public float SpawnInterval;
-
-        // Значение сложности (стоимость волны), рассчитанное по кривой
-        public int WaveValue;
+        [Header("Special")]
+        public List<int> EliteIndices = new(); // Индексы элитных врагов
     }
-    [CreateAssetMenu(fileName = "WavesData", menuName = "Custom/Waves/WavesData")]
+     [CreateAssetMenu(fileName = "WavesData", menuName = "Custom/Waves/WavesData")]
     public class WavesData : ScriptableObject
     {
         [Header("Enemy Pool")]
-        [SerializeField] private List<EnemyData> _enemies = new List<EnemyData>();
+        [SerializeField] private List<EnemyData> _enemies = new();
 
         [Header("Generation Settings")]
-        [SerializeField] private int _totalWaves = 10; // Количество волн для генерации
-        [SerializeField] private AnimationCurve _difficultyCurve = AnimationCurve.Linear(0, 1, 1, 1); // Кривая сложности
-        [SerializeField] private int _maxWaveDuration = 60; // Максимальная продолжительность волны (в секундах)
+        [SerializeField] private int _totalWaves = 20;
+        [SerializeField] private int _minWaveDuration = 30;
+        [SerializeField] private int _maxWaveDuration = 60;
+
+        [SerializeField] private AnimationCurve _difficultyCurve =
+            AnimationCurve.EaseInOut(0, 0.3f, 1, 1f);
 
         [Header("Generated Waves")]
-        [SerializeField] private List<Wave> _waves = new List<Wave>();
-        public List<Wave> Waves => _waves;
+        [SerializeField] private List<Wave> _waves = new();
+        public IReadOnlyList<Wave> Waves => _waves;
+
+        // =========================
+        // Generation
+        // =========================
 
         [Button]
         public void GenerateAllWaves()
@@ -44,82 +51,131 @@ namespace Game.Scripts.Services.Waves
 
             for (int i = 1; i <= _totalWaves; i++)
             {
-                int waveValue = Mathf.RoundToInt(_difficultyCurve.Evaluate((float)(i - 1) / (_totalWaves - 1)) * i);
-                int waveDuration = Mathf.RoundToInt(Mathf.Lerp(30, _maxWaveDuration, (float)(i - 1) / (_totalWaves - 1)));
+                float t = (float)(i - 1) / (_totalWaves - 1);
 
-                Wave newWave = new Wave
+                int waveValue = Mathf.RoundToInt(
+                    _difficultyCurve.Evaluate(t) * Mathf.Lerp(10, 200, t)
+                );
+
+                int targetCount = Mathf.RoundToInt(
+                    Mathf.Lerp(5, 80, t)
+                );
+
+                int duration = Mathf.RoundToInt(
+                    Mathf.Lerp(_minWaveDuration, _maxWaveDuration, t)
+                );
+
+                var wave = new Wave
                 {
                     WaveNumber = i,
                     WaveValue = waveValue,
-                    WaveDuration = waveDuration
+                    TargetEnemyCount = targetCount,
+                    WaveDuration = duration
                 };
 
-                GenerateEnemiesForWave(newWave);
+                GenerateEnemiesForWave(wave);
+                CalculateSpawnInterval(wave);
+                GenerateEliteIndices(wave, t);
 
-                if (newWave.EnemiesToSpawn.Count > 0)
-                {
-                    float minInterval = Mathf.Lerp(2.0f, 0.4f, (float)(i - 1) / Mathf.Max(1, _totalWaves - 1));
-                    newWave.SpawnInterval = minInterval;
-                }
-                else
-                {
-                    newWave.SpawnInterval = 0; // На случай, если волна пустая
-                }
-
-                _waves.Add(newWave);
+                _waves.Add(wave);
             }
         }
+
+        // =========================
+        // Enemy generation
+        // =========================
 
         private void GenerateEnemiesForWave(Wave wave)
         {
-            List<GameObject> generatedEnemies = new List<GameObject>();
+            var result = new List<GameObject>();
             int remainingValue = wave.WaveValue;
 
-            while (remainingValue > 0)
+            var sortedEnemies = new List<EnemyData>(_enemies);
+            sortedEnemies.Sort((a, b) => a.Cost.CompareTo(b.Cost));
+
+            if (sortedEnemies.Count == 0)
+                return;
+
+            // 1. Массовка (дешёвые враги)
+            EnemyData cheapest = sortedEnemies[0];
+
+            for (int i = 0; i < wave.TargetEnemyCount; i++)
             {
-                // Найдём врагов, стоимость которых <= remainingValue
-                List<int> validIndices = new List<int>();
-                for (int i = 0; i < _enemies.Count; i++)
-                {
-                    if (_enemies[i].Cost <= remainingValue)
-                    {
-                        validIndices.Add(i);
-                    }
-                }
-
-                if (validIndices.Count == 0)
-                {
-                    // Если не нашли подходящего врага, выходим
+                if (remainingValue < cheapest.Cost)
                     break;
-                }
 
-                // Выбираем случайного врага из подходящих
-                int randIndex = validIndices[Random.Range(0, validIndices.Count)];
-                int randEnemyCost = _enemies[randIndex].Cost;
-
-                generatedEnemies.Add(_enemies[randIndex].EnemyPrefab);
-                remainingValue -= randEnemyCost;
+                result.Add(cheapest.EnemyPrefab);
+                remainingValue -= cheapest.Cost;
             }
 
-            wave.EnemiesToSpawn = generatedEnemies;
+            // 2. Усиление волны (элитные / сильные)
+            int upgradeTries = result.Count / 4;
+
+            for (int i = 0; i < upgradeTries; i++)
+            {
+                var candidates = sortedEnemies.FindAll(e => e.Cost <= remainingValue);
+                if (candidates.Count == 0)
+                    break;
+
+                EnemyData strong = candidates[Random.Range(0, candidates.Count)];
+                result.Add(strong.EnemyPrefab);
+                remainingValue -= strong.Cost;
+            }
+
+            wave.EnemiesToSpawn = result;
         }
 
-        // Публичный метод для получения волны по индексу (0-based)
+        // =========================
+        // Spawn timing
+        // =========================
+
+        private void CalculateSpawnInterval(Wave wave)
+        {
+            if (wave.EnemiesToSpawn.Count == 0)
+            {
+                wave.SpawnInterval = 0f;
+                return;
+            }
+
+            wave.SpawnInterval =
+                (float)wave.WaveDuration / wave.EnemiesToSpawn.Count;
+        }
+
+        // =========================
+        // Elite enemies
+        // =========================
+
+        private void GenerateEliteIndices(Wave wave, float t)
+        {
+            wave.EliteIndices.Clear();
+
+            float eliteChance = Mathf.Lerp(0.05f, 0.3f, t);
+
+            for (int i = 0; i < wave.EnemiesToSpawn.Count; i++)
+            {
+                if (Random.value < eliteChance)
+                    wave.EliteIndices.Add(i);
+            }
+        }
+
+        // =========================
+        // Public API
+        // =========================
+
         public Wave GetWave(int index)
         {
-            if (index >= 0 && index < _waves.Count)
-            {
-                return _waves[index];
-            }
-            return null;
+            if (index < 0 || index >= _waves.Count)
+                return null;
+
+            return _waves[index];
         }
 
-        // Публичный метод для получения общего количества волн
-        public int GetTotalWaves()
-        {
-            return _waves.Count;
-        }
+        public int GetTotalWaves() => _waves.Count;
     }
+
+    // =========================
+    // Enemy data
+    // =========================
 
     [System.Serializable]
     public class EnemyData

@@ -21,8 +21,7 @@ namespace Game.Scripts.Client.Logic.Enemy
         protected override void OnSpawned(bool asServer)
         {
             base.OnSpawned(asServer);
-            if(PlayerHealth.AllPlayers.ContainsKey(networkManager.localPlayer))
-                _mainCamera = PlayerHealth.AllPlayers[networkManager.localPlayer].transform.GetComponentInChildren<Camera>();
+           _mainCamera = PlayerCameraProvider.LocalCamera;
         }
         
 
@@ -40,6 +39,7 @@ namespace Game.Scripts.Client.Logic.Enemy
 
             // 3️⃣ обновляем полоску
             _fillImage.fillAmount = Mathf.Clamp01(_enemyHealth.Health / _enemyHealth.MaxHealth);
+
         }
 
   

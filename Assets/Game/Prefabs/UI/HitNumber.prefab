@@ -84,7 +84,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 0
+  m_PresetInfoIsWorld: 1
 --- !u!114 &2608731321012998323
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -97,6 +97,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32bb6aad29ef9f84dbe7da576ccb71c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.Client.UI.Game.World.DamagePopup
+  _isSetup: 0
+  _prefabId: -2147483648
+  _componentIndex: -2147483648
+  _shouldBePooled: 0
+  _parent: {fileID: 0}
+  _invertedPathToNearestParent: 
+  _directChildren: []
+  _networkRules: {fileID: 0}
+  _visitiblityRules: {fileID: 0}
   _text: {fileID: 6592368102738792526}
   _lifetime: 1
   _floatSpeed: 1.5
@@ -166,7 +175,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 30
+  m_text: 9999999
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 1ab85b9c494a9ba498edb4469b20ee2e, type: 2}
   m_sharedMaterial: {fileID: 6070061758891052490, guid: 1ab85b9c494a9ba498edb4469b20ee2e, type: 2}

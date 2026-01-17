@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Game.Scripts.Client.UI.Game.World
 {
-    public class DamagePopup : NetworkBehaviour
+    public class DamagePopup : MonoBehaviour
     {
         [SerializeField] private TMP_Text _text;
         [SerializeField] private float _lifetime = 1f;
@@ -17,7 +17,7 @@ namespace Game.Scripts.Client.UI.Game.World
 
         public void Init(float damage, Vector3 worldPosition)
         {
-            _camera = PlayerHealth.AllPlayers[networkManager.localPlayer].transform.GetComponentInChildren<Camera>();;
+            _camera = PlayerCameraProvider.LocalCamera;
             _text.text = Mathf.Abs(damage).ToString("0");
 
             Vector3 random = new Vector3(

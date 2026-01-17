@@ -17,12 +17,40 @@ PrefabInstance:
       value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 6265585724353146765, guid: 82d829c347b75054f8912722ec5e14ca, type: 3}
+      propertyPath: _renderer
+      value: 
+      objectReference: {fileID: 7299219861317167945}
+    - target: {fileID: 6265585724353146765, guid: 82d829c347b75054f8912722ec5e14ca, type: 3}
       propertyPath: _maxHealth
       value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 6265585724353146765, guid: 82d829c347b75054f8912722ec5e14ca, type: 3}
+      propertyPath: _expFOrKill
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 6265585724353146765, guid: 82d829c347b75054f8912722ec5e14ca, type: 3}
       propertyPath: _maxHealthDefault
       value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 6265585724353146765, guid: 82d829c347b75054f8912722ec5e14ca, type: 3}
+      propertyPath: _hpByLevel.Array.size
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 6265585724353146765, guid: 82d829c347b75054f8912722ec5e14ca, type: 3}
+      propertyPath: _hpCurve.m_Curve.Array.data[0].value
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 6265585724353146765, guid: 82d829c347b75054f8912722ec5e14ca, type: 3}
+      propertyPath: _hpCurve.m_Curve.Array.data[1].value
+      value: 2500
+      objectReference: {fileID: 0}
+    - target: {fileID: 6265585724353146765, guid: 82d829c347b75054f8912722ec5e14ca, type: 3}
+      propertyPath: _hpCurve.m_Curve.Array.data[0].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6265585724353146765, guid: 82d829c347b75054f8912722ec5e14ca, type: 3}
+      propertyPath: _hpCurve.m_Curve.Array.data[1].outSlope
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 8938450240552127687, guid: 82d829c347b75054f8912722ec5e14ca, type: 3}
       propertyPath: m_LocalPosition.x
@@ -63,6 +91,26 @@ PrefabInstance:
     - target: {fileID: 8938450240552127687, guid: 82d829c347b75054f8912722ec5e14ca, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9060703235407567913, guid: 82d829c347b75054f8912722ec5e14ca, type: 3}
+      propertyPath: _damageByLevel.Array.size
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 9060703235407567913, guid: 82d829c347b75054f8912722ec5e14ca, type: 3}
+      propertyPath: _damageCurve.m_Curve.Array.data[0].value
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 9060703235407567913, guid: 82d829c347b75054f8912722ec5e14ca, type: 3}
+      propertyPath: _damageCurve.m_Curve.Array.data[1].value
+      value: 300
+      objectReference: {fileID: 0}
+    - target: {fileID: 9060703235407567913, guid: 82d829c347b75054f8912722ec5e14ca, type: 3}
+      propertyPath: _damageCurve.m_Curve.Array.data[0].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9060703235407567913, guid: 82d829c347b75054f8912722ec5e14ca, type: 3}
+      propertyPath: _damageCurve.m_Curve.Array.data[1].outSlope
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 9106263823997635096, guid: 82d829c347b75054f8912722ec5e14ca, type: 3}
       propertyPath: m_Constraints
@@ -133,6 +181,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 63f21844ecb779d4bbb862a368b5ce54, type: 3}
       propertyPath: m_Name
       value: Muscomorph
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 63f21844ecb779d4bbb862a368b5ce54, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

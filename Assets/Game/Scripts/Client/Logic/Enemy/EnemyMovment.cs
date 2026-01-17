@@ -1,4 +1,6 @@
 using System;
+using FlexiblePathfindingSystem3D;
+using Game.Scripts.Client.Logic.Enemy;
 using Game.Scripts.Client.Logic.Player;
 using ProjectDawn.Navigation.Hybrid;
 using PurrNet;
@@ -6,9 +8,12 @@ using UnityEngine;
 [RequireComponent(typeof(AgentAuthoring))]
 public class EnemyMovment : NetworkBehaviour,ITick
 {
+    [SerializeField] private EnemyHealth _enemyHealth;
     private AgentAuthoring _agent;
     private PlayerHealth _targetPlayer;
     private float _lastPlayerCheck;
+    
+    
 
     private void Awake()
     {
@@ -36,6 +41,13 @@ public class EnemyMovment : NetworkBehaviour,ITick
             return;
         if(!_targetPlayer)
             return;
+        if(!_enemyHealth.Spawned)
+            return;
+        if (_enemyHealth.Health <= 0)
+        {
+            _agent.enabled = false;
+            return;
+        }
         var body = _agent.EntityBody;
         body.Destination = _targetPlayer.transform.position;;
         body.IsStopped = false;

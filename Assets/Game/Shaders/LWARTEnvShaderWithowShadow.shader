@@ -12,7 +12,17 @@ Shader "LWART/EnvShaderWithowShadow"
 		[HideInInspector] _DstBlend ("blending destination", Float) = 0.0
 		[TCP2Separator]
 
-		// Injection Point: 'Properties/Start'
+		//================================
+		// Injected Code for 'Properties/Start'
+		[TCP2Header(Dissolve)]
+		[NoScaleOffset] _MaskNoiseMap ("Mask Noise Map", 2D) = "white" {}
+		[HDR] _MaskEdgeColor ("Mask Edge Color", Color) = (1,1,1,1)
+		_AlphaClipThreshold ("Alpha Clip Threshold", Range(0.0, 1.0)) = 0.5
+		_EdgeThreshold ("Edge Threshold", Range(0.0, 1.0)) = 0.5
+		[ToggleUI] _InvertDissolveEffect ("Invert Dissolve Effect", Float) = 0.0
+		[TCP2Separator]
+		//================================
+
 		[TCP2HeaderHelp(Base)]
 		_Color ("Color", Color) = (1,1,1,1)
 		[TCP2ColorNoAlpha] _HColor ("Highlight Color", Color) = (0.75,0.75,0.75,1)
@@ -20,12 +30,6 @@ Shader "LWART/EnvShaderWithowShadow"
 		[MainTexture] _BaseMap ("Albedo", 2D) = "white" {}
 		[TCP2Separator]
 
-		[TCP2Header(Ramp Shading)]
-		
-		_RampThreshold ("Threshold", Range(0.01,1)) = 0.5
-		_RampSmoothing ("Smoothing", Range(0.001,1)) = 0.5
-		[TCP2Separator]
-		
 		// Injection Point: 'Properties/End'
 
 		// Avoid compile error if the properties are ending with a drawer
@@ -68,21 +72,30 @@ Shader "LWART/EnvShaderWithowShadow"
 		#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 		#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
 
-		// Injection Point: 'Include Files'
+		//================================
+		// Injected Code for 'Include Files'
+		#include "Assets/Plugins/VFX/Amazing Assets/Dynamic Radial Masks/Shaders/CGINC/HeightField/DynamicRadialMasks_HeightField_1_Advanced_Normalized_ID1_Global.cginc"
+		TCP2_TEX2D_WITH_SAMPLER(_MaskNoiseMap); // Объявляем текстуру вне CBUFFER
+		//================================
 
 		// Uniforms
 
 		// Shader Properties
 		TCP2_TEX2D_WITH_SAMPLER(_BaseMap);
-		// Injection Point: 'Variables/Outside CBuffer'
+		//================================
+		// Injected Code for 'Variables/Outside CBuffer'
+		// Переменные из свойств объявляем здесь, т.к. TCP2 может не помещать все в CBUFFER автоматически в этом случае
+		fixed4 _MaskEdgeColor;
+		float _AlphaClipThreshold;
+		float _InvertDissolveEffect;
+		float _EdgeThreshold;
+		//================================
 
 		CBUFFER_START(UnityPerMaterial)
 			
 			// Shader Properties
 			float4 _BaseMap_ST;
 			fixed4 _Color;
-			float _RampThreshold;
-			float _RampSmoothing;
 			fixed4 _SColor;
 			fixed4 _HColor;
 			// Injection Point: 'Variables/Inside CBuffer'
@@ -107,7 +120,11 @@ Shader "LWART/EnvShaderWithowShadow"
 			Tags
 			{
 				"LightMode"="UniversalForward"
-				// Injection Point: 'Main Pass/Tags'
+				//================================
+				// Injected Code for 'Main Pass/Tags'
+				"RenderType" = "TransparentCutout"
+				//================================
+
 			}
 		Blend [_SrcBlend] [_DstBlend]
 		Cull [_Cull]
@@ -120,7 +137,11 @@ Shader "LWART/EnvShaderWithowShadow"
 			#pragma prefer_hlslcc gles
 			#pragma exclude_renderers d3d11_9x
 			#pragma target 3.0
-			// Injection Point: 'Main Pass/Pragma'
+			//================================
+			// Injected Code for 'Main Pass/Pragma'
+			#pragma shader_feature_local _ALPHATEST_ON
+			// Не используем ToggleOff, просто Float, поэтому не добавляем _INVERTDISSOLVE_ON
+			//================================
 
 			// -------------------------------------
 			// Material keywords
@@ -171,7 +192,11 @@ Shader "LWART/EnvShaderWithowShadow"
 				half3 vertexLights : TEXCOORD2;
 			#endif
 				float2 pack0 : TEXCOORD3; /* pack0.xy = texcoord0 */
-				// Injection Point: 'Main Pass/Varyings'
+				//================================
+				// Injected Code for 'Main Pass/Varyings'
+				// Не нужно добавлять worldPos, т.к. используем input.worldPosAndFog.xyz
+				//================================
+
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 				UNITY_VERTEX_OUTPUT_STEREO
 			};
@@ -220,7 +245,20 @@ Shader "LWART/EnvShaderWithowShadow"
 				UNITY_SETUP_INSTANCE_ID(input);
 				UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
 
-				// Injection Point: 'Main Pass/Fragment Shader/Start'
+				//================================
+				// Injected Code for 'Main Pass/Fragment Shader/Start'
+				// Сэмплируем шумовую карту
+				half4 noiseSample = TCP2_TEX2D_SAMPLE(_MaskNoiseMap, _MaskNoiseMap, input.pack0.xy);
+				half noiseValue = noiseSample.r;
+				
+				// Вычисляем маску диссольва DRM
+				float dissolveMask = DynamicRadialMasks_HeightField_1_Advanced_Normalized_ID1_Global(input.worldPosAndFog.xyz, noiseValue);
+				
+				// Применяем инверсию, если нужно (используем Float, а не keyword)
+				if (_InvertDissolveEffect > 0.5) {
+				    dissolveMask = 1.0 - dissolveMask;
+				}
+				//================================
 
 				float3 positionWS = input.worldPosAndFog.xyz;
 				float3 normalWS = normalize(input.normal);
@@ -230,8 +268,6 @@ Shader "LWART/EnvShaderWithowShadow"
 				float4 __mainColor = ( _Color.rgba );
 				float __alpha = ( __albedo.a * __mainColor.a );
 				float __ambientIntensity = ( 1.0 );
-				float __rampThreshold = ( _RampThreshold );
-				float __rampSmoothing = ( _RampSmoothing );
 				float3 __shadowColor = ( _SColor.rgb );
 				float3 __highlightColor = ( _HColor.rgb );
 
@@ -278,15 +314,13 @@ Shader "LWART/EnvShaderWithowShadow"
 				half3 lightDir = mainLight.direction;
 				half3 lightColor = mainLight.color.rgb;
 
-				half atten = mainLight.shadowAttenuation * mainLight.distanceAttenuation;
+				half atten = mainLight.shadowAttenuation;
 
 				half ndl = dot(normalWS, lightDir);
 				half3 ramp;
 				
-				half rampThreshold = __rampThreshold;
-				half rampSmooth = __rampSmoothing * 0.5;
 				ndl = saturate(ndl);
-				ramp = smoothstep(rampThreshold - rampSmooth, rampThreshold + rampSmooth, ndl);
+				ramp = float3(1, 1, 1);
 
 				// apply attenuation
 				ramp *= atten;
@@ -296,7 +330,7 @@ Shader "LWART/EnvShaderWithowShadow"
 				
 				// output color
 				half3 color = half3(0,0,0);
-				color += albedo * lightColor.rgb * ramp;
+				color += albedo * ramp;
 
 				// Additional lights loop
 
@@ -310,7 +344,18 @@ Shader "LWART/EnvShaderWithowShadow"
 
 				color += emission;
 
-				// Injection Point: 'Main Pass/Fragment Shader/End'
+				//================================
+				// Injected Code for 'Main Pass/Fragment Shader/End'
+				// Проверяем маску диссольва против порога (как в рабочем шейдере)
+				clip(dissolveMask - _AlphaClipThreshold);
+				
+				// Добавляем цвет края диссольва к эмиссии (как в рабочем шейдере)
+				// Используем _RampSmoothing как ширину края
+				half3 dissolveEdgeMask = saturate(1.0 - abs(dissolveMask - _AlphaClipThreshold) / max(0.001, _EdgeThreshold)); // __rampSmoothing из TCP2
+				//color-=emission;
+				emission += dissolveEdgeMask * _MaskEdgeColor.rgb;
+				color+=emission;
+				//================================
 
 				return half4(color, alpha);
 			}
@@ -465,5 +510,5 @@ Shader "LWART/EnvShaderWithowShadow"
 	CustomEditor "ToonyColorsPro.ShaderGenerator.MaterialInspector_SG2"
 }
 
-/* TCP_DATA u config(ver:"2.9.10";unity:"6000.0.58f2";tmplt:"SG2_Template_URP";features:list["UNITY_5_4","UNITY_5_5","UNITY_5_6","UNITY_2017_1","UNITY_2018_1","UNITY_2018_2","UNITY_2018_3","UNITY_2019_1","UNITY_2019_2","UNITY_2019_3","UNITY_2019_4","UNITY_2020_1","UNITY_2021_1","UNITY_2021_2","UNITY_2022_2","AUTO_TRANSPARENT_BLENDING","SUBSURFACE_AMB_COLOR","DISABLE_SHADOW_CASTING","DISABLE_SHADOW_RECEIVING","SHADOW_COLOR_MAIN_DIR","TEMPLATE_LWRP","DISABLE_ADDITIONAL_LIGHTS"];flags:list[];flags_extra:dict[];keywords:dict[RENDER_TYPE="Opaque",RampTextureDrawer="[TCP2Gradient]",RampTextureLabel="Ramp Texture",SHADER_TARGET="3.0",GPU_INSTANCING_MAX_COUNT_VALUE="50"];shaderProperties:list[,sp(name:"Main Color";imps:list[imp_mp_color(def:RGBA(1, 1, 1, 1);hdr:False;cc:4;chan:"RGBA";prop:"_Color";md:"";gbv:False;custom:False;refs:"";pnlock:False;guid:"5c97d97c-03b8-40ad-b3d7-d360fdd8e2af";op:Multiply;lbl:"Color";gpu_inst:False;dots_inst:False;locked:False;impl_index:0)];layers:list[];unlocked:list[];layer_blend:dict[];custom_blend:dict[];clones:dict[];isClone:False)];customTextures:list[];codeInjection:codeInjection(injectedFiles:list[];mark:True);matLayers:list[]) */
-/* TCP_HASH ea601a7d145ed2418fc30ecb63a57ce2 */
+/* TCP_DATA u config(ver:"2.9.10";unity:"6000.3.2f1";tmplt:"SG2_Template_URP";features:list["UNITY_5_4","UNITY_5_5","UNITY_5_6","UNITY_2017_1","UNITY_2018_1","UNITY_2018_2","UNITY_2018_3","UNITY_2019_1","UNITY_2019_2","UNITY_2019_3","UNITY_2019_4","UNITY_2020_1","UNITY_2021_1","UNITY_2021_2","UNITY_2022_2","AUTO_TRANSPARENT_BLENDING","SUBSURFACE_AMB_COLOR","DISABLE_SHADOW_CASTING","DISABLE_SHADOW_RECEIVING","SHADOW_COLOR_MAIN_DIR","DISABLE_ADDITIONAL_LIGHTS","TEMPLATE_LWRP","NO_RAMP_UNLIT"];flags:list[];flags_extra:dict[];keywords:dict[RENDER_TYPE="Opaque",RampTextureDrawer="[TCP2Gradient]",RampTextureLabel="Ramp Texture",SHADER_TARGET="3.0",GPU_INSTANCING_MAX_COUNT_VALUE="50"];shaderProperties:list[,sp(name:"Main Color";imps:list[imp_mp_color(def:RGBA(1, 1, 1, 1);hdr:False;cc:4;chan:"RGBA";prop:"_Color";md:"";gbv:False;custom:False;refs:"";pnlock:False;guid:"5c97d97c-03b8-40ad-b3d7-d360fdd8e2af";op:Multiply;lbl:"Color";gpu_inst:False;dots_inst:False;locked:False;impl_index:0)];layers:list[];unlocked:list[];layer_blend:dict[];custom_blend:dict[];clones:dict[];isClone:False)];customTextures:list[];codeInjection:codeInjection(injectedFiles:list[injectedFile(guid:"3fca7c847ce8b7d41aa1016d217af658";filename:"DMC_Injection";injectedPoints:list[injectedPoint(name:"Properties/Start";enabled:True;replace:False;displayName:__NULL__;blockName:"DMC Dissolve Properties";program:Undefined;shaderProperties:list[]),injectedPoint(name:"Include Files";enabled:True;replace:False;displayName:__NULL__;blockName:"DMC Dissolve Include";program:Undefined;shaderProperties:list[]),injectedPoint(name:"Variables/Outside CBuffer";enabled:True;replace:False;displayName:__NULL__;blockName:"DMC Dissolve Variables";program:Undefined;shaderProperties:list[]),injectedPoint(name:"Main Pass/Tags";enabled:True;replace:False;displayName:__NULL__;blockName:"DMC Dissolve Main Pass Tags";program:Undefined;shaderProperties:list[]),injectedPoint(name:"Main Pass/Pragma";enabled:True;replace:False;displayName:__NULL__;blockName:"DMC Dissolve Main Pass Pragma";program:Undefined;shaderProperties:list[]),injectedPoint(name:"Main Pass/Varyings";enabled:True;replace:False;displayName:__NULL__;blockName:"DMC Dissolve Main Pass Varyings";program:Undefined;shaderProperties:list[]),injectedPoint(name:"Main Pass/Fragment Shader/Start";enabled:True;replace:False;displayName:__NULL__;blockName:"DMC Dissolve Fragment Shader Start";program:Fragment;shaderProperties:list[]),injectedPoint(name:"Main Pass/Fragment Shader/End";enabled:True;replace:False;displayName:__NULL__;blockName:"DMC Dissolve Fragment Shader End";program:Fragment;shaderProperties:list[]),injectedPoint(name:"Depth + Shadow Caster Pass/Varyings";enabled:False;replace:False;displayName:__NULL__;blockName:"DMC Dissolve Shadow Caster Pass Varyings";program:Undefined;shaderProperties:list[]),injectedPoint(name:"Depth + Shadow Caster Pass/Vertex Shader/Start";enabled:False;replace:False;displayName:__NULL__;blockName:"DMC Dissolve Shadow Caster Pass Vertex Shader Start";program:Vertex;shaderProperties:list[]),injectedPoint(name:"Depth + Shadow Caster Pass/Fragment Shader/Start";enabled:False;replace:False;displayName:__NULL__;blockName:"DMC Dissolve Shadow Caster Pass Fragment Shader Start";program:Fragment;shaderProperties:list[])])];mark:True);matLayers:list[]) */
+/* TCP_HASH a7530e26afe9e70ae1d79c012aaa864e */

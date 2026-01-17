@@ -61,7 +61,7 @@ namespace Game.Scripts.Client.Logic.Player
             if (isOwner)
             {
                 Service<UIService>.Instance.GetPlayerInGameUI().UpdateHealth(_health.value);
-                Service<UIService>.Instance.GetPlayerInGameUI().SetPlayerCompas(transform.GetComponentInChildren<Camera>());
+                Service<UIService>.Instance.GetPlayerInGameUI().SetPlayerCompas(transform);
                 
             }
                 

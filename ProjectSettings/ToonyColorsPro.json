@@ -6,10 +6,10 @@
     "CustomOutputPath": "Game\\Shaders",
     "LastImplementationExportImportPath": "P:/Unity Projects/Project Chaos/Assets",
     "OpenedFoldouts": [
-        "THIRD PARTY PLUGINS",
         "LIGHTING",
-        "SURFACE",
-        "STYLIZATION"
+        "STYLIZATION",
+        "SPECIAL EFFECTS",
+        "TRANSPARENCY/BLENDING"
     ],
     "UseCustomFont": true,
     "CustomFont": {

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using CompassNavigatorPro;
+using Game.Scripts.Client.Logic.Colectables;
 using Game.Scripts.Client.Logic.Game;
 using Game.Scripts.Client.UI.Game.World;
 using PurrNet;
@@ -27,6 +28,7 @@ namespace Game.Scripts.Client.Logic.Enemy
         [SerializeField] private GameObject _spawnEffect;
         [SerializeField] private AnimationCurve _hpCurve = AnimationCurve.Linear(0, 1, 1, 10);
         [SerializeField] private List<float> _hpByLevel = new List<float>();
+        [SerializeField] private ExpOrb _expOrbPrefab;
         private bool _spawned=false;
         
 
@@ -108,14 +110,18 @@ namespace Game.Scripts.Client.Logic.Enemy
 
             _health.value = _maxHealth.value - missingHealth;
         }
-        
         private void Die()
         {
             onEnemyKilled?.Invoke(this);
-            if(InstanceHandler.TryGetInstance(out LevelManager levelManager))
-                levelManager.AddExp(_expFOrKill);
             DieFx();
             Destroy(gameObject,2f);
+            SpawnExpOrb();
+        }
+        [ObserversRpc(runLocally:true)]
+        private void SpawnExpOrb()
+        {
+            ExpOrb exp = NetworkManager.Instantiate(_expOrbPrefab, transform.position, Quaternion.identity);
+            exp.SetUpExp(_expFOrKill);
         }
 
 

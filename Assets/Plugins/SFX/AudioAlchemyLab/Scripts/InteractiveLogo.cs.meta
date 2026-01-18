@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 168e30fac202c5a42bf771a418b3735b
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 275734
+  packageName: Audio Alchemy Lab
+  packageVersion: 5.2
+  assetPath: Assets/AudioAlchemyLab/Scripts/InteractiveLogo.cs
+  uploadId: 687752

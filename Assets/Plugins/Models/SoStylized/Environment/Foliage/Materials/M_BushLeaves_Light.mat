@@ -36,9 +36,14 @@ Material:
   m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
-    m_TexEnvs: []
+    m_TexEnvs:
+    - _MaskNoiseMap:
+        m_Texture: {fileID: 2800000, guid: 2f91e21ac141d464b99b112ab24da454, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Ints: []
-    m_Floats: []
+    m_Floats:
+    - _InvertDissolveEffect: 1
     m_Colors:
     - _Main_Color: {r: 0.49962634, g: 0.7529412, b: 0.050980378, a: 1}
     - _Second_Color: {r: 0.4244486, g: 0.5882353, b: 0.24313724, a: 1}

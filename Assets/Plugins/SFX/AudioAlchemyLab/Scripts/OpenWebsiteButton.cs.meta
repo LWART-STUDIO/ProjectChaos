@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 12da72695f655af4b94b67dff7073df2
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 275734
+  packageName: Audio Alchemy Lab
+  packageVersion: 5.2
+  assetPath: Assets/AudioAlchemyLab/Scripts/OpenWebsiteButton.cs
+  uploadId: 687752

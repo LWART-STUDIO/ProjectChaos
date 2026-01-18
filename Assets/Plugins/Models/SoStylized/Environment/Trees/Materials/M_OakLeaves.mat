@@ -92,6 +92,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _MaskNoiseMap:
+        m_Texture: {fileID: 2800000, guid: 2f91e21ac141d464b99b112ab24da454, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -110,6 +114,10 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _SampleTexture2D_db2fa32299ac42f38d0435a90020f5ea_Texture_1_Texture2D:
         m_Texture: {fileID: 2800000, guid: af27d632f75721640aa8499b2c88b4b5, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SingleMaterialWoodTexture:
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Smoothness:
@@ -205,6 +213,7 @@ Material:
     - _Hue_Shift: 0
     - _Hue_Variation: 0.05
     - _IndirectLightInt: 2.6
+    - _InvertDissolveEffect: 1
     - _Keyword0: 1
     - _LOD: 0
     - _Max: 0
@@ -239,6 +248,7 @@ Material:
     - _SecondColorOverlayType: 0
     - _ShadowCutoffOffset: -30
     - _Shininess: 0.1
+    - _SingleMaterialLOD: 0
     - _Smoot: 1
     - _Smoothness: 0.1
     - _SmoothnessInt: 0
@@ -260,6 +270,7 @@ Material:
     - _UVBigWavesScale: 0.25
     - _UVBigWavesSpeed: 5
     - _UVNoiseOffset: 0
+    - _UVScaleNoise: 1
     - _UVSec: 0
     - _UVSmallWindInt: 1
     - _UVSmallWindScale: 1
@@ -299,6 +310,7 @@ Material:
     - _Gradient_Color: {r: 0.02710039, g: 0.2735849, b: 0.15034264, a: 0}
     - _MainColor: {r: 0.054923054, g: 0.561, b: 0.31384614, a: 0}
     - _Main_Color: {r: 0.16861512, g: 0.73800004, b: 0.011125635, a: 1}
+    - _MaskEdgeColor: {r: 7.086451, g: 0, b: 0, a: 1}
     - _Min_MAx: {r: -1, g: 1, b: 0, a: 0}
     - _Rim_Color: {r: 0, g: 0, b: 0, a: 0}
     - _SSSColor: {r: 0, g: 0, b: 0, a: 0}

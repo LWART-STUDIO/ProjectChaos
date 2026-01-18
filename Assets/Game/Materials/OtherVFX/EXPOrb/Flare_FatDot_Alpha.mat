@@ -129,7 +129,7 @@ Material:
     - _Culling: 0
     - _DISABLEEROSION: 0
     - _DepthOffsetEnable: 0
-    - _Desaturate: 0
+    - _Desaturate: 0.549
     - _DisableErosion: 0
     - _DistortionEnable: 0
     - _DistortionIntensity: 0
@@ -219,7 +219,7 @@ Material:
     - _LastColor: {r: 1, g: 0, b: 0, a: 0}
     - _MainAlphaChannel: {r: 0, g: 0, b: 0, a: 1}
     - _MainAlphaPanning: {r: 0, g: 0, b: 0, a: 0}
-    - _MainTextureChannel: {r: 1, g: 1, b: 1, a: 0}
+    - _MainTextureChannel: {r: 1, g: 1, b: -5.19, a: 0}
     - _MainTexturePanning: {r: 0, g: 0, b: 0, a: 0}
     - _MidColor: {r: 1, g: 0.44479147, b: 0, a: 0}
     - _Resolution: {r: 64, g: 64, b: 0, a: 0}

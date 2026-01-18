@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: c98ae98fbebb117408cc2632be4957c4
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 275734
+  packageName: Audio Alchemy Lab
+  packageVersion: 5.2
+  assetPath: Assets/AudioAlchemyLab/Editor/AudioAlchemyLab.cs
+  uploadId: 687752

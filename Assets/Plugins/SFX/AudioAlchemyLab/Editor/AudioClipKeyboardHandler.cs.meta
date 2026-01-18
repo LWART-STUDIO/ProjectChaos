@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 744c338c0e78c6947926e4994477cb94
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 275734
+  packageName: Audio Alchemy Lab
+  packageVersion: 5.2
+  assetPath: Assets/AudioAlchemyLab/Editor/AudioClipKeyboardHandler.cs
+  uploadId: 687752

@@ -1,0 +1,388 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c23dd35fe8a6f14f96d7f4b4e287e47, type: 3}
+  m_Name: MyAudioClipList
+  m_EditorClassIdentifier: 
+  favoriteClips: []
+  selectedSortingOption: 0
+  selectedClipIndex: 0
+  isFavoritesActive: 0
+  clipOrder:
+  - Echoes of Alchemy
+  - AALClip
+  - Cancel
+  - ClearAll
+  - GoodBye
+  - Heart
+  - KeyPress
+  - SearchSpell
+  - settingsSFX
+  - sortSFX
+  - toggleSFX
+  - Trash
+  - 10-pin-throw-roll-hit_04
+  - 10-pin_hit_close-up_12
+  - 10-pin_throw-roll_miss_09
+  - abstractambiences_27
+  - abstractambiences_ck_04-layer_03_stuttering-screeches
+  - antiques_adding-machine-crank-turn_03
+  - antiques_adding-machine-lever_a_05
+  - antiques_adding-machine_olympia_antique_05
+  - antiques_camera_super-8_bauer-88b_wind-up_10
+  - antiques_camera_super-8_bauer-88h_short_burst_05
+  - antiques_coffee-mill_antique_crank_05
+  - antiques_drawer-cupboard_c_01
+  - antiques_lock_wardrobe_01
+  - antiques_metal-box_hatch_13
+  - blacksmith_forging_metal_on_anvil_13
+  - blacksmith_metal_chain_hit_12
+  - blacksmith_metal_pickup_putdown_07
+  - buttons_switches_005
+  - buttons_switches_037
+  - buttons_switches_048
+  - ca12_forest_birds_small-stream
+  - ca13_roomtone_city-appartment_01a
+  - ca14_school-event_kids-walla_01
+  - ca1_ambience_city_rain_distantthunder
+  - ca5_ambience_indoorfoodmarket_verybusy
+  - ca8_ambience_farm_calm_birds_02
+  - ca_bird_crow_02
+  - ca_bird_magpie_01
+  - ca_cat_whining_08
+  - ca_dog_growling_04
+  - ca_group-of-dogs_barking_01
+  - ca_large-dog_barking_05
+  - ca_parrot_red-fronted-macaw_02
+  - ca_pig_grunt_13
+  - ca_poultry_chicken_10
+  - ca_poultry_ducks_10
+  - ca_poultry_turkey_04
+  - ca_songbird_skylark_08
+  - cht2_cinematic_hit_156
+  - cht2_cinematic_hit_220
+  - cht2_cinematic_transition_037
+  - cht2_cinematic_transition_101
+  - cht_transitions_14
+  - crs-e53_electric-window_01
+  - crs-e53_handling_crs-e53-door_ext_06
+  - crs-e53_pass-bys_steady-mic_02
+  - crs-e53_pass-by_02
+  - crs-oa_approach.brake_03
+  - crs-oa_arm-rest_04
+  - crs-oa_driving_short_engine_01_04
+  - crs-oa_electric-side-mirror_01
+  - crs-oa_idling-mixture_engine_04
+  - crs-oa_lid_ashtray-case_04
+  - crs-oa_seat_adjustment_c_01
+  - cs-d_glass_crash_designed_013
+  - cs-d_glass_crash_designed_037
+  - cs-d_metal_crash_designed_011
+  - cs-d_mixed_crash_designed_013
+  - cs-d_plastic_crash_designed_009
+  - cs-d_plastic_crash_designed_027
+  - cs-d_stone_crash_designed_017
+  - cs-d_stone_crash_designed_031
+  - cs-d_wood_crash_designed_012
+  - cs-d_wood_crash_designed_037
+  - csfx-2_alarms_15
+  - csfx-2_mechanics_18
+  - csfx-2_menu-close_17
+  - csfx-2_processing-loop_38
+  - csfx_short-006
+  - csfx_short-012
+  - csfx_short-040
+  - dark_scifi_drone_mixed_017
+  - dark_scifi_drone_mixed_044
+  - ds_sledgehammer_sliding_on_gravel_01_01
+  - ds_tallfridge_sliding_on_concrete_02_07
+  - ds_woodencrate_sliding_on_parquet_07_01
+  - emt2_film-projector_vintage_03
+  - emt2_fine-blanking-tool_03
+  - emt2_milling-machine_02_01
+  - emt2_toy-helicopter_02
+  - emt_buffing_machine_01
+  - emt_coffee_grinder_01
+  - emt_electricscrewdriver_09
+  - etw_3006_hammer-mechanism_random-strokes_01
+  - etw_3006_movement_paper-releae_04
+  - etw_r300_head-movement_enter_holddown_01
+  - etw_r300_head-movement_initiate_01
+  - glitched-loop_007_01
+  - glitched-loop_014_01
+  - glitched-loop_020_01
+  - glitched-loop_040_04
+  - glitchfx_01_dirt_sfx_011
+  - glitchfx_01_dirt_sfx_016
+  - glitchfx_01_dirt_sfx_019
+  - glitchfx_02_percussion_019
+  - glitchfx_02_percussion_039
+  - glitchfx_02_percussion_049
+  - hw_ballpen_006
+  - hw_marker_copics_033
+  - hw_marker_whiteboard_003
+  - jc_drops_13
+  - jc_footsteps-addon_12
+  - jc_pull-hanging-jingle_21
+  - jg_splat_splatter_33
+  - jg_squeeze_spurt_13
+  - jg_stab_punch_hack_51
+  - ji-b_impact-255
+  - ji-b_impact-297
+  - ji-b_impact-336
+  - ji-d_impact-075
+  - ji-d_impact-253
+  - ji-d_impact-300
+  - ji-e01_impact_163
+  - ji-e01_impact_167
+  - ji-e01_impact_171
+  - ji-e2_metal_hit_crash-200
+  - ji-e2_metal_jolt_rattle_scrape-054
+  - ji-e2_misc_hits-044
+  - ji-p_impact-079
+  - ji-p_impact-180
+  - ji-p_impact-295
+  - jm-sm_metal_squeak-050
+  - jm-sm_metal_squeak-082
+  - jm-sm_metal_squeak-360
+  - jm-ss_metal_scrape-0026
+  - jm-ss_metal_scrape-0067
+  - jm-ss_metal_scrape-0091
+  - jmg_blood-squeeze_drip_058
+  - jmg_bone-break_snap_027
+  - jmg_crunch_rip_014
+  - jmg_cut_slice_048
+  - jmg_splatter_splat_014
+  - jmg_splatter_splat_070
+  - js-stones_fine_debris-010
+  - js-stones_hit_drop-030
+  - js-stones_roll_bounce-036
+  - js-stones_scrape_jolt-036
+  - js-stones_water_hit-017
+  - jt-ct_transition-008
+  - jt-ct_transition-020
+  - jt-ct_transition-031
+  - jt-sm_transition-018
+  - jt-sm_transition-023
+  - jt-sm_transition-040
+  - jt-sm_transition-052
+  - jt-sm_transition-127
+  - jw2_whoosh-097
+  - jw2_whoosh-114
+  - jw2_whoosh-126
+  - jw3_swoosh_rod_pole-007
+  - jw3_swoosh_rod_pole-017
+  - jw3_swoosh_rope_whip-021
+  - jw3_whoosh_cloth_leather_fight-007
+  - jw3_whoosh_cloth_leather_fight-178
+  - jw3_whoosh_fire-008
+  - jw3_whoosh_shaverpassby-022
+  - jw4_abstract-fantasy-039
+  - jw4_bubbles-039
+  - jw4_engines-motors-024
+  - jw4_friction-organic-030
+  - jw4_metallic-dystopian-029
+  - jw4_noise-interference-116
+  - jw4_projectiles-ballistics-028
+  - jw4_rattle-mechanics-022
+  - jw4_spacecrafts-scifi-022
+  - jw4_synthetic-artificial-045
+  - jw_whoosh-004
+  - jw_whoosh-033
+  - jw_whoosh-051
+  - jw_whoosh-17
+  - jw_whoosh-22
+  - levers_sliders_026
+  - levers_sliders_139
+  - levers_sliders_209
+  - oc2_drawer-kitchen-utensils_04
+  - oc_book-01-12
+  - oc_cap-coffeecan-02-01
+  - oc_door-metal-02-01
+  - oc_drawer-heavy-woodmetal-01-02
+  - pb-fr_fun-ride_038
+  - pb-fr_fun-ride_081
+  - pb-sc_sports-car_multiple_026
+  - pb-sc_sports-car_single_015
+  - pb-sc_sports-car_single_056
+  - pb-ttc_car_02
+  - pb-ttc_train_70
+  - pb-ttc_truck_12
+  - rc-car_driving_12
+  - rc-car_idling_23
+  - rc-car_passby_07
+  - rc-car_steering_13
+  - rmg_junk_plastic_glass-05
+  - rmg_pocket_leather_jacket-03
+  - rmg_trash_bag-02
+  - scifi-voices_anne_droid, female, robot, android_alphabet, a to z
+  - scifi-voices_anne_droid, female, robot, android_barrier
+  - scifi-voices_anne_droid, female, robot, android_cancel, canceling, canceled
+  - scifi-voices_anne_droid, female, robot, android_data, transfer, completed, please,
+    remove, disk
+  - scifi-voices_anne_droid, female, robot, android_false
+  - scifi-voices_anne_droid, female, robot, android_opposite
+  - scifi-voices_j-data_male, robot, android_bullets
+  - scifi-voices_j-data_male, robot, android_cabin, pressure, normalized, remove,
+    oxygen, mask
+  - scifi-voices_j-data_male, robot, android_crash, crashing, crashed
+  - scifi-voices_j-data_male, robot, android_in
+  - scifi-voices_j-data_male, robot, android_nato, alfa to zulu
+  - scifi-voices_j-data_male, robot, android_under
+  - scifi-voices_jenny-x_female, robot, android_ammunition
+  - scifi-voices_jenny-x_female, robot, android_at
+  - scifi-voices_jenny-x_female, robot, android_damage, damaging, damaged
+  - scifi-voices_jenny-x_female, robot, android_dark
+  - scifi-voices_jenny-x_female, robot, android_please, select, your, weapon
+  - scifi-voices_jenny-x_female, robot, android_with
+  - scifi-voices_tera_female, robot, android_button
+  - scifi-voices_tera_female, robot, android_calculate, calculating, calculated
+  - scifi-voices_tera_female, robot, android_connection, lost, please, try to reconnect
+  - scifi-voices_tera_female, robot, android_duple
+  - scifi-voices_tera_female, robot, android_round
+  - scifi-voices_tera_female, robot, android_through
+  - scifi-voices_zeetor_male, robot, android_alphabet, a to z
+  - scifi-voices_zeetor_male, robot, android_between
+  - scifi-voices_zeetor_male, robot, android_energy, loss, detected, readjusting,
+    fuel, levels
+  - scifi-voices_zeetor_male, robot, android_in
+  - scifi-voices_zeetor_male, robot, android_initiate, initiating, initiated
+  - scifi-voices_zykon_male, robot, android_beyond
+  - scifi-voices_zykon_male, robot, android_checkpoints
+  - scifi-voices_zykon_male, robot, android_establish, establishing, established
+  - scifi-voices_zykon_male, robot, android_numbers, 1 to 1000
+  - scifi-voices_zykon_male, robot, android_phares, alien, lifeform, detected
+  - scifi-voices_zykon_male, robot, android_positive
+  - scsh_human_female_028
+  - scsh_monster_processed_014
+  - scsh_monster_processed_051
+  - scsh_monster_processed_079
+  - scsh_zombie_voice_015
+  - sctr_driving-loop_02_m_48khz
+  - sctr_driving_short_01_m
+  - sctr_false-start_09_m
+  - sctr_passby_01_m
+  - sotd_2013-10-18_rooster
+  - sotd_2013-10-19_metal_impact
+  - sotd_2013-10-20_gunshot
+  - sotd_2013-10-21_tractor
+  - sotd_2013-10-22_monster
+  - sotd_2013-10-23_swishes
+  - sotd_2013-10-24_synthetic
+  - sotd_2013-10-25_heavy_stab
+  - sotd_2013-10-26_doors_open_close
+  - sotd_2013-10-27_doorsqueaks
+  - sotd_2013-10-28_electro-mechanical
+  - sotd_2013-10-29_fx-snares
+  - sotd_2013-10-30_female_scream
+  - sotd_2013-10-31_zombie_moan
+  - sotd_2013-11-01_lofitoms
+  - ss2-h_child_scream_028
+  - ss2-h_female_scream_070
+  - ss2-h_female_shout-of-pain_014
+  - ss2-h_female_shout-of-pain_028
+  - ss2-h_female_shout-of-pain_154
+  - ss2-h_male_grunt-shout_048
+  - ss2-h_male_grunt-shout_057
+  - ss2-h_male_grunt-shout_079
+  - ss2-h_male_scream_032
+  - ss2-m_monster_pain_death_133
+  - ss2-m_monster_pain_death_201
+  - ss2-m_monster_roar_growl_034
+  - ss2-m_monster_roar_growl_159
+  - ss2-m_monster_struggle_grunt_041
+  - ss2-m_monster_struggle_grunt_197
+  - ss2-m_monster_struggle_grunt_223
+  - tt2_goose_hissing_01
+  - tt2_measuring-tape_04
+  - tt2_transitions-2_262
+  - tt_transition_013
+  - tt_whoosh_source_metalscrape_06
+  - tt_whoosh_source_tube_03
+  - ucns_adhesivetape_creak_22
+  - ucns_dry-ice_creak_squeak_30
+  - ucns_metal_creak_08
+  - ucns_woodenbed_creaks_04
+  - ucns_woodencupboard_01_squeaks_07
+  - wi2_impacts_116
+  - wi2_whooshes_024_04
+  - wi2_whooshes_032
+  - wi_impact_01
+  - wi_impact_64
+  - Audio_Click
+  - Audio_Footstep
+  - Audio_Footstep_02
+  - Audio_Jump
+  - Audio_Land
+  - Button RollOver Soft
+  - Button RollOver Strong
+  - Button
+  - Close (Rollover)
+  - Close
+  - High Tone
+  - Open (Button)
+  - Peep
+  - Pop
+  - Scene Transition Back
+  - Scene Transition
+  - Soft (Loud)
+  - Soft (Short)
+  - Soft
+  - Switch
+  - Campfire
+  - magic_cast_generic
+  - magic_cast_generic02
+  - magic_cast_generic03
+  - arcaneimpact
+  - arcaneimpact2
+  - earthimpact
+  - fireimpact
+  - fireimpact02
+  - fireimpact03
+  - fireimpact04
+  - frostimpact
+  - frostimpact02
+  - genericimpact
+  - lifeimpact
+  - lifeimpact02
+  - lifeimpact03
+  - lifeimpact04
+  - lightimpact
+  - lightimpact2
+  - lightningimpact
+  - shadowimpact
+  - shadowimpact2
+  - stormimpact
+  - stormimpact02
+  - stormimpact03
+  - waterimpact
+  - waterimpact02
+  - arcaneloop
+  - arcaneloop02
+  - earthloop
+  - fireloop
+  - frostloop
+  - frostloop02
+  - lifeloop
+  - lightloop
+  - lightningloop
+  - lightningloop02
+  - shadowloop
+  - stormloop
+  - waterloop
+  - windloop
+  - heartbeat
+  - reveal1
+  - reveal2
+  - reveal3
+  - reveal4
+  - reveal5
+  selectedAudioSourceNames: []

@@ -103,6 +103,7 @@ namespace Game.Scripts.Client.Logic.Game
                     spawnPoint.position,
                     spawnPoint.rotation
                 );
+                newPlayer.GetComponent<PlayerController>().Teleport(spawnPoint.position);
 
                 newPlayer.GiveOwnership(player);
                 _players.Add(newPlayer);

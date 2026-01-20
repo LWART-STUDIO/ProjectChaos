@@ -26,7 +26,7 @@ namespace Game.Scripts.Client.Logic.Skills.Area
             _lastCastTime = Time.time;
             var projectile = Instantiate(_curentSkills,transform.position,_curentSkills.transform.rotation,transform);
             projectile.Initialize(_damage, _levelData.distanceFromGround,
-                _levelData.size, _speed,_duration);
+                _levelData.size, _speed,_levelData.onGround,_duration);
         }
     }
 }

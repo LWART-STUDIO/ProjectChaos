@@ -30,9 +30,10 @@ namespace Game.Scripts.Client.Logic.Game
         [SerializeField] private int _earlyNextWaveThreshold = 3;
 
         private int _waveIndex;
-        private int _difficultyLevel;
+        private int _difficultyLevel=0;
         private int _roundRobinIndex;
         private int _aliveEnemies;
+        private float _timeFromLastEnemySpawn;
 
         private Coroutine _spawnRoutine;
 
@@ -46,7 +47,7 @@ namespace Game.Scripts.Client.Logic.Game
             enabled = isServer;
 
             _waveIndex = 0;
-            _difficultyLevel = 1;
+            _difficultyLevel = 0;
             _roundRobinIndex = 0;
             _aliveEnemies = 0;
 
@@ -82,14 +83,23 @@ namespace Game.Scripts.Client.Logic.Game
                 }
 
                 Wave wave = GetCurrentWave();
+                Debug.Log($"Уровень сложности:{_difficultyLevel}");
                 yield return SpawnWave(wave);
 
                 // ожидание завершения волны
                 while (_aliveEnemies > _earlyNextWaveThreshold)
+                {
+                    if (_timeFromLastEnemySpawn+10f < Time.time)
+                    {
+                        break;
+                    }
                     yield return null;
-
+                    
+                }
+                yield return null;
                 _waveIndex++;
                 _difficultyLevel++;
+                
             }
         }
 
@@ -114,7 +124,12 @@ namespace Game.Scripts.Client.Logic.Game
             {
                 // ждём свободные слоты
                 while (_aliveEnemies >= _maxAliveEnemies)
+                {
+                    if (_timeFromLastEnemySpawn+10f < Time.time)
+                        break;
                     yield return null;
+                }
+                    
 
                 int desiredBatch = Random.Range(_minBatchSize, _maxBatchSize + 1);
                 int availableSlots = _maxAliveEnemies - _aliveEnemies;
@@ -129,7 +144,15 @@ namespace Game.Scripts.Client.Logic.Game
 
                 for (int i = 0; i < actualBatch && spawnQueue.Count > 0; i++)
                 {
-                    SpawnNextEnemy(spawnQueue.Dequeue());
+                    var enemyPrefab = spawnQueue.Dequeue();
+
+                    bool enemyWasSpawned = SpawnNextEnemy(enemyPrefab);
+                    if (!enemyWasSpawned)
+                    {
+                        i--;
+                        spawnQueue.Enqueue(enemyPrefab);
+                        yield return null;
+                    }
                 }
 
                 yield return new WaitForSeconds(_batchInterval);
@@ -156,27 +179,28 @@ namespace Game.Scripts.Client.Logic.Game
             return queue;
         }
 
-        private void SpawnNextEnemy(GameObject prefab)
+        private bool SpawnNextEnemy(GameObject prefab)
         {
             var players = PlayerHealth.AllPlayers.Values.ToList();
             if (players.Count == 0)
-                return;
+                return false;
 
             PlayerHealth target = players[_roundRobinIndex];
             _roundRobinIndex = (_roundRobinIndex + 1) % players.Count;
 
             Vector3? pos = FindValidSpawnPosition(target.transform.position);
             if (!pos.HasValue)
-                return;
-
+                return false;
+            Debug.Log("SpawnEnemy");
             InstantiateEnemy(prefab, pos.Value);
+            return true;
         }
 
         private void InstantiateEnemy(GameObject prefab, Vector3 position)
         {
             GameObject enemy = Instantiate(prefab, position, Quaternion.identity);
             _aliveEnemies++;
-
+            _timeFromLastEnemySpawn=Time.time;
             if (enemy.TryGetComponent(out EnemyUpgrader upgrader))
                 upgrader.UpgradeEnemy(_difficultyLevel);
         }

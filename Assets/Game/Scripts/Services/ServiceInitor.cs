@@ -2,7 +2,6 @@ using System.Linq;
 using Game.Scripts.Client.Logic;
 using Game.Scripts.Client.Logic.Game;
 using Game.Scripts.Services.Audio;
-using Game.Scripts.Services.Input;
 using Game.Scripts.Services.ResourceLoader;
 using Game.Scripts.Services.Scene;
 using Game.Scripts.Services.StaticService;
@@ -15,21 +14,18 @@ using UnityEngine;
 namespace Game.Scripts.Services
 {
     [Service(typeof(ServiceInitor),FindFromScene = true,LazyInit = true)]
-    public class ServiceInitor : MonoBehaviour<UIService,InputService>
+    public class ServiceInitor : MonoBehaviour<UIService>
     {
         [SerializeField] private AudioService _audioService;
         private LevelManager _levelManager;
         private UIService _uiService;
-        private InputService _inputService;
         private ResourceLoaderService _resourceLoaderService;
         private SceneService _sceneService;
         public AudioService AudioService => _audioService;
         protected override void Init(
-            UIService uiService,
-            InputService inputService)
+            UIService uiService)
         {
             _uiService = uiService;
-            _inputService = inputService;
             _resourceLoaderService = Service<ResourceLoaderService>.Instance;
         }
 
@@ -38,9 +34,6 @@ namespace Game.Scripts.Services
             base.OnAwake();
             if (Service<ServiceInitor>.Instance == null)
                 Service.SetInstance(this);
-            if(_inputService == null)
-                _inputService = Service<InputService>.Instance;
-            _inputService.LocalAwake();
             if(_uiService == null)
                 _uiService = Service<UIService>.Instance;
             _uiService.LocalAwake();
@@ -53,7 +46,6 @@ namespace Game.Scripts.Services
         }
         private void Start()
         {
-            _inputService.LocalStart();
             _uiService.LocalStart();
             if(_audioService != null)
                 _audioService.LocalStart();
@@ -73,7 +65,6 @@ namespace Game.Scripts.Services
         private void Update()
         {
             _sceneService.LocalUpdate(Time.deltaTime);
-            _inputService.LocalUpdate(Time.deltaTime);
             _uiService.LocalUpdate(Time.deltaTime);
             if(_audioService != null)
                 _audioService.LocalUpdate(Time.deltaTime);

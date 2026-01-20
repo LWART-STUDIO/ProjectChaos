@@ -17,6 +17,7 @@ namespace CMF
 		public float upperVerticalLimit = 60f;
 		[Range(0f, 90f)]
 		public float lowerVerticalLimit = 60f;
+		[SerializeField] private float maxYawOffset = 80f;
 
 		//Variables to store old rotation values for interpolation purposes;
 		float oldHorizontalInput = 0f;
@@ -58,8 +59,8 @@ namespace CMF
 				cam = GetComponentInChildren<Camera>();
 
 			//Set angle variables to current rotation angles of this transform;
-			currentXAngle = tr.localRotation.eulerAngles.x;
-			currentYAngle = tr.localRotation.eulerAngles.y;
+			currentXAngle = tr.rotation.eulerAngles.x;
+			currentYAngle = tr.rotation.eulerAngles.y;
 
 			//Execute camera rotation code once to calculate facing and upwards direction;
 			RotateCamera(0f, 0f);
@@ -73,7 +74,7 @@ namespace CMF
 			
 		}
 
-		void Update()
+		void LateUpdate()
 		{
 			HandleCameraRotation();
 		}
@@ -111,9 +112,10 @@ namespace CMF
 			//Add input to camera angles;
 			currentXAngle += oldVerticalInput * cameraSpeed * Time.deltaTime;
 			currentYAngle += oldHorizontalInput * cameraSpeed * Time.deltaTime;
-
-			//Clamp vertical rotation;
+			
 			currentXAngle = Mathf.Clamp(currentXAngle, -upperVerticalLimit, lowerVerticalLimit);
+			
+			currentYAngle = Mathf.Clamp(currentYAngle, -maxYawOffset, maxYawOffset);
 
 			UpdateRotation();
 		}
@@ -121,13 +123,20 @@ namespace CMF
 		//Update camera rotation based on x and y angles;
 		protected void UpdateRotation()
 		{
-			tr.localRotation = Quaternion.Euler(new Vector3(0, currentYAngle, 0));
+			// Получаем поворот родителя (персонажа), но только по Y
+			float parentY = tr.parent ? tr.parent.rotation.eulerAngles.y : 0f;
 
-			//Save 'facingDirection' and 'upwardsDirection' for later;
-			facingDirection = tr.forward;
+			// Устанавливаем поворот камеры: поворот родителя + локальный поворот по X и Y
+			// Но мы не даём повороту родителя влиять на Y камеры, если хотим независимость
+			// Поэтому Y — это только локальный
+			tr.localRotation = Quaternion.Euler(currentXAngle, currentYAngle, 0f);
+
+			// Если хочешь, чтобы камера не поворачивалась вместе с персонажем по Y:
+			// tr.rotation = Quaternion.Euler(0, parentY, 0) * Quaternion.Euler(currentXAngle, currentYAngle, 0);
+
+			// Направления обновляем из локального поворота
+			facingDirection = Vector3.ProjectOnPlane(tr.forward, Vector3.up).normalized;
 			upwardsDirection = tr.up;
-
-			tr.localRotation = Quaternion.Euler(new Vector3(currentXAngle, currentYAngle, 0));
 		}
 
 		//Set the camera's field-of-view (FOV);

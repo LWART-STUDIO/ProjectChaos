@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: Mage
   m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.Client.Logic.Player.PlayerClassConfig
   classType: 0
-  prefab: {fileID: 214271761532775238, guid: a3e4a15fbbe207b4583fd5124dce9e8d, type: 3}
+  prefab: {fileID: 2468475490799713760, guid: 69e94cba9100ef1499dd19e14cb6edbf, type: 3}

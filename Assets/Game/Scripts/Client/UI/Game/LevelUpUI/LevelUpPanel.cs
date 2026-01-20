@@ -67,6 +67,7 @@ namespace Game.Scripts.Client.UI.Game
             foreach (Transform child in _upgradeHolder) 
                 Destroy(child.gameObject);
             _modalWindowManager.OpenWindow();
+            Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
             
         }
@@ -83,6 +84,7 @@ namespace Game.Scripts.Client.UI.Game
                  skillPanel.Init(skill,state);
             }
             _modalWindowManager.OpenWindow();
+            Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
             
         }

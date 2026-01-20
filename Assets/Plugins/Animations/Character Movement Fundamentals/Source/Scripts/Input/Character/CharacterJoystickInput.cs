@@ -55,6 +55,10 @@ namespace CMF
 		{
 			return Input.GetKey(jumpKey);
 		}
+		public override bool IsSlideKeyPressed()
+		{
+			return false;
+		}
 
 	}
 }

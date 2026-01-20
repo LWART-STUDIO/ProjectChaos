@@ -381,6 +381,9 @@ MonoBehaviour:
   groundFriction: 100
   gravity: 30
   slideGravity: 5
+  slideSpeedThreshold: 0
+  slideSpeedDampening: 0
+  keepSlidingSpeedThreshold: 0
   slopeLimit: 80
   useLocalMomentum: 1
   cameraTransform: {fileID: 5079136658137591190}
@@ -399,6 +402,7 @@ MonoBehaviour:
   horizontalInputAxis: Horizontal
   verticalInputAxis: Vertical
   jumpKey: 32
+  slideKey: 304
   useRawInput: 1
 --- !u!114 &63624054864818426
 MonoBehaviour:
@@ -591,9 +595,9 @@ Rigidbody:
     m_Bits: 0
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_UseGravity: 0
-  m_IsKinematic: 0
-  m_Interpolate: 1
+  m_UseGravity: 1
+  m_IsKinematic: 1
+  m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 2
 --- !u!114 &3908082991892466566
@@ -1060,6 +1064,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   upperVerticalLimit: 60
   lowerVerticalLimit: 60
+  maxYawOffset: 80
   cameraSpeed: 500
   smoothCameraRotation: 0
   cameraSmoothingFactor: 25
@@ -1075,8 +1080,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ef9d20421a8e3e44e88315dc70ee11e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mouseHorizontalAxis: Mouse X
-  mouseVerticalAxis: Mouse Y
+  _camera: {fileID: 0}
   invertHorizontalInput: 0
   invertVerticalInput: 0
   mouseInputMultiplier: 0.01

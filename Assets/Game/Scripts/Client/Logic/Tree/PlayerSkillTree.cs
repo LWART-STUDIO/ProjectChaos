@@ -210,6 +210,7 @@ public class PlayerSkillTree : MonoBehaviour
         _canvasGroup.alpha = 1;
         _canvasGroup.interactable = true;
         _canvasGroup.blocksRaycasts = true;
+        Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
     }
     public void CloseWindow()

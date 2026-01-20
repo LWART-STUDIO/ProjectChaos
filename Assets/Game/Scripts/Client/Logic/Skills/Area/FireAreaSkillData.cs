@@ -16,6 +16,7 @@ namespace Game.Scripts.Client.Logic.Skills.Area
             public float speed;
             public float duration;
             public float distanceFromGround;
+            public bool onGround;
         }
         [SerializeField] private List<LevelData> _levels =  new List<LevelData>();
         [SerializeField] private AnimationCurve _damageCurve = AnimationCurve.Linear(0, 1, 1, 10);

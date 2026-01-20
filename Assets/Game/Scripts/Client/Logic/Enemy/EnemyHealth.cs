@@ -3,10 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using CompassNavigatorPro;
 using Game.Scripts.Client.Logic.Colectables;
-using Game.Scripts.Client.Logic.Game;
 using Game.Scripts.Client.UI.Game.World;
+using Game.Scripts.Services;
 using PurrNet;
 using SaintsField.Playa;
+using Sisus.Init;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -30,6 +31,7 @@ namespace Game.Scripts.Client.Logic.Enemy
         [SerializeField] private List<float> _hpByLevel = new List<float>();
         [SerializeField] private ExpOrb _expOrbPrefab;
         private bool _spawned=false;
+        public Collider Collider=>_collider;
         
 
         public float Health => _health.value;
@@ -113,6 +115,7 @@ namespace Game.Scripts.Client.Logic.Enemy
         private void Die()
         {
             onEnemyKilled?.Invoke(this);
+            Service<ServiceInitor>.Instance.AudioService.PlaySoundInPlaceObserver("EnemyDeath",transform.position);
             DieFx();
             Destroy(gameObject,2f);
             SpawnExpOrb();

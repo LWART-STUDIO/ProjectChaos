@@ -51,6 +51,10 @@ namespace CMF
 		public float gravity = 30f;
 		[Tooltip("How fast the character will slide down steep slopes.")]
 		public float slideGravity = 5f;
+
+		public float slideSpeedThreshold;
+		public float slideSpeedDampening;
+		public float keepSlidingSpeedThreshold;
 		
 		//Acceptable slope angle limit;
 		public float slopeLimit = 80f;
@@ -59,6 +63,8 @@ namespace CMF
 		public bool useLocalMomentum = false;
 		
 		private bool _spawned = false;
+		private bool slideInitiated;
+		private bool isSliding;
 
 		//Enum describing basic controller states; 
 		public enum ControllerState
@@ -67,7 +73,8 @@ namespace CMF
 			Sliding,
 			Falling,
 			Rising,
-			Jumping
+			Jumping,
+			HandSliding,
 		}
 		
 		ControllerState currentControllerState = ControllerState.Falling;
@@ -244,6 +251,14 @@ namespace CMF
 
 			return characterInput.IsJumpKeyPressed();
 		}
+		protected virtual bool IsSlideKeyPressed()
+		{
+			//If no character input script is attached to this object, return;
+			if(characterInput == null)
+				return false;
+
+			return characterInput.IsSlideKeyPressed();
+		}
 
 		//Determine current controller state based on current momentum and whether the controller is grounded (or not);
 		//Handle state transitions;
@@ -252,7 +267,8 @@ namespace CMF
 			//Check if vertical momentum is pointing upwards;
 			bool _isRising = IsRisingOrFalling() && (VectorMath.GetDotProduct(GetMomentum(), tr.up) > 0f);
 			//Check if controller is sliding;
-			bool _isSliding = mover.IsGrounded() && IsGroundTooSteep();
+			bool _isSliding = (mover.IsGrounded() && IsGroundTooSteep());
+			bool _isHandSliding = (mover.IsGrounded() && IsSlideKeyPressed());
 			
 			//Grounded;
 			if(currentControllerState == ControllerState.Grounded)
@@ -269,6 +285,11 @@ namespace CMF
 					OnGroundContactLost();
 					return ControllerState.Sliding;
 				}
+				if (_isHandSliding)
+				{
+					Slide();
+					return ControllerState.HandSliding;
+				}
 				return ControllerState.Grounded;
 			}
 
@@ -278,12 +299,17 @@ namespace CMF
 				if(_isRising){
 					return ControllerState.Rising;
 				}
-				if(mover.IsGrounded() && !_isSliding){
+				if(mover.IsGrounded() && !_isSliding &&!_isHandSliding){
 					OnGroundContactRegained();
 					return ControllerState.Grounded;
 				}
 				if(_isSliding){
 					return ControllerState.Sliding;
+				}
+				if (_isHandSliding)
+				{
+					Slide();
+					return ControllerState.HandSliding;
 				}
 				return ControllerState.Falling;
 			}
@@ -299,9 +325,14 @@ namespace CMF
 					OnGroundContactLost();
 					return ControllerState.Falling;
 				}
-				if(mover.IsGrounded() && !_isSliding){
+				if(mover.IsGrounded() && !_isSliding&&!_isHandSliding){
 					OnGroundContactRegained();
 					return ControllerState.Grounded;
+				}
+				if (_isHandSliding)
+				{
+					Slide();
+					return ControllerState.HandSliding;
 				}
 				return ControllerState.Sliding;
 			}
@@ -310,7 +341,7 @@ namespace CMF
 			if(currentControllerState == ControllerState.Rising)
 			{
 				if(!_isRising){
-					if(mover.IsGrounded() && !_isSliding){
+					if(mover.IsGrounded() && !_isSliding&&!_isHandSliding){
 						OnGroundContactRegained();
 						return ControllerState.Grounded;
 					}
@@ -319,6 +350,11 @@ namespace CMF
 					}
 					if(!mover.IsGrounded()){
 						return ControllerState.Falling;
+					}
+					if (_isHandSliding)
+					{
+						Slide();
+						return ControllerState.HandSliding;
 					}
 				}
 
@@ -344,7 +380,11 @@ namespace CMF
 				//Check if jump key was let go;
 				if(jumpKeyWasLetGo)
 					return ControllerState.Rising;
-
+				if (_isHandSliding)
+				{
+					Slide();
+					return ControllerState.HandSliding;
+				}
 				//If a ceiling detector has been attached to this gameobject, check for ceiling hits;
 				if(ceilingDetector != null)
 				{
@@ -355,6 +395,28 @@ namespace CMF
 					}
 				}
 				return ControllerState.Jumping;
+			}
+
+			if (currentControllerState == ControllerState.HandSliding)
+			{
+				if(_isRising){
+					OnGroundContactLost();
+					return ControllerState.Rising;
+				}
+				if(!mover.IsGrounded()){
+					OnGroundContactLost();
+					return ControllerState.Falling;
+				}
+				if(_isSliding){
+					OnGroundContactLost();
+					return ControllerState.Sliding;
+				}
+				if(mover.IsGrounded() && !_isSliding&&!_isHandSliding){
+					OnGroundContactRegained();
+					return ControllerState.Grounded;
+				}
+				Slide();
+				return ControllerState.HandSliding;
 			}
 			
 			return ControllerState.Falling;
@@ -534,6 +596,50 @@ namespace CMF
 
 			if(useLocalMomentum)
 				momentum = tr.worldToLocalMatrix * momentum;
+		}
+
+		private void Slide()
+		{
+			if (slideInitiated)
+			{
+				if(isSliding)
+					return;
+				
+				Vector3 _velocity = GetMovementVelocity();
+				float horizontalSpeed = new Vector3(_velocity.x,0,_velocity.z).magnitude;
+				if(horizontalSpeed < slideSpeedThreshold) return;
+				StartSliding();
+			}
+			if (isSliding)
+			{
+				Vector3 newVelocity  = GetMovementVelocity()*slideSpeedDampening;
+				if(newVelocity.magnitude>keepSlidingSpeedThreshold)
+					momentum = newVelocity;
+				else
+					StopSliding();
+			}
+			
+		}
+
+		private void StartSliding()
+		{
+			slideInitiated = false;
+			SetAsSliding(true);
+			float currentSpeedModifire = Mathf.Clamp(GetMovementVelocity().magnitude / 40, 0, 1);
+			float boost = slideGravity+Mathf.Lerp(0,slideGravity*2f,currentSpeedModifire);
+			Vector3 direction = GetMovementVelocity().normalized;
+			
+			momentum = direction*(GetMovementVelocity().magnitude+boost);
+		}
+
+		private void StopSliding()
+		{
+			SetAsSliding(false);
+		}
+
+		private void SetAsSliding(bool isSliding)
+		{
+			
 		}
 
 		//This function is called when the controller has landed on a surface after being in the air;

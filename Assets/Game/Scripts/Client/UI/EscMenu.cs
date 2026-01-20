@@ -1,5 +1,6 @@
+using System;
+using Game.Scripts.Client.Logic.Player;
 using Game.Scripts.Server;
-using Game.Scripts.Services.Input;
 using Game.Scripts.Services.UI;
 using Michsky.MUIP;
 using Sisus.Init;
@@ -11,12 +12,18 @@ namespace Game.Scripts.Client.UI
     {
         [SerializeField] private ModalWindowManager _modalWindowManager;
         private UIService _uiService => Service<UIService>.Instance;
-        private InputService _inputService => Service<InputService>.Instance;
+        private PlayerInputActions _inputActions;
         private bool _opened => _modalWindowManager.isOn;
+
+        private void Start()
+        {
+            _inputActions = new PlayerInputActions();
+            _inputActions.Enable();
+        }
 
         private void Update()
         {
-            if (_inputService.WasActionPressed(InputAction.Escape))
+            if (_inputActions.Menu.EscMenu.WasPressedThisFrame())
             {
                 if (!_opened)
                     OpenWindow();
@@ -41,15 +48,20 @@ namespace Game.Scripts.Client.UI
         }
         public void CloseWindow()
         {
-            _inputService.UnlockPlayerMovementInput();
+            if(PlayerHealth.AllPlayers.Count<2)
+                Time.timeScale = 1;
             _modalWindowManager.CloseWindow();
+            Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
+            
         }
 
         public void OpenWindow()
         {
-            _inputService.BlockPlayerMovementInput();
+            if(PlayerHealth.AllPlayers.Count<2)
+                Time.timeScale = 0;
             _modalWindowManager.OpenWindow();
+            Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
         }
     }

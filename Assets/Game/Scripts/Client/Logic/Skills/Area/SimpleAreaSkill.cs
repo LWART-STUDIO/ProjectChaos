@@ -16,6 +16,7 @@ namespace Game.Scripts.Client.Logic.Skills.Area
         private bool _setUp;
         private float _distanceFromGround;
         private float _lastAttackTime = 0;
+        private bool _onGround;
         private readonly HashSet<EnemyHealth> _enemiesInArea = new();
         private readonly List<EnemyHealth> _damageBuffer = new();
         
@@ -24,6 +25,7 @@ namespace Game.Scripts.Client.Logic.Skills.Area
             float distanceFromGround,
             float size,
             float speed,
+            bool onGround,
             float duration = 4f)
         {
             if(!isOwner)
@@ -35,6 +37,7 @@ namespace Game.Scripts.Client.Logic.Skills.Area
             transform.localScale = Vector3.one * size;
             transform.localPosition = new Vector3(transform.localPosition.x, transform.localPosition.x+_distanceFromGround, transform.localPosition.z);
             _speed = speed;
+            _onGround = onGround;
             _lastAttackTime = 0;
             _setUp = true;
         }

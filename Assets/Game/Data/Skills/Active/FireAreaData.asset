@@ -28,72 +28,292 @@ MonoBehaviour:
   icon: {fileID: 21300000, guid: 1e29cecd94d0e8347ba6aaf9acfff85f, type: 3}
   prefab: {fileID: 8376601374886026760, guid: 1fdacee12648bae4698c89310ef734b3, type: 3}
   _levels:
-  - damage: 3
+  - damage: 7
     cooldown: 0.4
     size: 0.3
     speed: 1
     duration: 2
     distanceFromGround: -1.6
-  - damage: 23.374487
+    onGround: 1
+  - damage: 11.827341
     cooldown: 0.4
-    size: 0.48888892
+    size: 0.34358975
     speed: 1
     duration: 2
     distanceFromGround: -1.6
-  - damage: 77.99589
+    onGround: 1
+  - damage: 25.973751
     cooldown: 0.4
-    size: 0.67777777
+    size: 0.3871795
     speed: 1
     duration: 2
     distanceFromGround: -1.6
-  - damage: 157.11111
+    onGround: 1
+  - damage: 48.935825
+    cooldown: 0.4
+    size: 0.43076926
+    speed: 1
+    duration: 2
+    distanceFromGround: -1.6
+    onGround: 1
+  - damage: 80.21014
+    cooldown: 0.4
+    size: 0.47435898
+    speed: 1
+    duration: 2
+    distanceFromGround: -1.6
+    onGround: 1
+  - damage: 119.29328
+    cooldown: 0.4
+    size: 0.51794875
+    speed: 1
+    duration: 2
+    distanceFromGround: -1.6
+    onGround: 1
+  - damage: 165.68185
+    cooldown: 0.4
+    size: 0.56153846
+    speed: 1
+    duration: 2
+    distanceFromGround: -1.6
+    onGround: 1
+  - damage: 218.87242
+    cooldown: 0.4
+    size: 0.6051282
+    speed: 1
+    duration: 2
+    distanceFromGround: -1.6
+    onGround: 1
+  - damage: 278.36157
+    cooldown: 0.4
+    size: 0.648718
+    speed: 1
+    duration: 2
+    distanceFromGround: -1.6
+    onGround: 1
+  - damage: 343.64587
+    cooldown: 0.4
+    size: 0.6923077
+    speed: 1
+    duration: 2
+    distanceFromGround: -1.6
+    onGround: 1
+  - damage: 414.22202
+    cooldown: 0.4
+    size: 0.73589754
+    speed: 1
+    duration: 2
+    distanceFromGround: -1.6
+    onGround: 1
+  - damage: 489.58643
+    cooldown: 0.4
+    size: 0.77948725
+    speed: 1
+    duration: 2
+    distanceFromGround: -1.6
+    onGround: 1
+  - damage: 569.2358
+    cooldown: 0.4
+    size: 0.823077
+    speed: 1
+    duration: 2
+    distanceFromGround: -1.6
+    onGround: 1
+  - damage: 652.6667
     cooldown: 0.4
     size: 0.86666673
     speed: 1
     duration: 2
     distanceFromGround: -1.6
-  - damage: 250.96707
+    onGround: 1
+  - damage: 739.37573
     cooldown: 0.4
-    size: 1.0555556
+    size: 0.9102565
     speed: 1
     duration: 2
     distanceFromGround: -1.6
-  - damage: 349.81073
+    onGround: 1
+  - damage: 828.8593
     cooldown: 0.4
-    size: 1.2444446
+    size: 0.9538462
     speed: 1
     duration: 2
     distanceFromGround: -1.6
-  - damage: 443.88892
+    onGround: 1
+  - damage: 920.6143
+    cooldown: 0.4
+    size: 0.997436
+    speed: 1
+    duration: 2
+    distanceFromGround: -1.6
+    onGround: 1
+  - damage: 1014.1371
+    cooldown: 0.4
+    size: 1.0410258
+    speed: 1
+    duration: 2
+    distanceFromGround: -1.6
+    onGround: 1
+  - damage: 1108.9244
+    cooldown: 0.4
+    size: 1.0846155
+    speed: 1
+    duration: 2
+    distanceFromGround: -1.6
+    onGround: 1
+  - damage: 1204.4728
+    cooldown: 0.4
+    size: 1.1282053
+    speed: 1
+    duration: 2
+    distanceFromGround: -1.6
+    onGround: 1
+  - damage: 1300.2788
+    cooldown: 0.4
+    size: 1.171795
+    speed: 1
+    duration: 2
+    distanceFromGround: -1.6
+    onGround: 1
+  - damage: 1395.8391
+    cooldown: 0.4
+    size: 1.2153847
+    speed: 1
+    duration: 2
+    distanceFromGround: -1.6
+    onGround: 1
+  - damage: 1490.6499
+    cooldown: 0.4
+    size: 1.2589746
+    speed: 1
+    duration: 2
+    distanceFromGround: -1.6
+    onGround: 1
+  - damage: 1584.2081
+    cooldown: 0.4
+    size: 1.3025641
+    speed: 1
+    duration: 2
+    distanceFromGround: -1.6
+    onGround: 1
+  - damage: 1676.0104
+    cooldown: 0.4
+    size: 1.346154
+    speed: 1
+    duration: 2
+    distanceFromGround: -1.6
+    onGround: 1
+  - damage: 1765.5535
+    cooldown: 0.4
+    size: 1.3897438
+    speed: 1
+    duration: 2
+    distanceFromGround: -1.6
+    onGround: 1
+  - damage: 1852.3334
     cooldown: 0.4
     size: 1.4333334
     speed: 1
     duration: 2
     distanceFromGround: -1.6
-  - damage: 523.44855
+    onGround: 1
+  - damage: 1935.8472
     cooldown: 0.4
-    size: 1.6222224
+    size: 1.4769232
     speed: 1
     duration: 2
     distanceFromGround: -1.6
-  - damage: 578.73663
+    onGround: 1
+  - damage: 2015.5911
     cooldown: 0.4
-    size: 1.8111115
+    size: 1.520513
     speed: 1
     duration: 2
     distanceFromGround: -1.6
-  - damage: 600
+    onGround: 1
+  - damage: 2091.062
+    cooldown: 0.4
+    size: 1.5641026
+    speed: 1
+    duration: 2
+    distanceFromGround: -1.6
+    onGround: 1
+  - damage: 2161.7563
+    cooldown: 0.4
+    size: 1.6076925
+    speed: 1
+    duration: 2
+    distanceFromGround: -1.6
+    onGround: 1
+  - damage: 2227.1711
+    cooldown: 0.4
+    size: 1.6512823
+    speed: 1
+    duration: 2
+    distanceFromGround: -1.6
+    onGround: 1
+  - damage: 2286.802
+    cooldown: 0.4
+    size: 1.6948721
+    speed: 1
+    duration: 2
+    distanceFromGround: -1.6
+    onGround: 1
+  - damage: 2340.1467
+    cooldown: 0.4
+    size: 1.7384617
+    speed: 1
+    duration: 2
+    distanceFromGround: -1.6
+    onGround: 1
+  - damage: 2386.7004
+    cooldown: 0.4
+    size: 1.7820516
+    speed: 1
+    duration: 2
+    distanceFromGround: -1.6
+    onGround: 1
+  - damage: 2425.9614
+    cooldown: 0.4
+    size: 1.8256414
+    speed: 1
+    duration: 2
+    distanceFromGround: -1.6
+    onGround: 1
+  - damage: 2457.425
+    cooldown: 0.4
+    size: 1.869231
+    speed: 1
+    duration: 2
+    distanceFromGround: -1.6
+    onGround: 1
+  - damage: 2480.5886
+    cooldown: 0.4
+    size: 1.9128208
+    speed: 1
+    duration: 2
+    distanceFromGround: -1.6
+    onGround: 1
+  - damage: 2494.9475
+    cooldown: 0.4
+    size: 1.9564106
+    speed: 1
+    duration: 2
+    distanceFromGround: -1.6
+    onGround: 1
+  - damage: 2500
     cooldown: 0.4
     size: 2
     speed: 1
     duration: 2
     distanceFromGround: -1.6
+    onGround: 1
   _damageCurve:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 3
+      value: 7
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -102,7 +322,7 @@ MonoBehaviour:
       outWeight: 0
     - serializedVersion: 3
       time: 1
-      value: 600
+      value: 2500
       inSlope: 9
       outSlope: 9
       tangentMode: 0

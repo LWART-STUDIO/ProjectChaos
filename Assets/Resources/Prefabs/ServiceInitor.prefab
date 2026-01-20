@@ -46,6 +46,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ec1b4081a6983e54cac68e1a7f47961c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.Services.ServiceInitor
+  _audioService: {fileID: 5317879956670566149}
 --- !u!82 &7577859809095379860
 AudioSource:
   m_ObjectHideFlags: 0
@@ -164,3 +165,5 @@ MonoBehaviour:
   _directChildren: []
   _networkRules: {fileID: 0}
   _visitiblityRules: {fileID: 0}
+  _audioData: []
+  _audioSourcePrefab: {fileID: 0}

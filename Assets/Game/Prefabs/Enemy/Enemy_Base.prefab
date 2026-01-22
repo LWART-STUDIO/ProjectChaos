@@ -134,6 +134,10 @@ MonoBehaviour:
   _networkRules: {fileID: 0}
   _visitiblityRules: {fileID: 0}
   _enemyHealth: {fileID: 6265585724353146765}
+  _agent: {fileID: -3207869756835835820}
+  _agentShape: {fileID: 6867922400764534319}
+  _sonar: {fileID: 4502848714000563896}
+  _spawnEffect: {fileID: -7828607461089824292}
 --- !u!136 &5753413937424566927
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -169,7 +173,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1565ff73cfdaf674890d00521faf853e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.Client.Logic.Enemy.EnemyAttackMelee
-  _damage: 10
+  _isSetup: 0
+  _prefabId: -2147483648
+  _componentIndex: -2147483648
+  _shouldBePooled: 0
+  _parent: {fileID: 0}
+  _invertedPathToNearestParent: 
+  _directChildren: []
+  _networkRules: {fileID: 0}
+  _visitiblityRules: {fileID: 0}
+  _damage:
+    _value: 10
+    _ownerAuth: 0
+    _sendIntervalInSeconds: 0
   _enemyHealth: {fileID: 6265585724353146765}
   _damageCurve:
     serializedVersion: 2
@@ -198,6 +214,9 @@ MonoBehaviour:
   _damageByLevel: []
   _rigidbody: {fileID: 280596381776421547}
   _agent: {fileID: -3207869756835835820}
+  _layerMask:
+    serializedVersion: 2
+    m_Bits: 3072
   _collider: {fileID: 5753413937424566927}
 --- !u!114 &2127135950359571955
 MonoBehaviour:
@@ -228,7 +247,7 @@ MonoBehaviour:
   _minBufferSize: 1
   _maxBufferSize: 2
   _characterControllerPatch: 0
-  _ownerAuth: 1
+  _ownerAuth: 0
   _interpolationTiming: 0
 --- !u!114 &-3207869756835835820
 MonoBehaviour:
@@ -237,7 +256,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 178846807476514020}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 825ee44755f2e4846a6229365ed8d44c, type: 3}
   m_Name: 
@@ -256,7 +275,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 178846807476514020}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fed5c6dd07c7d6e4f857b420fa8f559a, type: 3}
   m_Name: 
@@ -270,7 +289,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 178846807476514020}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0344116cd75eaaf488b894904a1649d9, type: 3}
   m_Name: 
@@ -303,7 +322,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 178846807476514020}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 00fe6fc1ebf8ff240ad5b12ad70ce1c2, type: 3}
   m_Name: 

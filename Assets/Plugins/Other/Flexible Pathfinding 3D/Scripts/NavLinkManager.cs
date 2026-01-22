@@ -185,7 +185,7 @@ namespace FlexiblePathfindingSystem3D
                 link.RecalculateParameters();
             }
 
-            NavMeshLink[] allLinks = FindObjectsOfType<NavMeshLink>();
+            NavMeshLink[] allLinks = FindObjectsByType<NavMeshLink>(FindObjectsInactive.Exclude,FindObjectsSortMode.None);
 
             int newLinksRecognized = 0;
 

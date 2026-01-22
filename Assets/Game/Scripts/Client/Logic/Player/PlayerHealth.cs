@@ -29,12 +29,7 @@ namespace Game.Scripts.Client.Logic.Player
         public static Action<PlayerID> onPlayerDie;
         public Action<int> onHealthChanged;
         public Action onPlayerDieLocal;
-
-        private void Awake()
-        {
-            
-            
-        }
+        
         [ServerRpc(requireOwnership:false)]
         public void RestoreFullHealth()
         {

@@ -32,7 +32,7 @@ namespace Game.Scripts.Services.Audio
 
         public void PlaySoundInPlace(string name,
             Vector3 position,
-            bool asObserver)
+            bool asObserver = false)
         {
            
             if (asObserver)
@@ -54,15 +54,17 @@ namespace Game.Scripts.Services.Audio
             }
             AudioPlayInPlays audioObject = _audioPool.Pull(position, Quaternion.identity);
             audioObject.AudioSource.clip = audioData.clips[Random.Range(0, audioData.clips.Count)];
+            
             audioObject.AudioSource.pitch = PitchFromSemitones(audioData.basePitch, semitone);
             audioObject.AudioSource.volume = audioData.volume;
             audioObject.AudioSource.Play();
+            Debug.Log($"Sound was played{name}"); 
             float lifetime = audioObject.AudioSource.clip.length / Mathf.Abs(audioObject.AudioSource.pitch);
             audioObject.SetUp(name, lifetime);
         }
 
         [ObserversRpc(runLocally: true)]
-        public void PlaySoundInPlaceObserver(string name,
+        private void PlaySoundInPlaceObserver(string name,
             Vector3 position)
         {
             AudioData audioData = SelectData(name);

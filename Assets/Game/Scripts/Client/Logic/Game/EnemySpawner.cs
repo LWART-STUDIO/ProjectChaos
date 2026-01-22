@@ -191,7 +191,6 @@ namespace Game.Scripts.Client.Logic.Game
             Vector3? pos = FindValidSpawnPosition(target.transform.position);
             if (!pos.HasValue)
                 return false;
-            Debug.Log("SpawnEnemy");
             InstantiateEnemy(prefab, pos.Value);
             return true;
         }

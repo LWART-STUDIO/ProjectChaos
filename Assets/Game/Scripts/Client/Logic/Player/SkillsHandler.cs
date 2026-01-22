@@ -13,6 +13,7 @@ namespace Game.Scripts.Client.Logic.Player
         [SerializeField] private Transform _shootPoint;
         [SerializeField] private PlayerStatsHolder _playerStatsHolder;
         private Dictionary<string,Skill> _activeSkills = new Dictionary<string,Skill>();
+        private Dictionary<string,Skill> _passiveSkills = new Dictionary<string,Skill>();
         [SerializeField] private List<SkillData> _initialSkills = new List<SkillData>();
 
         protected override void OnSpawned()
@@ -55,6 +56,17 @@ namespace Game.Scripts.Client.Logic.Player
         public int GetSkillLevel(string id)
         {
             return _activeSkills.TryGetValue(id, out var skill) ? skill.level : -1;
+        }
+
+        public int GetALLDamage()
+        {
+            int damage = 0;
+            foreach (var skill in _activeSkills)
+            {
+                damage += skill.Value.GetDamage();
+            }
+
+            return damage;
         }
 
 

@@ -20,6 +20,8 @@ namespace Game.Scripts.Client.Logic.Skills
             OnInitialize();
         }
 
+        public abstract int GetDamage();
+
         protected abstract void OnInitialize();
         public abstract void Tick();
 

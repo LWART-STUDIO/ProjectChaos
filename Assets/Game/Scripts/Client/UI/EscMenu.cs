@@ -19,6 +19,7 @@ namespace Game.Scripts.Client.UI
         {
             _inputActions = new PlayerInputActions();
             _inputActions.Enable();
+            _modalWindowManager.gameObject.SetActive(true);
         }
 
         private void Update()

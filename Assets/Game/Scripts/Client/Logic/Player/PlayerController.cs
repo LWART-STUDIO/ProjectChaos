@@ -1,4 +1,5 @@
 using CMF;
+using Game.Scripts.Client.Logic.Colectables;
 using PurrNet;
 using Unity.Cinemachine;
 using UnityEngine;
@@ -11,10 +12,15 @@ namespace Game.Scripts.Client.Logic.Player
        [SerializeField] private PlayerMover _playerMover;
        [SerializeField] private Camera _camera;
        [SerializeField] private bool _useToggleToCrouch;
+       [SerializeField] private SyncVar<Vector3> _startPosition = new SyncVar<Vector3>();
        private bool _spawned = false;
 
        private PlayerInputActions _inputActions;
 
+       public void SetStartPosition(Vector3 position)
+       {
+           _startPosition.value = position;
+       }
        protected override void OnSpawned()
        {
            base.OnSpawned();
@@ -26,15 +32,20 @@ namespace Game.Scripts.Client.Logic.Player
            LocalStart();
           
        }
+
+       public void MoveToStartPosition()
+       {
+           Teleport(_startPosition.value);
+       }
        
        private void LocalStart()
        {
            Cursor.lockState = CursorLockMode.Locked;
+           _playerMover.enabled = true;
            _playerMover.Initialize();
            _inputActions = new PlayerInputActions();
            _inputActions.Enable();
-
-           
+           Teleport(_startPosition.value);
        }
 
        private void OnDestroy()
@@ -70,6 +81,12 @@ namespace Game.Scripts.Client.Logic.Player
                    
            };
            _playerMover.UpdateInput(characterInput);
+           //Debug
+           if (_inputActions.Debug.Magnet.WasPressedThisFrame())
+           {
+               ExpOrbManager.MagnetAllOrbsToPlayer(transform);
+           }
+
        }
 
        public void Teleport(Vector3 position)

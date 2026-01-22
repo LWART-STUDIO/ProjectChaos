@@ -3,7 +3,12 @@ guid: 37d97a2138bea44448ff60752e35a739
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_Telluropod
+    second: {fileID: 2100000, guid: daa3d364b2faf364cbcb7d4d9e4b1037, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

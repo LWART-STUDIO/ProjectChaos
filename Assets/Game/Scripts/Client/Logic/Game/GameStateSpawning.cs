@@ -68,8 +68,7 @@ namespace Game.Scripts.Client.Logic.Game
             }
         
         }
-
-
+        
         private void DespawnPlayers()
         {
             var allPlayers = FindObjectsByType<PlayerHealth>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
@@ -103,12 +102,16 @@ namespace Game.Scripts.Client.Logic.Game
                     spawnPoint.position,
                     spawnPoint.rotation
                 );
-                newPlayer.GetComponent<PlayerController>().Teleport(spawnPoint.position);
-
                 newPlayer.GiveOwnership(player);
+                newPlayer.GetComponent<PlayerController>().SetStartPosition(spawnPoint.position);
                 _players.Add(newPlayer);
 
                 spawnIndex = (spawnIndex + 1) % _spawnPoints.Count;
+            }
+
+            foreach (var player in _players)
+            {
+                player.GetComponent<PlayerController>().MoveToStartPosition();
             }
         }
 

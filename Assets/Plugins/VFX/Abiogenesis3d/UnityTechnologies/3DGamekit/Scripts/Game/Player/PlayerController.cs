@@ -111,7 +111,7 @@ namespace Gamekit3D
         // Called automatically by Unity when the script first exists in the scene.
         void Awake()
         {
-            m_Input = FindObjectOfType<PlayerInput>();
+            m_Input = FindAnyObjectByType<PlayerInput>();
             m_Animator = GetComponent<Animator>();
             m_CharCtrl = GetComponent<CharacterController>();
 

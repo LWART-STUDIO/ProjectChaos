@@ -324,7 +324,7 @@ namespace AmazingAssets.DynamicRadialMasks
         void FindUsedObjectsPool()
         {
             //Find pool updating this controller
-            DRMGameObjectsPool[] gameObjectsPool = UnityEngine.Object.FindObjectsOfType<DRMGameObjectsPool>();
+            DRMGameObjectsPool[] gameObjectsPool = FindObjectsByType<DRMGameObjectsPool>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
             if (gameObjectsPool != null && gameObjectsPool.Length > 0)
             {
                 foreach (var pool in gameObjectsPool)
@@ -337,7 +337,8 @@ namespace AmazingAssets.DynamicRadialMasks
                 }
             }
 
-            DRMLiveObjectsPool[] liveObjectsPool = UnityEngine.Object.FindObjectsOfType<DRMLiveObjectsPool>();
+            DRMLiveObjectsPool[] liveObjectsPool =
+                FindObjectsByType<DRMLiveObjectsPool>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
             if (liveObjectsPool != null && liveObjectsPool.Length > 0)
             {
                 foreach (var pool in liveObjectsPool)
@@ -354,7 +355,7 @@ namespace AmazingAssets.DynamicRadialMasks
         [ContextMenu("Find DRMController Script With The Same Settings", false, 2001)]
         void FindDuplicate()
         {
-            foreach (var script in UnityEngine.Object.FindObjectsOfType<DRMController>())
+            foreach (var script in UnityEngine.Object.FindObjectsByType<DRMController>(FindObjectsInactive.Exclude,FindObjectsSortMode.None))
             {
                 if (script != this &&
                    script.shape == this.shape &&

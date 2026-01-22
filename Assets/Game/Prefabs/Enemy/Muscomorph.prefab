@@ -38,7 +38,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6265585724353146765, guid: 82d829c347b75054f8912722ec5e14ca, type: 3}
       propertyPath: _maxHealthDefault
-      value: 30
+      value: 14
       objectReference: {fileID: 0}
     - target: {fileID: 6265585724353146765, guid: 82d829c347b75054f8912722ec5e14ca, type: 3}
       propertyPath: _hpByLevel.Array.size

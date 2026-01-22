@@ -40,8 +40,9 @@ namespace Game.Scripts.Client.Logic.Enemy
         public float MaxHealthMultiplayer => _maxHealthMultiplayer;
         public float MaxHealthFlatModifier => _maxHealthFlatModifier;
         public bool Spawned => _spawned;
+        private bool _dead;
 
-        public static Action<EnemyHealth> onEnemyKilled;
+        public static event  Action<EnemyHealth> onEnemyKilled;
 
         protected override void OnSpawned( bool asServer)
         {
@@ -64,6 +65,8 @@ namespace Game.Scripts.Client.Logic.Enemy
         protected override void OnPoolReset()
         {
             base.OnPoolReset();
+            _dead = false;
+            _spawned = false;
             _maxHealth.value=(_maxHealthDefault+_maxHealthFlatModifier)*_maxHealthMultiplayer;
             _health.value = _maxHealth.value;
         
@@ -114,17 +117,20 @@ namespace Game.Scripts.Client.Logic.Enemy
         }
         private void Die()
         {
+            if(_dead)
+                return;
+            _dead = true;
             onEnemyKilled?.Invoke(this);
-            Service<ServiceInitor>.Instance.AudioService.PlaySoundInPlaceObserver("EnemyDeath",transform.position);
+            Service<ServiceInitor>.Instance.AudioService.PlaySoundInPlace("EnemyDeath",transform.position,true);
             DieFx();
             Destroy(gameObject,2f);
             SpawnExpOrb();
         }
-        [ObserversRpc(runLocally:true)]
+        [ServerRpc(requireOwnership:false)]
         private void SpawnExpOrb()
         {
             ExpOrb exp = NetworkManager.Instantiate(_expOrbPrefab, transform.position, Quaternion.identity);
-            exp.SetUpExp(_expFOrKill);
+            exp.SetUpExpServer(_expFOrKill);
         }
 
 

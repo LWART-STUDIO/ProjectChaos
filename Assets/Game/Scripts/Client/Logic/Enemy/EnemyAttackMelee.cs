@@ -3,58 +3,36 @@ using System.Collections;
 using System.Collections.Generic;
 using Game.Scripts.Client.Logic.Player;
 using ProjectDawn.Navigation.Hybrid;
+using PurrNet;
 using SaintsField.Playa;
 using UnityEditor;
 using UnityEngine;
 
 namespace Game.Scripts.Client.Logic.Enemy
 {
-    public class EnemyAttackMelee : MonoBehaviour
+    public class EnemyAttackMelee : NetworkBehaviour,ITick
     {
-        [SerializeField] private float _damage=10;
+        [SerializeField] private SyncVar<float> _damage= new SyncVar<float>(10f);
         [SerializeField] private EnemyHealth _enemyHealth;
         [SerializeField] private AnimationCurve _damageCurve = AnimationCurve.Linear(0, 1, 1, 10);
         [SerializeField] private List<float> _damageByLevel = new List<float>();
         [SerializeField] private Rigidbody _rigidbody;
         [SerializeField] private AgentAuthoring _agent;
+        [SerializeField] private LayerMask _layerMask;
         private float _attackDelay = 2f;
         [SerializeField] private CapsuleCollider _collider;
 
         private float _lastAttackTime;
         private readonly RaycastHit[] _hits = new RaycastHit[1];
         
-
-        private void Update()
-        {
-            if(!_enemyHealth.Spawned)
-                return;
-            if(_enemyHealth.Health<=0)
-                return;
-            if(_lastAttackTime+_attackDelay>Time.time)
-                return;
-            int hitCount = Physics.SphereCastNonAlloc(
-                transform.position,
-                _collider.radius,
-                transform.forward,
-                _hits,
-                _collider.radius,
-                1<<10,
-                QueryTriggerInteraction.Ignore
-            );
-            if (hitCount > 0)
-            {
-                ProcessHit(_hits[0]);
-                return;
-            }
-          
-        }
-
+        
+        [ServerRpc(requireOwnership: false)]
         private void ProcessHit(RaycastHit hit)
         {
             if (!hit.collider.TryGetComponent(out PlayerHealth playerHealth))
                 return;
             _lastAttackTime = Time.time;
-            playerHealth.ChangeHealth(-(int)_damage);
+            playerHealth.ChangeHealth(-(int)_damage.value);
             StartCoroutine(AttackState(playerHealth.transform));
         }
 
@@ -70,9 +48,10 @@ namespace Game.Scripts.Client.Logic.Enemy
 
 
         }
+        [ServerRpc(requireOwnership: false)]
         public void Upgrade(int value)
         {
-            _damage =_damageByLevel[value];
+            _damage.value =_damageByLevel[value];
         }
 #if UNITY_EDITOR
         
@@ -91,6 +70,33 @@ namespace Game.Scripts.Client.Logic.Enemy
                 _damageByLevel[i] = damage;
             }
             EditorUtility.SetDirty(gameObject);
+        }
+
+        public void OnTick(float delta)
+        {
+            
+            if(!_enemyHealth.Spawned)
+                return;
+            if(_enemyHealth.Health<=0)
+                return;
+            if(_lastAttackTime+_attackDelay>Time.time)
+                return;
+            if(!isServer)
+                return;
+            int hitCount = Physics.SphereCastNonAlloc(
+                transform.position,
+                _collider.radius,
+                transform.forward,
+                _hits,
+                _collider.radius/2,
+                _layerMask,
+                QueryTriggerInteraction.Ignore
+            );
+            if (hitCount > 0)
+            {
+                ProcessHit(_hits[0]);
+                return;
+            }
         }
 
         [Button]

@@ -20,6 +20,42 @@ namespace Game.Scripts.Client.Logic.Skills.Projectiles.Spark
         private float _duration => (_levelData.duration * stats.GetStatValue(StatBonus.SkillDuration));
         private float _speed => (_levelData.speed * stats.GetStatValue(StatBonus.SkillSpeed));
         private int _projectileCount => (int)(_levelData.projectileCount + stats.GetStatValue(StatBonus.Projectile));
+        public override int GetDamage()
+        {
+            float hitsPerProjectile =
+                1f                                     
+                + ExpectedPierceHits()
+                + ExpectedBounceHits();
+
+            float totalHits =
+                _projectileCount
+                * hitsPerProjectile
+                * HitChanceBySpread();
+
+            float damagePerCast = totalHits * _damage;
+
+            return Mathf.RoundToInt(damagePerCast / _levelData.cooldown);
+        }
+        float ExpectedPierceHits()
+        {
+            return Mathf.Min(_pirce, 3) * 0.4f;
+        }
+        float ExpectedBounceHits()
+        {
+            return Mathf.Min(_wallBounce, 3) * 0.3f;
+        }
+        float HitChanceBySpread()
+        {
+            if (_projectileCount == 1)
+                return 1f;
+
+            float spreadPenalty = Mathf.Clamp01(
+                1f - _levelData.angleSpread / 90f
+            );
+
+            return spreadPenalty;
+        }
+
         protected override void OnInitialize()
         {
             var sparkData = data as SparkData;

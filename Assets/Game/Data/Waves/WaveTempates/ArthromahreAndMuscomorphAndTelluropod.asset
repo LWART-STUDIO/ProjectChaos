@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7f77f020ce24c0fbe9405d12c7bae80, type: 3}
+  m_Name: ArthromahreAndMuscomorphAndTelluropod
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.Services.Waves.WaveTemplate
+  Name: Muscomorph
+  Weight: 1
+  EnemyWeights:
+  - Enemy:
+      EnemyPrefab: {fileID: 6684282530575742800, guid: 63ed3f7f216760444b9c73be6ffdcb02, type: 3}
+      Cost: 1
+    RelativeWeight: 1
+  - Enemy:
+      EnemyPrefab: {fileID: 4795157039767286585, guid: c9b7ef8ee32255343b428a3f0c843460, type: 3}
+      Cost: 3
+    RelativeWeight: 0.5
+  - Enemy:
+      EnemyPrefab: {fileID: 5278598904858081144, guid: 3766c4dc73b139645a04909e6a5b5bc6, type: 3}
+      Cost: 1
+    RelativeWeight: 1

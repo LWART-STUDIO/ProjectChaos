@@ -11,8 +11,13 @@ namespace Game.Scripts.Client.UI.Game.PlayerUI
     {
         [SerializeField] private TMP_Text _healthText;
         [SerializeField] private CompassPro _compassPro;
+        [SerializeField] private TimerUI _timer;
         private UIService _uiService => Service<UIService>.Instance;
 
+        public void UpdateTimer(float time)
+        {
+            _timer.UpdateTimer(time);
+        }
         public void UpdateHealth(int health)
         {
             _healthText.text = health.ToString();

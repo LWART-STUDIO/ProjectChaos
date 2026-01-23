@@ -1,6 +1,13 @@
 ﻿using System.Collections;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
+
+#if ENABLE_INPUT_SYSTEM
+using UnityEngine.UIElements.InputSystem;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.UI;
+#endif
 
 namespace AllIn1VfxToolkit.Demo.Scripts
 {
@@ -39,9 +46,14 @@ namespace AllIn1VfxToolkit.Demo.Scripts
         private float timeSinceEffectPlay;
         private AllIn1TimeControl allIn1TimeControl;
 
+		private EventSystem eventSystem;
+
         private void Start()
         {
-            projectileSceneSetupObject.SetActive(false);
+			CheckEventSystem();
+
+
+			projectileSceneSetupObject.SetActive(false);
             currDemoCollectionIndex = startingCollectionIndex;
             currDemoEffectIndex = startingEffectIndex;
             currLabelTween = currentEffectLabel.GetComponent<AllIn1DemoScaleTween>();
@@ -49,14 +61,31 @@ namespace AllIn1VfxToolkit.Demo.Scripts
             nextButtTween = nextEffectButton.GetComponent<AllIn1DemoScaleTween>();
             prevButtTween = previousEffectButton.GetComponent<AllIn1DemoScaleTween>();
             allIn1TimeControl = gameObject.GetComponent<AllIn1TimeControl>();
-            SetupAndInstantiateCurrentEffect();
+
+			SetupAndInstantiateCurrentEffect();
         }
 
-        private void Update()
+		private void CheckEventSystem()
+		{
+			EventSystem eventSystemInScene = GameObject.FindAnyObjectByType<EventSystem>();
+			if (eventSystemInScene != null)
+			{
+				GameObject.Destroy(eventSystemInScene.gameObject);
+			}
+
+			GameObject goEventSystem = new GameObject("Event System");
+			eventSystem = goEventSystem.AddComponent<EventSystem>();
+
+#if ENABLE_INPUT_SYSTEM
+			goEventSystem.AddComponent<InputSystemUIInputModule>();
+#elif ENABLE_LEGACY_INPUT_MANAGER
+			goEventSystem.AddComponent<StandaloneInputModule>();
+#endif
+		}
+
+		private void Update()
         {
-            if(currDemoEffect.canBePlayedAgain && Input.GetKeyDown(playEffectKey)) PlayCurrentEffect();
-            if(Input.GetKeyDown(nextEffectKey) || Input.GetKeyDown(nextEffectKeyAlt)) ChangeCurrentEffect(1);
-            else if(Input.GetKeyDown(previousEffectKey) || Input.GetKeyDown(previousEffectKeyAlt)) ChangeCurrentEffect(-1);
+			ProcessInput();
 
             if(currDemoEffect.spawnTouchingFloor) cameraPivotTransform.position = Vector3.Lerp(cameraPivotTransform.position, new Vector3(0f, 0.1f, 0f), Time.unscaledDeltaTime * camPivotHeightSmoothing);
             if(!currDemoEffect.spawnTouchingFloor) cameraPivotTransform.position = Vector3.Lerp(cameraPivotTransform.position, new Vector3(0f, 2f, 0f), Time.unscaledDeltaTime * camPivotHeightSmoothing);
@@ -64,7 +93,14 @@ namespace AllIn1VfxToolkit.Demo.Scripts
             CooldownHandling();
         }
 
-        private void CooldownHandling()
+		private void ProcessInput()
+		{
+			if (currDemoEffect.canBePlayedAgain && AllIn1InputSystem.GetKeyDown(playEffectKey)) PlayCurrentEffect();
+			if (AllIn1InputSystem.GetKeyDown(nextEffectKey) || AllIn1InputSystem.GetKeyDown(nextEffectKeyAlt)) ChangeCurrentEffect(1);
+			else if (AllIn1InputSystem.GetKeyDown(previousEffectKey) || AllIn1InputSystem.GetKeyDown(previousEffectKeyAlt)) ChangeCurrentEffect(-1);
+		}
+
+		private void CooldownHandling()
         {
             if(!currDemoEffect.canBePlayedAgain) return;
             timeSinceEffectPlay += Time.deltaTime;

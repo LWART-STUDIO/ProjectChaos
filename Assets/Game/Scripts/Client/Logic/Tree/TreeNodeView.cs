@@ -23,14 +23,12 @@ namespace Game.Scripts.Client.Logic.Tree
         [SerializeField] private Image _background;
         [SerializeField] private Image _highlight;
         [SerializeField] private Image _outline;
-
-        [SerializeField] private Color _normalFillBackground;
-        [SerializeField] private Color _selectedFillBackground;
-        [SerializeField] private Color _highlightColor;
+        [SerializeField] private Image _deselectedBackGround;
+        
         [SerializeField] private Color _normalFillIcon;
         [SerializeField] private Color _selectedFillIcon;
-        [SerializeField] private Color _normalFillOutline;
-        [SerializeField] private Color _selectedFillOutline;
+        [SerializeField] private Color _highlightFillIcon;
+
         [SerializeField] private TooltipContent _tooltip;
         private bool isHovered;
 
@@ -86,10 +84,22 @@ namespace Game.Scripts.Client.Logic.Tree
             bool hovered = isHovered; // выставляется OnPointerEnter/Exit
 
             _highlight.enabled = selected || hovered;
-            _highlight.color = _highlightColor;
-            _background.color = selected ? _selectedFillBackground : _normalFillBackground;
-            _icon.color = selected ? _selectedFillIcon : _normalFillIcon;
-            _outline.color = selected ? _selectedFillOutline : _normalFillOutline;
+            if (selected)
+            {
+                _background.gameObject.SetActive(true);
+                _deselectedBackGround.gameObject.SetActive(false);
+                _icon.color =  _selectedFillIcon; 
+                _outline.gameObject.SetActive(true);
+            }
+            else
+            {
+                _background.gameObject.SetActive(false);
+                _deselectedBackGround.gameObject.SetActive(true);
+                _icon.color = !hovered ? _normalFillIcon : _highlightFillIcon;
+                _outline.gameObject.SetActive(false);
+            }
+            
+            
         }
     }
 }

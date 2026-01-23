@@ -12,27 +12,28 @@ namespace AllIn1VfxToolkit
 {
     public class AllIn1VfxWindow : EditorWindow
     {
-        [MenuItem("Window/AllIn1VfxToolkitWindow")]
-        public static void ShowAllIn1VfxToolkitWindowWindow()
-        {
-            GetWindow<AllIn1VfxWindow>("All In 1 VFX Toolkit Window");
-        }
+        private const string Version = "2.21";
+        
+        [MenuItem("Tools/AllIn1/VfxToolkitWindow")]
+        public static void ShowAllIn1VfxToolkitWindowWindow() => GetWindow<AllIn1VfxWindow>("All In 1 VFX Toolkit Window");
 
-        public static readonly string materialsSavesPath = "Assets/AllIn1VfxToolkit/MaterialSaves";
-        public static readonly string particlePresetsSavesPath = "Assets/AllIn1VfxToolkit/ParticlePresets/Resources";
-        public static readonly string renderImagesSavesPath = "Assets/AllIn1VfxToolkit/Demo & Assets/Textures";
-        public static readonly string normalMapSavesPath = "Assets/AllIn1VfxToolkit/Demo & Assets/Textures/Distortion Normal Maps";
-        public static readonly string gradientSavesPath = "Assets/AllIn1VfxToolkit/Demo & Assets/Textures/Color Gradients";
-        public static readonly string noiseSavesPath = "Assets/AllIn1VfxToolkit/Demo & Assets/Textures/Noise";
-        public static readonly string atlasSavesPath = "Assets/AllIn1VfxToolkit/Demo & Assets/Textures/Shapes";
-        public static readonly string materialAutoSetupSavesPath = "Assets/AllIn1VfxToolkit/Demo & Assets/Demo/Materials";
-
-        private const string Version = "1.5";
-        public Vector2 scrollPosition = Vector2.zero;
-
+        public static readonly string CUSTOM_EDITOR_HEADER = "AllIn1VfxCustomEditorImage";
+        private static string basePath = "Assets/Plugins/AllIn1VfxToolkit";
+        public static readonly string materialsSavesPath = "/MaterialSaves";
+        public static readonly string particlePresetsSavesPath = "/ParticlePresets";
+        public static readonly string renderImagesSavesPath = "/Demo & Assets/Textures";
+        public static readonly string normalMapSavesPath = "/Demo & Assets/Textures/Distortion Normal Maps";
+        public static readonly string gradientSavesPath = "/Demo & Assets/Textures/Color Gradients";
+        public static readonly string noiseSavesPath = "/Demo & Assets/Textures/Noise";
+        public static readonly string atlasSavesPath = "/Demo & Assets/Textures/Shapes";
+        public static readonly string materialAutoSetupSavesPath = "/Demo & Assets/Demo/Materials";
+        
+        private Vector2 scrollPosition = Vector2.zero;
         private DefaultAsset materialTargetFolder = null;
         private GUIStyle style, bigLabel = new GUIStyle();
         private const int BigFontSize = 16;
+        private Texture2D imageInspector;
+        private const int BUTTON_WIDTH = 600;
 
         private enum TextureSizes
         {
@@ -76,7 +77,7 @@ namespace AllIn1VfxToolkit
             {
                 scrollPosition = scrollView.scrollPosition;
 
-                Texture2D imageInspector = Resources.Load<Texture2D>("CustomEditorTransparent");
+                if(imageInspector == null) imageInspector = GetInspectorImage();
                 if(imageInspector)
                 {
                     Rect rect = EditorGUILayout.GetControlRect(GUILayout.Height(50));
@@ -115,20 +116,30 @@ namespace AllIn1VfxToolkit
                 GUILayout.Label("Current asset version is " + Version, EditorStyles.boldLabel);
             }
         }
+        
+        public static Texture2D GetInspectorImage()
+        {
+            string[] guids = AssetDatabase.FindAssets($"{CUSTOM_EDITOR_HEADER} t:texture");
+            if(guids.Length > 0)
+            {
+                string path = AssetDatabase.GUIDToAssetPath(guids[0]);
+                return AssetDatabase.LoadAssetAtPath<Texture2D>(path);
+            }
+            return null;
+        }
 
         private void SavePaths()
         {
             GUILayout.Label("Material Save Path", bigLabel);
             GUILayout.Space(20);
             GUILayout.Label("Select the folder where new Materials will be saved when the Save Material To Folder button of the asset component is pressed", EditorStyles.boldLabel);
-            HandleSaveFolderEditorPref("All1VfxMaterials", materialsSavesPath, "Material");
+            HandleSaveFolderEditorPref("All1VfxMaterials", basePath + materialsSavesPath, "Material");
 
             DrawLine(Color.grey, 1, 3);
             GUILayout.Label("Particle Presets Save Path", bigLabel);
             GUILayout.Space(20);
             GUILayout.Label("Select the folder where new Particle Helper Preset or Particle System Preset is saved with the Particle Helper Component", EditorStyles.boldLabel);
-            GUILayout.Label("*Use a folder named Resources", EditorStyles.boldLabel);
-            HandleSaveFolderEditorPref("All1VfxParticlePresets", particlePresetsSavesPath, "Presets");
+            HandleSaveFolderEditorPref("All1VfxParticlePresets", basePath + particlePresetsSavesPath, "Presets");
 
             DrawLine(Color.grey, 1, 3);
             GUILayout.Label("Render Material to Image Save Path", bigLabel);
@@ -144,35 +155,46 @@ namespace AllIn1VfxToolkit
             }
             EditorGUILayout.EndHorizontal();
             GUILayout.Label("Select the folder where new Images will be saved when the Render Material To Image button of the asset component is pressed", EditorStyles.boldLabel);
-            HandleSaveFolderEditorPref("All1VfxRenderImages", renderImagesSavesPath, "Images");
+            HandleSaveFolderEditorPref("All1VfxRenderImages", basePath + renderImagesSavesPath, "Images");
         }
 
         private void HandleSaveFolderEditorPref(string keyName, string defaultPath, string logsFeatureName)
         {
-            if(!PlayerPrefs.HasKey(keyName)) PlayerPrefs.SetString(keyName, defaultPath);
-            materialTargetFolder = (DefaultAsset) AssetDatabase.LoadAssetAtPath(PlayerPrefs.GetString(keyName), typeof(DefaultAsset));
-            if(materialTargetFolder == null)
+            if (!PlayerPrefs.HasKey(keyName)) PlayerPrefs.SetString(keyName, defaultPath);
+            materialTargetFolder = (DefaultAsset)AssetDatabase.LoadAssetAtPath(PlayerPrefs.GetString(keyName), typeof(DefaultAsset));
+            if (materialTargetFolder == null)
             {
                 PlayerPrefs.SetString(keyName, defaultPath);
-                materialTargetFolder = (DefaultAsset) AssetDatabase.LoadAssetAtPath(PlayerPrefs.GetString(keyName), typeof(DefaultAsset));
-                if(materialTargetFolder == null)
+                materialTargetFolder = (DefaultAsset)AssetDatabase.LoadAssetAtPath(PlayerPrefs.GetString(keyName), typeof(DefaultAsset));
+                if (materialTargetFolder == null)
                 {
-                    materialTargetFolder = (DefaultAsset) AssetDatabase.LoadAssetAtPath("Assets/", typeof(DefaultAsset));
-                    if(materialTargetFolder == null) Debug.LogWarning("The desired save folder doesn't exist. " + PlayerPrefs.GetString(keyName) +
-                                                                    "\n Go to Window -> AllIn1VfxToolkitWindow and set a valid folder");
+                    materialTargetFolder = (DefaultAsset)AssetDatabase.LoadAssetAtPath("Assets/", typeof(DefaultAsset));
+                    if(materialTargetFolder == null)
+                    {
+                        EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth(600));
+                        EditorGUILayout.HelpBox("Folder is invalid, please select a valid one", MessageType.Error, true);
+                        EditorGUILayout.EndHorizontal();
+                    }
                     else PlayerPrefs.SetString("Assets/", defaultPath);
                 }
             }
+            materialTargetFolder = (DefaultAsset)EditorGUILayout.ObjectField("New " + logsFeatureName + " Folder", 
+                materialTargetFolder, typeof(DefaultAsset), false, GUILayout.MaxWidth(500));
 
-            materialTargetFolder = (DefaultAsset) EditorGUILayout.ObjectField("New " + logsFeatureName + " Folder", materialTargetFolder, typeof(DefaultAsset), false);
-
-            if(materialTargetFolder != null && IsAssetAFolder(materialTargetFolder))
+            if (materialTargetFolder != null && IsAssetAFolder(materialTargetFolder))
             {
                 string path = AssetDatabase.GetAssetPath(materialTargetFolder);
                 PlayerPrefs.SetString(keyName, path);
-                EditorGUILayout.HelpBox("Valid folder! " + logsFeatureName + " save path: " + path, MessageType.Info, true);
+                EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth(600));
+                EditorGUILayout.HelpBox("Valid folder! " + logsFeatureName + " save path: " + path, MessageType.Info);
+                EditorGUILayout.EndHorizontal();
             }
-            else EditorGUILayout.HelpBox("Select the new " + logsFeatureName + " Folder", MessageType.Warning, true);
+            else
+            {
+                EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth(600));
+                EditorGUILayout.HelpBox("Select the new " + logsFeatureName + " Folder", MessageType.Warning, true);
+                EditorGUILayout.EndHorizontal();
+            }
         }
 
         private void NormalMapCreator()
@@ -182,10 +204,10 @@ namespace AllIn1VfxToolkit
             GUILayout.Space(20);
             GUILayout.Label("Select the folder where new Normal Maps will be saved when the Create Normal Map button of the asset component is pressed", EditorStyles.boldLabel);
             GUILayout.Label("*These Normal Maps can then be used with the Screen Distortion effect", EditorStyles.boldLabel);
-            HandleSaveFolderEditorPref("All1VfxNormals", normalMapSavesPath, "Normal Maps");
+            HandleSaveFolderEditorPref("All1VfxNormals", basePath + normalMapSavesPath, "Normal Maps");
 
             GUILayout.Space(20);
-            GUILayout.Label("Assign a sprite you want to create a normal map from. Choose the normal map settings and press the 'Create And Save Normal Map' button", EditorStyles.boldLabel);
+            GUILayout.Label("Assign a texture you want to create a normal map from. Choose the normal map settings and press the 'Create And Save Normal Map' button", EditorStyles.boldLabel);
             targetNormalImage = (Texture2D) EditorGUILayout.ObjectField("Target Image", targetNormalImage, typeof(Texture2D), false, GUILayout.MaxWidth(225));
 
             EditorGUILayout.BeginHorizontal();
@@ -206,7 +228,7 @@ namespace AllIn1VfxToolkit
             {
                 if(targetNormalImage != null)
                 {
-                    if(GUILayout.Button("Create And Save Normal Map"))
+                    if(GUILayout.Button("Create And Save Normal Map", GUILayout.MaxWidth(BUTTON_WIDTH)))
                     {
                         isComputingNormals = 1;
                         return;
@@ -280,7 +302,7 @@ namespace AllIn1VfxToolkit
             GUILayout.Space(20);
             GUILayout.Label("This feature can be used to create textures for the Color Ramp Effect", EditorStyles.boldLabel);
 
-            EditorGUILayout.GradientField("Color Gradient: ", gradient, GUILayout.Height(25));
+            EditorGUILayout.GradientField("Color Gradient: ", gradient, GUILayout.Height(25), GUILayout.MaxWidth(BUTTON_WIDTH));
 
             EditorGUILayout.BeginHorizontal();
             {
@@ -302,12 +324,12 @@ namespace AllIn1VfxToolkit
 
             GUILayout.Space(20);
             GUILayout.Label("Select the folder where new Color Gradient Textures will be saved", EditorStyles.boldLabel);
-            HandleSaveFolderEditorPref("All1VfxGradients", gradientSavesPath, "Gradients");
+            HandleSaveFolderEditorPref("All1VfxGradients", basePath + gradientSavesPath, "Gradients");
 
             string prefSavedPath = PlayerPrefs.GetString("All1VfxGradients") + "/";
             if(Directory.Exists(prefSavedPath))
             {
-                if(GUILayout.Button("Save Color Gradient Texture"))
+                if(GUILayout.Button("Save Color Gradient Texture", GUILayout.MaxWidth(BUTTON_WIDTH)))
                 {
                     string path = prefSavedPath + "ColorGradient.png";
                     if(System.IO.File.Exists(path)) path = GetNewValidPath(path);
@@ -351,7 +373,7 @@ namespace AllIn1VfxToolkit
             ScriptableObject target = this;
             SerializedObject so = new SerializedObject(target);
             SerializedProperty stringsProperty = so.FindProperty("Atlas");
-            EditorGUILayout.PropertyField(stringsProperty, true);
+            EditorGUILayout.PropertyField(stringsProperty, true, GUILayout.MaxWidth(200));
             so.ApplyModifiedProperties();
 
             squareAtlas = EditorGUILayout.Toggle("Square Atlas?", squareAtlas, GUILayout.MaxWidth(200));
@@ -408,12 +430,12 @@ namespace AllIn1VfxToolkit
 
             GUILayout.Space(20);
             GUILayout.Label("Select the folder where new Atlases will be saved", EditorStyles.boldLabel);
-            HandleSaveFolderEditorPref("All1VfxAtlas", atlasSavesPath, "Atlas");
+            HandleSaveFolderEditorPref("All1VfxAtlas", basePath + atlasSavesPath, "Atlas");
 
             string prefSavedPath = PlayerPrefs.GetString("All1VfxAtlas") + "/";
             if(Directory.Exists(prefSavedPath))
             {
-                if(GUILayout.Button("Create And Save Atlas Texture"))
+                if(GUILayout.Button("Create And Save Atlas Texture", GUILayout.MaxWidth(BUTTON_WIDTH)))
                 {
                     string path = prefSavedPath + "Atlas.png";
                     if(System.IO.File.Exists(path)) path = GetNewValidPath(path);
@@ -494,14 +516,14 @@ namespace AllIn1VfxToolkit
             if(noiseType == NoiseTypes.Fractal || noiseType == NoiseTypes.Perlin || noiseType == NoiseTypes.Billow)
             {
                 isFractalNoise = true;
-                noiseMaterial = new Material(Resources.Load("AllIn1VfxFractalNoise", typeof(Shader)) as Shader);
+                noiseMaterial = new Material(FindShader("AllIn1VfxFractalNoise"));
                 noiseScaleX = 4f;
                 noiseScaleY = 4f;
             }
             else
             {
                 isFractalNoise = false;
-                noiseMaterial = new Material(Resources.Load("AllIn1VfxWorleyNoise", typeof(Shader)) as Shader);
+                noiseMaterial = new Material(FindShader("AllIn1VfxWorleyNoise"));
                 noiseScaleX = 10f;
                 noiseScaleY = 10f;
             }
@@ -625,18 +647,18 @@ namespace AllIn1VfxToolkit
                 }
                 EditorGUILayout.EndVertical();
                 
-                if(noisePreview != null) GUILayout.Label(noisePreview);
+                if(noisePreview != null) GUILayout.Label(noisePreview, GUILayout.MaxWidth(450), GUILayout.MaxHeight(450));
             }
             EditorGUILayout.EndHorizontal();
             
             GUILayout.Space(20);
             GUILayout.Label("Select the folder where new Noise Textures will be saved", EditorStyles.boldLabel);
-            HandleSaveFolderEditorPref("All1VfxNoise", noiseSavesPath, "Noises");
+            HandleSaveFolderEditorPref("All1VfxNoise", basePath + noiseSavesPath, "Noises");
 
             string prefSavedPath = PlayerPrefs.GetString("All1VfxNoise") + "/";
             if(Directory.Exists(prefSavedPath) && noisePreview != null)
             {
-                if(GUILayout.Button("Save Noise Texture"))
+                if(GUILayout.Button("Save Noise Texture", GUILayout.MaxWidth(BUTTON_WIDTH)))
                 {
                     string path = prefSavedPath + "Noise.png";
                     if(System.IO.File.Exists(path)) path = GetNewValidPath(path);
@@ -705,22 +727,27 @@ namespace AllIn1VfxToolkit
             DrawLine(Color.grey, 1, 3);
             GUILayout.Space(10);
             SceneNotificationsToggle();
-        }
+			DrawLine(Color.grey, 1, 3);
+			GUILayout.Space(10);
+			RefreshLitShader();
+		}
 
         private void AutoSetupMaterialsToCurrentPipelineArea()
         {
             GUILayout.Label("AllIn1Vfx Materials Shader Auto Setup", bigLabel);
             GUILayout.Space(20);
             GUILayout.Label("Select the folder where the target AllIn1Vfx materials are contained", EditorStyles.boldLabel);
-            HandleSaveFolderEditorPref("All1VfxAutoSetup", materialAutoSetupSavesPath, "Auto Setup");
+            HandleSaveFolderEditorPref("All1VfxAutoSetup", basePath + materialAutoSetupSavesPath, "Auto Setup");
 
             GUILayout.Space(20);
-            if(GUILayout.Button("Auto Setup Shaders for Materials in selected folder"))
+            if(GUILayout.Button("Auto Setup Shaders for Materials in selected folder", GUILayout.MaxWidth(BUTTON_WIDTH)))
             {
                 string autoSetupPath = PlayerPrefs.GetString("All1VfxAutoSetup");
                 SceneViewNotificationAndLog("Starting Material Auto Setup at: " + autoSetupPath);
                 string[] filePaths = System.IO.Directory.GetFiles(autoSetupPath);
 
+                bool isSuccess = true;
+                Material lastTargetMat = null;
                 if(filePaths != null && filePaths.Length > 0)
                 {
                     for(int i = 0; i < filePaths.Length; i++)
@@ -728,23 +755,34 @@ namespace AllIn1VfxToolkit
                         Object obj = UnityEditor.AssetDatabase.LoadAssetAtPath(filePaths[i], typeof(Material));
                         if(obj is Material mat)
                         {
+                            lastTargetMat = mat;
                             string shaderName = mat.shader.name;
                             if(shaderName.Contains("AllIn1Vfx/"))
                             {
                                 shaderName = shaderName.Replace("AllIn1Vfx/", "");
-                                if(shaderName.Contains("Vfx")) //Means it is a variation of the asset main shader
+                                if(shaderName.Contains("AllIn1Vfx")) //Means it is a variation of the asset main shader
                                 {
-                                    SetShaderBasedOnEffectsAndPipeline(mat);
+                                    isSuccess &= SetShaderBasedOnEffectsAndPipeline(mat);
                                 }
                             }
+                            else if(shaderName.Contains("Hidden/InternalError")) //If the material is broken we'll override it by a AllIn1Vfx one
+                            {
+                                isSuccess &= SetShaderBasedOnEffectsAndPipeline(mat);
+                            }
                         }
+                    }
+                    
+                    if(!isSuccess){
+                        string targetShader = GetTargetShaderName(lastTargetMat);
+                        EditorUtility.DisplayDialog("Missing Shader", 
+                        $"Shader {targetShader} not found. Import the appropriate Pipeline package as explained in the Documentation first section", "Ok");
                     }
                 }
 
                 AssetDatabase.SaveAssets();
                 AssetDatabase.Refresh();
 
-                SceneViewNotificationAndLog("Material Auto Setup finished");
+                if(isSuccess) SceneViewNotificationAndLog("Material Auto Setup finished");
             }
         }
         
@@ -754,10 +792,10 @@ namespace AllIn1VfxToolkit
             GUILayout.Label("These effects are: Soft Particles, Intersection Glow, Screen Distortion");
             GUILayout.Space(20);
             GUILayout.Label("Select the folder where the target AllIn1Vfx materials are contained", EditorStyles.boldLabel);
-            HandleSaveFolderEditorPref("DepthAndSceneColorPath", materialAutoSetupSavesPath, "Effects Disable");
+            HandleSaveFolderEditorPref("DepthAndSceneColorPath", basePath + materialAutoSetupSavesPath, "Effects Disable");
 
             GUILayout.Space(20);
-            if(GUILayout.Button("Disable Depth and Scene Color Effects for Materials in selected folder"))
+            if(GUILayout.Button("Disable Depth and Scene Color Effects for Materials in selected folder", GUILayout.MaxWidth(BUTTON_WIDTH)))
             {
                 string autoSetupPath = PlayerPrefs.GetString("DepthAndSceneColorPath");
                 SceneViewNotificationAndLog("Starting to Disable Depth and Scene Color Effects at: " + autoSetupPath);
@@ -802,22 +840,53 @@ namespace AllIn1VfxToolkit
             EditorGUIUtility.labelWidth = previousLabelWidth;
         }
 
-        private void SetShaderBasedOnEffectsAndPipeline(Material targetMat)
+		private static void RefreshLitShader()
+        {
+            GUILayout.Label("Force the Lit Shader to be reconfigured");
+            GUILayout.Label("If you are getting some error or have changed the render pipeline press the button below");
+			if(GUILayout.Button("Refresh Lit Shader", GUILayout.MaxWidth(BUTTON_WIDTH)))
+			{
+				AllIn1VfxShaderImporter.ForceReimport();
+			}
+		}
+
+		public static bool SetShaderBasedOnEffectsAndPipeline(Material targetMat)
+        {
+            string targetShader = GetTargetShaderName(targetMat);
+
+            if(!targetMat.shader.name.Equals(targetShader))
+            {
+                int renderingQueue = targetMat.renderQueue;
+                float zWriteValue = targetMat.GetFloat("_ZWrite");
+                Shader shader = FindShader(targetShader);
+                if(shader == null) return false;
+                targetMat.shader = shader;
+                targetMat.renderQueue = renderingQueue;
+                targetMat.SetFloat("_ZWrite", zWriteValue);
+                EditorUtility.SetDirty(targetMat);
+            }
+            return true;
+        }
+
+        private static string GetTargetShaderName(Material targetMat)
         {
             string[] oldKeyWords = targetMat.shaderKeywords;
             string targetShader = "AllIn1Vfx";
-        
             string pipeline = "Built-In";
             RenderPipelineAsset renderPipelineAsset = GraphicsSettings.defaultRenderPipeline;
-            if(renderPipelineAsset != null) {
-                switch(renderPipelineAsset.GetType().Name) {
-                    case "UniversalRenderPipelineAsset": pipeline = "URP";
+            if(renderPipelineAsset != null)
+            {
+                switch(renderPipelineAsset.GetType().Name)
+                {
+                    case"UniversalRenderPipelineAsset":
+                        pipeline = "URP";
                         break;
-                    case "HDRenderPipelineAsset": pipeline = "HDRP";
+                    case"HDRenderPipelineAsset":
+                        pipeline = "HDRP";
                         break;
                 }
             }
-        
+
             if(pipeline.Equals("Built-In"))
             {
                 if(oldKeyWords.Contains("SCREENDISTORTION_ON")) targetShader = "AllIn1VfxGrabPass";
@@ -826,22 +895,28 @@ namespace AllIn1VfxToolkit
             }
             else if(pipeline.Equals("URP"))
             {
-                targetShader = "AllIn1VfxURP";
+				if(targetMat.shader.name == "AllIn1Vfx/AllIn1VfxSRPBatch")
+				{
+					targetShader = "AllIn1VfxSRPBatch";
+				}
+				else
+				{
+					targetShader = "AllIn1VfxURP";
+				}
             }
             else if(pipeline.Equals("HDRP"))
             {
-                targetShader = "AllIn1VfxHDRP";
+				if (targetMat.shader.name == "AllIn1Vfx/AllIn1VfxSRPBatch")
+				{
+					targetShader = "AllIn1VfxSRPBatch";
+				}
+				else
+				{
+					targetShader = "AllIn1VfxHDRP";
+				}
             }
 
-            if(!targetMat.shader.name.Equals(targetShader))
-            {
-                int renderingQueue = targetMat.renderQueue;
-                float zWriteValue = targetMat.GetFloat("_ZWrite");
-                targetMat.shader = Resources.Load(targetShader, typeof(Shader)) as Shader;
-                targetMat.renderQueue = renderingQueue;
-                targetMat.SetFloat("_ZWrite", zWriteValue);
-                EditorUtility.SetDirty(targetMat);
-            }
+            return targetShader;
         }
 
         private static bool IsAssetAFolder(Object obj)
@@ -850,9 +925,13 @@ namespace AllIn1VfxToolkit
 
             if(obj == null) return false;
 
-            path = AssetDatabase.GetAssetPath(obj.GetInstanceID());
+#if UNITY_6000_3_OR_NEWER
+			path = AssetDatabase.GetAssetPath(obj.GetEntityId());
+#else
+			path = AssetDatabase.GetAssetPath(obj.GetInstanceID());
+#endif
 
-            if(path.Length > 0)
+			if (path.Length > 0)
             {
                 if(Directory.Exists(path)) return true;
                 else return false;
@@ -897,32 +976,28 @@ namespace AllIn1VfxToolkit
             return result;
         }
 
-        private Texture2D CreateNormalMap(Texture2D t, float normalMult = 5f, int normalSmooth = 0)
+        private static Texture2D CreateNormalMap(Texture2D t, float normalMult = 5f, int normalSmooth = 0)
         {
-            Color[] pixels = new Color[t.width * t.height];
-            Texture2D texNormal = new Texture2D(t.width, t.height, TextureFormat.RGB24, false, false);
+            int width = t.width;
+            int height = t.height;
+            Color[] sourcePixels = t.GetPixels();
+            Color[] resultPixels = new Color[width * height];
             Vector3 vScale = new Vector3(0.3333f, 0.3333f, 0.3333f);
 
-            for(int y = 0; y < t.height; y++)
+            for(int y = 0; y < height; y++)
             {
-                for(int x = 0; x < t.width; x++)
+                for(int x = 0; x < width; x++)
                 {
-                    Color tc = t.GetPixel(x - 1, y - 1);
-                    Vector3 cSampleNegXNegY = new Vector3(tc.r, tc.g, tc.g);
-                    tc = t.GetPixel(x, y - 1);
-                    Vector3 cSampleZerXNegY = new Vector3(tc.r, tc.g, tc.g);
-                    tc = t.GetPixel(x + 1, y - 1);
-                    Vector3 cSamplePosXNegY = new Vector3(tc.r, tc.g, tc.g);
-                    tc = t.GetPixel(x - 1, y);
-                    Vector3 cSampleNegXZerY = new Vector3(tc.r, tc.g, tc.g);
-                    tc = t.GetPixel(x + 1, y);
-                    Vector3 cSamplePosXZerY = new Vector3(tc.r, tc.g, tc.g);
-                    tc = t.GetPixel(x - 1, y + 1);
-                    Vector3 cSampleNegXPosY = new Vector3(tc.r, tc.g, tc.g);
-                    tc = t.GetPixel(x, y + 1);
-                    Vector3 cSampleZerXPosY = new Vector3(tc.r, tc.g, tc.g);
-                    tc = t.GetPixel(x + 1, y + 1);
-                    Vector3 cSamplePosXPosY = new Vector3(tc.r, tc.g, tc.g);
+                    int index = x + y * width;
+                    Vector3 cSampleNegXNegY = GetPixelClamped(sourcePixels, x - 1, y - 1, width, height);
+                    Vector3 cSampleZerXNegY = GetPixelClamped(sourcePixels, x, y - 1, width, height);
+                    Vector3 cSamplePosXNegY = GetPixelClamped(sourcePixels, x + 1, y - 1, width, height);
+                    Vector3 cSampleNegXZerY = GetPixelClamped(sourcePixels, x - 1, y, width, height);
+                    Vector3 cSamplePosXZerY = GetPixelClamped(sourcePixels, x + 1, y, width, height);
+                    Vector3 cSampleNegXPosY = GetPixelClamped(sourcePixels, x - 1, y + 1, width, height);
+                    Vector3 cSampleZerXPosY = GetPixelClamped(sourcePixels, x, y + 1, width, height);
+                    Vector3 cSamplePosXPosY = GetPixelClamped(sourcePixels, x + 1, y + 1, width, height);
+
                     float fSampleNegXNegY = Vector3.Dot(cSampleNegXNegY, vScale);
                     float fSampleZerXNegY = Vector3.Dot(cSampleZerXNegY, vScale);
                     float fSamplePosXNegY = Vector3.Dot(cSamplePosXNegY, vScale);
@@ -931,79 +1006,67 @@ namespace AllIn1VfxToolkit
                     float fSampleNegXPosY = Vector3.Dot(cSampleNegXPosY, vScale);
                     float fSampleZerXPosY = Vector3.Dot(cSampleZerXPosY, vScale);
                     float fSamplePosXPosY = Vector3.Dot(cSamplePosXPosY, vScale);
+
                     float edgeX = (fSampleNegXNegY - fSamplePosXNegY) * 0.25f + (fSampleNegXZerY - fSamplePosXZerY) * 0.5f + (fSampleNegXPosY - fSamplePosXPosY) * 0.25f;
                     float edgeY = (fSampleNegXNegY - fSampleNegXPosY) * 0.25f + (fSampleZerXNegY - fSampleZerXPosY) * 0.5f + (fSamplePosXNegY - fSamplePosXPosY) * 0.25f;
+
                     Vector2 vEdge = new Vector2(edgeX, edgeY) * normalMult;
                     Vector3 norm = new Vector3(vEdge.x, vEdge.y, 1.0f).normalized;
-                    Color c = new Color(norm.x * 0.5f + 0.5f, norm.y * 0.5f + 0.5f, norm.z * 0.5f + 0.5f, 1);
-                    pixels[x + y * t.width] = c;
+                    resultPixels[index] = new Color(norm.x * 0.5f + 0.5f, norm.y * 0.5f + 0.5f, norm.z * 0.5f + 0.5f, 1);
                 }
             }
 
-            if(normalSmooth > 0f)
+            if(normalSmooth > 0)
             {
-                float step = 0.00390625f * normalSmooth;
-                for(int y = 0; y < t.height; y++)
-                {
-                    for(int x = 0; x < t.width; x++)
-                    {
-                        float pixelsToAverage = 0.0f;
-                        Color c = pixels[(x + 0) + ((y + 0) * t.width)];
-                        pixelsToAverage++;
-                        if(x - normalSmooth > 0)
-                        {
-                            if(y - normalSmooth > 0)
-                            {
-                                c += pixels[(x - normalSmooth) + ((y - normalSmooth) * t.width)];
-                                pixelsToAverage++;
-                            }
-
-                            c += pixels[(x - normalSmooth) + ((y + 0) * t.width)];
-                            pixelsToAverage++;
-                            if(y + normalSmooth < t.height)
-                            {
-                                c += pixels[(x - normalSmooth) + ((y + normalSmooth) * t.width)];
-                                pixelsToAverage++;
-                            }
-                        }
-
-                        if(y - normalSmooth > 0)
-                        {
-                            c += pixels[(x + 0) + ((y - normalSmooth) * t.width)];
-                            pixelsToAverage++;
-                        }
-
-                        if(y + normalSmooth < t.height)
-                        {
-                            c += pixels[(x + 0) + ((y + normalSmooth) * t.width)];
-                            pixelsToAverage++;
-                        }
-
-                        if(x + normalSmooth < t.width)
-                        {
-                            if(y - normalSmooth > 0)
-                            {
-                                c += pixels[(x + normalSmooth) + ((y - normalSmooth) * t.width)];
-                                pixelsToAverage++;
-                            }
-
-                            c += pixels[(x + normalSmooth) + ((y + 0) * t.width)];
-                            pixelsToAverage++;
-                            if(y + normalSmooth < t.height)
-                            {
-                                c += pixels[(x + normalSmooth) + ((y + normalSmooth) * t.width)];
-                                pixelsToAverage++;
-                            }
-                        }
-
-                        pixels[x + y * t.width] = c / pixelsToAverage;
-                    }
-                }
+                resultPixels = SmoothNormals(resultPixels, width, height, normalSmooth);
             }
 
-            texNormal.SetPixels(pixels);
+            Texture2D texNormal = new Texture2D(width, height, TextureFormat.RGB24, false, false);
+            texNormal.SetPixels(resultPixels);
             texNormal.Apply();
             return texNormal;
+        }
+        
+        private static Vector3 GetPixelClamped(Color[] pixels, int x, int y, int width, int height)
+        {
+            x = Mathf.Clamp(x, 0, width - 1);
+            y = Mathf.Clamp(y, 0, height - 1);
+            Color c = pixels[x + y * width];
+            return new Vector3(c.r, c.g, c.b);
+        }
+        
+        private static Color[] SmoothNormals(Color[] pixels, int width, int height, int normalSmooth)
+        {
+            Color[] smoothedPixels = new Color[pixels.Length];
+            float step = 0.00390625f * normalSmooth;
+
+            for(int y = 0; y < height; y++)
+            {
+                for(int x = 0; x < width; x++)
+                {
+                    float pixelsToAverage = 0.0f;
+                    Color c = pixels[x + y * width];
+                    pixelsToAverage++;
+
+                    for(int offsetY = -normalSmooth; offsetY <= normalSmooth; offsetY++)
+                    {
+                        for(int offsetX = -normalSmooth; offsetX <= normalSmooth; offsetX++)
+                        {
+                            if(offsetX == 0 && offsetY == 0) continue;
+
+                            int sampleX = Mathf.Clamp(x + offsetX, 0, width - 1);
+                            int sampleY = Mathf.Clamp(y + offsetY, 0, height - 1);
+
+                            c += pixels[sampleX + sampleY * width];
+                            pixelsToAverage++;
+                        }
+                    }
+
+                    smoothedPixels[x + y * width] = c / pixelsToAverage;
+                }
+            }
+
+            return smoothedPixels;
         }
 
         private Color editorColorTint = Color.white;
@@ -1121,7 +1184,7 @@ namespace AllIn1VfxToolkit
             int currWidth = Mathf.ClosestPowerOfTwo((int)(editorTexInput.width * exportScale));
             int currHeight = Mathf.ClosestPowerOfTwo((int)(editorTexInput.height * exportScale));
             GUILayout.Label("Current export size is: "+ currWidth + " x " + currHeight + " (size snaps to the closest power of 2)", EditorStyles.boldLabel);
-            if(GUILayout.Button("Save Resulting Image as PNG file"))
+            if(GUILayout.Button("Save Resulting Image as PNG file", GUILayout.MaxWidth(BUTTON_WIDTH)))
             {
                 string fullPath = AssetDatabase.GetAssetPath(editorTexInput);
                 string path = fullPath.Replace(Path.GetFileName(fullPath), "");
@@ -1429,9 +1492,73 @@ namespace AllIn1VfxToolkit
             return y * width + x;
         }
         
+        private void OnEnable() => GetBasePath();
+
+        private static void GetBasePath()
+        {
+            string[] guids = AssetDatabase.FindAssets("t:folder AllIn1VfxToolkit");
+            if(guids.Length > 0)
+            {
+                basePath = AssetDatabase.GUIDToAssetPath(guids[0]);
+            }
+            else
+            {
+                Debug.LogError("AllIn1VfxToolkit folder not found in the project.");
+                basePath = "Assets/Plugins/AllIn1VfxToolkit";
+            }
+        }
+        
+        public static string GetMaterialSavePath()
+        {
+            if(!PlayerPrefs.HasKey("All1VfxMaterials"))
+            {
+                GetBasePath();
+                return basePath + materialsSavesPath;
+            }
+            return PlayerPrefs.GetString("All1VfxMaterials");
+        }
+        
+        public static string GetRenderImageSavePath()
+        {
+            if(!PlayerPrefs.HasKey("All1VfxRenderImages"))
+            {
+                GetBasePath();
+                return basePath + renderImagesSavesPath;
+            }
+            return PlayerPrefs.GetString("All1VfxRenderImages");
+        }
+        
+        public static string GetParticlePresetsPath()
+        {
+            if(!PlayerPrefs.HasKey("All1VfxParticlePresets"))
+            {
+                GetBasePath();
+                return basePath + particlePresetsSavesPath;
+            }
+            return PlayerPrefs.GetString("All1VfxParticlePresets");
+        }
+        
         public static void SceneViewNotificationAndLog(string message)
         {
+            Debug.Log(message);
             ShowSceneViewNotification(message);
+        }
+
+        public static Shader FindShader(string shaderName)
+        {
+            string[] guids = AssetDatabase.FindAssets($"{shaderName} t:shader");
+            foreach(string guid in guids)
+            {
+                string path = AssetDatabase.GUIDToAssetPath(guid);
+                Shader shader = AssetDatabase.LoadAssetAtPath<Shader>(path);
+                if(shader != null)
+                {
+                    string fullShaderName = shader.name;
+                    string actualShaderName = fullShaderName.Substring(fullShaderName.LastIndexOf('/') + 1);
+                    if(actualShaderName == shaderName) return shader;
+                }
+            }
+            return null;
         }
 
         public static void ShowSceneViewNotification(string message)

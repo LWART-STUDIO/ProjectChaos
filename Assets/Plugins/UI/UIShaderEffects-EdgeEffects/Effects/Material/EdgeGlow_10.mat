@@ -9,6 +9,8 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: EdgeGlow_10
   m_Shader: {fileID: 4800000, guid: 0da559dfe5960d04eab89ed1248364a6, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
   - _Use_Mask
   m_InvalidKeywords: []
@@ -18,6 +20,7 @@ Material:
   m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
+  m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -103,9 +106,9 @@ Material:
     - _Cutoff: 0.5
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
-    - _DistortionIntensity: 10.5
+    - _DistortionIntensity: 3.5
     - _DstBlend: 0
-    - _EdgeBlur: 3.35
+    - _EdgeBlur: 0.82
     - _EnvironmentReflections: 1
     - _GlossMapScale: 0
     - _Glossiness: 0
@@ -142,7 +145,7 @@ Material:
     - _StencilReadMask: 255
     - _StencilWriteMask: 255
     - _Surface: 0
-    - _Thickness: 0
+    - _Thickness: 0.05
     - _UseMask: 0
     - _Use_Mask: 1
     - _Use_Mask2: 0
@@ -160,6 +163,7 @@ Material:
     - _ScaleScrollSpeed: {r: -1.6, g: 6.64, b: 0, a: -0.4}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []
+  m_AllowLocking: 1
 --- !u!114 &5455401148254403089
 MonoBehaviour:
   m_ObjectHideFlags: 11

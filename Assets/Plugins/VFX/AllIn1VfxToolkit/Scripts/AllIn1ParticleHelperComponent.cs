@@ -518,9 +518,7 @@ namespace AllIn1VfxToolkit
             psHelperPresetAsset.colorLifetime = colorLifetime;
             psHelperPresetAsset.sizeLifetime = sizeLifetime;
 
-            string path = "Assets/AllIn1VfxToolkit/ParticlePresets/Resources";
-            if(PlayerPrefs.HasKey("All1VfxParticlePresets")) path = PlayerPrefs.GetString("All1VfxParticlePresets") + "/";
-            else PlayerPrefs.SetString("All1VfxParticlePresets", "Assets/AllIn1VfxToolkit/ParticlePresets/Resources");
+            string path = AllIn1VfxWindow.GetParticlePresetsPath();
             if(!System.IO.Directory.Exists(path))
             {
                 EditorUtility.DisplayDialog("The desired Particle Presets Save Path doesn't exist",
@@ -568,9 +566,7 @@ namespace AllIn1VfxToolkit
 
             Preset psPreset = new Preset(ps);
             
-            string path = "Assets/AllIn1VfxToolkit/ParticlePresets/Resources";
-            if(PlayerPrefs.HasKey("All1VfxParticlePresets")) path = PlayerPrefs.GetString("All1VfxParticlePresets") + "/";
-            else PlayerPrefs.SetString("All1VfxParticlePresets", "Assets/AllIn1VfxToolkit/ParticlePresets/Resources");
+            string path = AllIn1VfxWindow.GetParticlePresetsPath();
             if(!System.IO.Directory.Exists(path))
             {
                 EditorUtility.DisplayDialog("The desired Particle Presets Save Path doesn't exist",
@@ -656,7 +652,9 @@ namespace AllIn1VfxToolkit
             {
                 string logErrorString = "The Particle System in the object: " + gameObject.name + " has no valid target material";
                 Debug.LogError(logErrorString);
+                #if UNITY_EDITOR
                 AllIn1VfxWindow.ShowSceneViewNotification(logErrorString);
+                #endif
                 return;
             } 
             
@@ -715,7 +713,9 @@ namespace AllIn1VfxToolkit
         {
             string logErrorString = "This GameObject: " + gameObject.name + " doesn't have a Particle System and it should, please double check what you are doing";
             Debug.LogError(logErrorString);
+            #if UNITY_EDITOR
             AllIn1VfxWindow.ShowSceneViewNotification(logErrorString);
+            #endif
         }
 #endif
         private void SetSceneDirty()

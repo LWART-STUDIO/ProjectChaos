@@ -8,10 +8,11 @@ namespace AllIn1VfxToolkit
     public class AllIn1VfxEditor : UnityEditor.Editor
     {
         private GUIStyle smallBoldLabel;
+        private Texture2D imageInspector;
 
         public override void OnInspectorGUI()
         {
-            Texture2D imageInspector = Resources.Load<Texture2D>("CustomEditorTransparent");
+            if(imageInspector == null) imageInspector = AllIn1VfxWindow.GetInspectorImage();
             if(imageInspector)
             {
                 Rect rect = EditorGUILayout.GetControlRect(GUILayout.Height(32));
@@ -112,6 +113,7 @@ namespace AllIn1VfxToolkit
             if(GUILayout.Button("Add Particle System Helper"))
             {
                 for(int i = 0; i < targets.Length; i++) ((AllIn1VfxComponent) targets[i]).AddHelperAndPlaceUnderAll1VfxMainComponent();
+                AllIn1VfxWindow.ShowSceneViewNotification("AllIn1Vfx: Particle System Helper Added");
             }
         }
 

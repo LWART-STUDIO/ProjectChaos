@@ -25,6 +25,10 @@ public class PlayerSkillTree : MonoBehaviour
     [SerializeField] private Vector2 boundsMin = new(-800, -800);
     [SerializeField] private Vector2 boundsMax = new(800, 800);
     
+    [SerializeField] private GameObject[] ParalaxObjects;
+    [SerializeField] private float MouseSpeedX = 1f, MouseSpeedY = .2f;
+    [SerializeField] private RectTransform _mainObjectForParalax;
+    
     private GameStateLevelUp _levelUp;
     private int _abilityPoints;
     [SerializeField]private bool _isOpen = false;
@@ -33,6 +37,7 @@ public class PlayerSkillTree : MonoBehaviour
     private float _currentZoom = 1f;
     private float defaultZoom = 2f;
     private Vector2 defaultPosition=Vector2.zero;
+    private Vector3[] OriginalPositions;
     
 
     private HashSet<int> selectedNodes = new();
@@ -40,6 +45,11 @@ public class PlayerSkillTree : MonoBehaviour
     public void SetUp(PlayerStatsHolder stats)
     {
         this.stats = stats;
+        OriginalPositions = new Vector3[ParalaxObjects.Length];
+        for (int i = 0; i < ParalaxObjects.Length; i++)
+        {
+            OriginalPositions[i] = ParalaxObjects[i].transform.position;
+        }
         UpdateTree();
     }
     public bool TrySelectNode(TreeNodeView node)
@@ -212,6 +222,20 @@ public class PlayerSkillTree : MonoBehaviour
         _canvasGroup.blocksRaycasts = true;
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
+    }
+
+    private void LateUpdate()
+    {
+        if(!_isOpen)
+            return;
+        Vector2 treeOffset = _treeToMove.anchoredPosition - defaultPosition;
+
+        float parallaxX = treeOffset.x * MouseSpeedX;
+        float parallaxY = treeOffset.y * MouseSpeedY;
+        for (int i = 1; i < ParalaxObjects.Length+1; i++)
+        {
+            ParalaxObjects[i-1].transform.position = OriginalPositions[i-1] + (new Vector3(parallaxX, parallaxY, 0f) * i * ((i-1) - (ParalaxObjects.Length/2)));
+        }
     }
     public void CloseWindow()
     {

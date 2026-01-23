@@ -10,10 +10,10 @@ namespace Game.Scripts.Client.Logic.Tree
     {
         public int fromId;
         public int toId;
-
-        [SerializeField] private Image line;
+        
         [SerializeField] private Color inactiveColor;
-        [SerializeField] private Color activeColor;
+        [SerializeField] private GameObject _selected;
+        [SerializeField] private GameObject _deselected;
 
         [SaintsField.Playa.Button]
         public void UpdateIds()
@@ -25,7 +25,17 @@ namespace Game.Scripts.Client.Logic.Tree
 
         public void Refresh(bool active)
         {
-            line.color = active ? activeColor : inactiveColor;
+            if (active)
+            {
+                _selected.SetActive(true);
+                _deselected.SetActive(false);
+            }
+            else
+            {
+                _selected.SetActive(false);
+                _deselected.SetActive(true);
+            }
+    
         }
     }
 }

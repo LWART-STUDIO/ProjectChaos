@@ -65,7 +65,7 @@ namespace AllIn1VfxToolkit
         {
             bool operationSuccessful = SetMaterial(AfterSetAction.Clear, shaderName);
             #if UNITY_EDITOR
-            if(notifyWhenDone && operationSuccessful) AllIn1VfxWindow.ShowSceneViewNotification("AllIn1Vfx: Material Created and Added");
+            if(notifyWhenDone && operationSuccessful) AllIn1VfxWindow.ShowSceneViewNotification("AllIn1Vfx: Material Created and Assigned");
             #endif
         }
 
@@ -78,8 +78,7 @@ namespace AllIn1VfxToolkit
 
             string shaderName = currMaterial.shader.name;
             if(shaderName.Contains("AllIn1Vfx/")) shaderName = shaderName.Replace("AllIn1Vfx/", "");
-            SetMaterial(AfterSetAction.CopyMaterial, shaderName);
-            return true;
+            return SetMaterial(AfterSetAction.CopyMaterial, shaderName);
         }
 
         private bool FetchCurrentMaterial()
@@ -117,7 +116,8 @@ namespace AllIn1VfxToolkit
 
         private bool SetMaterial(AfterSetAction action, string shaderName)
         {
-            Shader allIn1VfxShader = Resources.Load(shaderName, typeof(Shader)) as Shader;
+            #if UNITY_EDITOR
+            Shader allIn1VfxShader = AllIn1VfxWindow.FindShader(shaderName);
 
             if(!Application.isPlaying && Application.isEditor && allIn1VfxShader != null)
             {
@@ -126,10 +126,16 @@ namespace AllIn1VfxToolkit
                 if(sr != null)
                 {
                     rendererExists = true;
-                    prevMaterial = new Material(GetComponent<Renderer>().sharedMaterial);
+                    Renderer currentRenderer = GetComponent<Renderer>();
+                    if(currentRenderer.sharedMaterial == null)
+                    {
+                        AllIn1VfxWindow.SceneViewNotificationAndLog("Error: No Material Found");
+                        return false;
+                    }
+                    prevMaterial = new Material(currentRenderer.sharedMaterial);
                     currMaterial = new Material(allIn1VfxShader);
-                    GetComponent<Renderer>().sharedMaterial = currMaterial;
-                    GetComponent<Renderer>().sharedMaterial.hideFlags = HideFlags.None;
+                    currentRenderer.sharedMaterial = currMaterial;
+                    currentRenderer.sharedMaterial.hideFlags = HideFlags.None;
                     matAssigned = true;
                     DoAfterSetAction(action);
                 }
@@ -155,14 +161,13 @@ namespace AllIn1VfxToolkit
             }
             else if(allIn1VfxShader == null)
             {
-                #if UNITY_EDITOR
-                string logErrorMessage = "Make sure the AllIn1Vfx shader variants are inside the Resource folder! You looked for " + shaderName;
+                string logErrorMessage = "You are missing shader variants. Maybe reinstall the asset? You looked for " + shaderName;
                 Debug.LogError(logErrorMessage);
                 AllIn1VfxWindow.ShowSceneViewNotification(logErrorMessage);          
-                #endif
 
                 return false;
             }
+            #endif
             
             return false;
         }
@@ -356,9 +361,7 @@ namespace AllIn1VfxToolkit
         public bool SaveMaterial()
         {
 #if UNITY_EDITOR
-            string path = AllIn1VfxWindow.materialsSavesPath;
-            if(PlayerPrefs.HasKey("All1VfxMaterials")) path = PlayerPrefs.GetString("All1VfxMaterials");
-            else PlayerPrefs.SetString("All1VfxMaterials", AllIn1VfxWindow.materialsSavesPath);
+            string path = AllIn1VfxWindow.GetMaterialSavePath();
             path += "/";
             if(!System.IO.Directory.Exists(path))
             {
@@ -377,8 +380,9 @@ namespace AllIn1VfxToolkit
 
             SetSceneDirty();
             return true;
-#endif
+#else
             return false;
+#endif
         }
 
         private void SaveMaterialWithOtherName(string path, int i = 1)
@@ -566,9 +570,7 @@ namespace AllIn1VfxToolkit
             resultTex.ReadPixels(new Rect(0, 0, renderTarget.width, renderTarget.height), 0, 0);
             resultTex.Apply();
 
-            string path = AllIn1VfxWindow.renderImagesSavesPath;
-            if(PlayerPrefs.HasKey("All1VfxRenderImages")) path = PlayerPrefs.GetString("All1VfxRenderImages");
-            else PlayerPrefs.SetString("All1VfxRenderImages", AllIn1VfxWindow.renderImagesSavesPath);
+            string path = AllIn1VfxWindow.GetRenderImageSavePath();
             path +=  "/";
             if(!System.IO.Directory.Exists(path))
             {

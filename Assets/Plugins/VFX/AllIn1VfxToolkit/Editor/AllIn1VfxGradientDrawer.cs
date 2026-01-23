@@ -1,6 +1,7 @@
 #if UNITY_EDITOR
 using System;
 using System.Linq;
+using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -11,6 +12,8 @@ namespace AllIn1VfxToolkit
 	{
 		private int resolution;
 		private Texture2D textureAsset;
+		private static MethodInfo reinitializeMethod;
+		private static MethodInfo resizeMethod;
 
 		public AllIn1VfxGradientDrawer()
 		{
@@ -24,7 +27,9 @@ namespace AllIn1VfxToolkit
 
 		private static bool IsPropertyTypeSuitable(MaterialProperty prop)
 		{
-			return prop.propertyType == UnityEngine.Rendering.ShaderPropertyType.Texture;
+			AllIn1ShaderPropertyType propType = EditorUtils.GetShaderTypeByMaterialProperty(prop);
+
+			return propType == AllIn1ShaderPropertyType.Texture;
 		}
 
 		private string TextureName(MaterialProperty prop) => $"z{prop.name}Tex";
@@ -103,8 +108,25 @@ namespace AllIn1VfxToolkit
 				}
 			}
 			if (textureAsset == null) CreateTexture(path, name);
-			if (textureAsset.width != resolution) textureAsset.Reinitialize(resolution, 1);
+			if(textureAsset.width != resolution)
+			{
+				ResizeTexture(textureAsset, resolution, 1);
+				EditorUtility.SetDirty(textureAsset);
+				AssetDatabase.SaveAssets();
+			}
 			return textureAsset;
+		}
+
+		private void ResizeTexture(Texture2D texture, int width, int height)
+		{
+			if(reinitializeMethod == null && resizeMethod == null)
+			{
+				reinitializeMethod = typeof(Texture2D).GetMethod("Reinitialize", new[] { typeof(int), typeof(int) });
+				if(reinitializeMethod == null) resizeMethod = typeof(Texture2D).GetMethod("Resize", new[] { typeof(int), typeof(int) });
+			}
+
+			if(reinitializeMethod != null) reinitializeMethod.Invoke(texture, new object[] { width, height });
+			else if(resizeMethod != null) resizeMethod.Invoke(texture, new object[] { width, height });
 		}
 
 		private void CreateTexture(string path, string name = "unnamed texture")

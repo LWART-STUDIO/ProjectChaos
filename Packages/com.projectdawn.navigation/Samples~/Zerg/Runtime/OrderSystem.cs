@@ -5,9 +5,6 @@ using Unity.Transforms;
 using Unity.Jobs;
 using Unity.Burst;
 using UnityEngine;
-using UnityEngine.AI;
-using static Unity.Entities.SystemAPI;
-using NavMeshPath = ProjectDawn.Navigation.NavMeshPath;
 using Unity.Collections.LowLevel.Unsafe;
 
 namespace ProjectDawn.Navigation.Sample.Zerg
@@ -19,7 +16,7 @@ namespace ProjectDawn.Navigation.Sample.Zerg
 
         protected override void OnCreate()
         {
-            m_Gestures = GameObject.FindObjectOfType<Gestures>(true);
+            m_Gestures = GameObject.FindFirstObjectByType<Gestures>(FindObjectsInactive.Include);
         }
 
         public struct Singleton : IComponentData

@@ -20,7 +20,8 @@ namespace GIGA.AutoRadialLayout
 
         // Constants
         public const string VERSION = "1.0.1";
-
+        [SerializeField]
+        private List<ExtraLink> extraLinks = new List<ExtraLink>();
         // Enums
         public enum AutoRebuildMode { Never, EditorOnly, Always };
         public enum NodesDistribution { Concentric, Branches };
@@ -148,6 +149,12 @@ namespace GIGA.AutoRadialLayout
 
         // Flags
         private bool initialized;
+        [Serializable]
+        public class ExtraLink
+        {
+            public RadialLayoutNode a;
+            public RadialLayoutNode b;
+        }
 
 		private void OnEnable()
 		{
@@ -451,6 +458,72 @@ namespace GIGA.AutoRadialLayout
             this.onRebuild?.Invoke(this);
 
         }
+        private void RebuildExtraLinks()
+        {
+            if (this.prefab_link == null || this.linksRoot == null)
+                return;
+
+            foreach (var link in extraLinks)
+            {
+                if (link.a == null || link.b == null)
+                    continue;
+
+                // не создаём дубликаты
+                if (RadialLayoutLinkExists(link.a, link.b))
+                    continue;
+
+                var go = Instantiate(this.prefab_link.gameObject, this.linksRoot.transform);
+                RadialLayoutLink rl = go.GetComponent<RadialLayoutLink>();
+
+                rl.root = this.linksRoot.GetComponent<RadialLayoutLinksRoot>();
+                rl.Set(link.a, link.b);
+                
+            }
+        }
+        private bool RadialLayoutLinkExists(RadialLayoutNode a, RadialLayoutNode b)
+        {
+            foreach (Transform t in this.linksRoot.transform)
+            {
+                var link = t.GetComponent<RadialLayoutLink>();
+                if (link == null)
+                    continue;
+
+                if ((link.from == a && link.to == b) ||
+                    (link.from == b && link.to == a))
+                    return true;
+            }
+            return false;
+        }
+
+
+        public void AddExtraLink(RadialLayoutNode a, RadialLayoutNode b)
+        {
+            if (a == null || b == null || a == b)
+                return;
+
+            // защита от дубликатов
+            foreach (var l in extraLinks)
+            {
+                if ((l.a == a && l.b == b) || (l.a == b && l.b == a))
+                    return;
+            }
+
+            extraLinks.Add(new ExtraLink { a = a, b = b });
+
+            QueueNodeForLinkRebuild(a);
+            QueueNodeForLinkRebuild(b);
+        }
+
+        public void RemoveExtraLink(RadialLayoutNode a, RadialLayoutNode b)
+        {
+            extraLinks.RemoveAll(l =>
+                (l.a == a && l.b == b) ||
+                (l.a == b && l.b == a));
+
+            QueueNodeForLinkRebuild(a);
+            QueueNodeForLinkRebuild(b);
+        }
+
 
         private void RebuildLinks(bool deferred)
         {
@@ -472,6 +545,8 @@ namespace GIGA.AutoRadialLayout
                 {
                     foreach (var node in this.linksRebuildList)
                         node.CreateLink();
+                    
+                    RebuildExtraLinks();
 
                     this.linksRebuildList = null;
                     this.linksRebuildFrameCounter = 0;

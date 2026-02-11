@@ -11,7 +11,7 @@ namespace SaintsField.Samples.Scripts.SaintsEditor.Issues
             public string structString;
         }
 
-        [Serializable, Flags]
+        [Serializable]
         public enum MyEnum
         {
             EnumValue1,

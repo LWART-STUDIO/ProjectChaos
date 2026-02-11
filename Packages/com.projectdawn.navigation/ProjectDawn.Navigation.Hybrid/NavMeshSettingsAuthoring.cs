@@ -22,11 +22,11 @@ namespace ProjectDawn.Navigation.Hybrid
         /// <summary>
         /// Returns default component of <see cref="AgentSpatialPartitioningSystem.Settings"/>.
         /// </summary>
-        public NavMeshQuerySystem.Settings DefaultSettings => new()
+        /*public NavMeshQuerySystem.Settings DefaultSettings => new()
         {
             MaxIterations = m_MaxIterations,
             MaxPathSize = m_MaxPath,
-        };
+        };*/
 
         public override Entity GetOrCreateEntity()
         {

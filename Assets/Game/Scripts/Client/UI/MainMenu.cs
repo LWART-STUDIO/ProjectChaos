@@ -45,7 +45,7 @@ namespace Game.Scripts.Client.UI
         private void OnLobbyEntered()
         {
             // Debug.Log("Steam lobby entered, showing lobby UI...");
-            _gameCanvas.HideMainMenu();
+          //  _gameCanvas.HideMainMenu();
             Service<SceneService>.Instance.LoadScene(SceneMapper.Game);
             _gameCanvas.GetLobbyUI();
         }

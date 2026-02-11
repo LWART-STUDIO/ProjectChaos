@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using SaintsField.Editor.Linq;
 using SaintsField.Editor.Playa.Utils;
 using SaintsField.Playa;
+using SaintsField.Utils;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
@@ -10,8 +13,11 @@ namespace SaintsField.Editor.Playa.RendererGroup
 {
     public partial class SaintsRendererGroup: ISaintsRendererGroup
     {
-        public bool InDirectHorizontalLayout { get; set; }
+        private static Texture2D _dropdownIcon;
+        private static Texture2D _dropdownRightIcon;
+
         public bool InAnyHorizontalLayout { get; set; }
+        public bool InDirectHorizontalLayout { get; set; }
 
         public class Config
         {
@@ -33,7 +39,7 @@ namespace SaintsField.Editor.Playa.RendererGroup
 
         private readonly List<string> _orderedKeys = new List<string>();  // no OrderedDict can use...
 
-        private readonly string _groupPath;
+        private readonly IReadOnlyList<string> _groupPath;
         private readonly ELayout _eLayout;
         private readonly Config _config;
 
@@ -46,7 +52,7 @@ namespace SaintsField.Editor.Playa.RendererGroup
 
         public SaintsRendererGroup(string groupPath, Config config, object containerObject)
         {
-            _groupPath = groupPath;
+            _groupPath = RuntimeUtil.SeparatePath(groupPath).ToArray();
             _config = config;
             _eLayout = config.ELayout;
             _foldout = !config.ELayout.HasFlagFast(ELayout.Collapse);
@@ -104,7 +110,7 @@ namespace SaintsField.Editor.Playa.RendererGroup
         public void Add(string groupPath, ISaintsRenderer renderer)
         {
             // ReSharper disable once ReplaceSubstringWithRangeIndexer
-            string lastId = groupPath.Substring(groupPath.LastIndexOf('/') + 1);
+            string lastId = RuntimeUtil.SeparatePath(groupPath).LastOrDefault() ?? "";
 
             // ReSharper disable once ConvertIfStatementToNullCoalescingAssignment
             // if(_curSelected == null)
@@ -115,8 +121,8 @@ namespace SaintsField.Editor.Playa.RendererGroup
             if(!_groupIdToRenderer.TryGetValue(lastId, out List<ISaintsRenderer> renderers))
             {
                 _groupIdToRenderer[lastId] = renderers = new List<ISaintsRenderer>();
-#if SAINTSFIELD_DEBUG && SAINTSFIELD_DEBUG_EDITOR_LAYOUT
-                Debug.Log($"Add Key to {_groupPath}: {lastId} of {groupPath}");
+#if SAINTSFIELD_DEBUG && SAINTSFIELD_DEBUG_SAINTS_EDITOR_LAYOUT
+                Debug.Log($"Add Key to `{string.Join('/', _groupPath)}`: `{lastId}` of `{groupPath}`");
 #endif
                 _orderedKeys.Add(lastId);
             }
@@ -151,7 +157,7 @@ namespace SaintsField.Editor.Playa.RendererGroup
             }
         }
 
-        public override string ToString() => $"<Group path={_groupPath} layout={_eLayout}/>";
+        public override string ToString() => $"<Group path={string.Join('/', _groupPath)} layout={_eLayout}/>";
 
         private static bool IsFancyBox(ELayout eLayout) => eLayout.HasFlagFast(ELayout.Background) || eLayout.HasFlagFast(ELayout.Tab);
 

@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: a42b7d6aa1d0b7440a614e63081558bf
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 295704
+  packageName: Workshop Friendly Localization
+  packageVersion: 1.0
+  assetPath: Assets/SoftKitty/WorkshopFriendlyLocalization/Scripts/Ui/LocalizationTextLegacy.cs
+  uploadId: 690837

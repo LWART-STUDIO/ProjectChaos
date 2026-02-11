@@ -17,6 +17,12 @@ namespace ProjectDawn.Navigation
         /// </summary>
         [Tooltip("Radius at which agent will assume similarity of the distance.")]
         public float Radius;
+        /// <summary>
+        /// The minimum distance from the destination at which the hive mind stop behavior becomes active.
+        /// The agent's body remaining distance is used to determine this value.
+        /// </summary>
+        [Tooltip("The minimum distance from the destination at which the hive mind stop behavior becomes active. The agent's body remaining distance is used to determine this value.")]
+        public float MinDistance;
 
         /// <summary>
         /// Returns default configuration.
@@ -25,6 +31,7 @@ namespace ProjectDawn.Navigation
         {
             Enabled = true,
             Radius = 1,
+            MinDistance = float.MaxValue,
         };
     }
 

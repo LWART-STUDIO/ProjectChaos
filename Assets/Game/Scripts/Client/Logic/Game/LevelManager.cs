@@ -19,6 +19,7 @@ namespace Game.Scripts.Client.Logic.Game
 
         public static Action<int> onExpChanged;
         public static Action<int> onLevelChanged;
+        public static Action onPassiveGrant;
 
         private void Awake()
         {
@@ -29,12 +30,18 @@ namespace Game.Scripts.Client.Logic.Game
             ApplyExpCurve();
         }
 
+        public void PassiveGrant()
+        {
+            onPassiveGrant?.Invoke();
+        }
+
         protected override void OnDestroy()
         {
-            base.OnDestroy();
             InstanceHandler.UnregisterInstance<LevelManager>();
             _exp.onChanged -= OnExpChanged;
             _level.onChanged -= OnLevelChanged;
+            base.OnDestroy();
+        
         }
 
         private void OnLevelChanged(int newLevel) => onLevelChanged?.Invoke(newLevel);

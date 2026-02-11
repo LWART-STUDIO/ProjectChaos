@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Game.Scripts.Client.Logic.Player;
 using Game.Scripts.Server;
+using Game.Scripts.Services.Audio;
 using Game.Scripts.Services.Save;
 using PurrNet;
 using PurrNet.Modules;
@@ -17,6 +18,8 @@ namespace Game.Scripts.Client.Logic.Game
         [SerializeField] private int minPlayers=1;
         private ConnectionStarter _connectionStarter;
         private Dictionary<PlayerID, PlayerClassType> _playerClases;
+        private bool _warmUpComplete;
+        public bool WarmUpComplete=>_warmUpComplete;
 
         private void Awake()
         {
@@ -87,7 +90,16 @@ namespace Game.Scripts.Client.Logic.Game
                 }
                 yield return null;
             }
+
+            MakeWarmUpComplete();
+            AudioService.instance.PlayMusicCrossfade("InGameMusic1");
             machine.Next(_playerClases);
+        }
+
+        [ObserversRpc(runLocally: true)]
+        private void MakeWarmUpComplete()
+        {
+            _warmUpComplete = true;
         }
         private void OnDisable()
         {

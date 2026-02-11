@@ -56,8 +56,9 @@ namespace Game.Scripts.Client.Logic.Game
 
         protected override void OnDestroy()
         {
-            base.OnDestroy();
             EnemyHealth.onEnemyKilled -= OnEnemyKilled;
+            base.OnDestroy();
+           
         }
 
         public void StartSpawning()

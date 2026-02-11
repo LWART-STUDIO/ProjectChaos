@@ -7,9 +7,9 @@ namespace Game.Scripts.Client.Logic.Game
 {
     public class GameStatisticCollector  : NetworkBehaviour
     {
-        private static float _gameTime;
+        private static SyncVar<float> _gameTime = new SyncVar<float>(0);
         private static int _enemiesWasKilled;
-        public static float GameTime=>_gameTime;
+        public static SyncVar<float> GameTime=>_gameTime;
         public static int EnemyWasKilled => _enemiesWasKilled;
         public static int PlayerTotalDamage => CalculatePlayerDamage();
 
@@ -24,12 +24,18 @@ namespace Game.Scripts.Client.Logic.Game
         [ObserversRpc(runLocally: true)]
         public static void UpdateTime(float time)
         {
-            _gameTime =  time;
+            _gameTime.value =  time;
         }
         [ObserversRpc(runLocally: true)]
         private void OnEnemyWasKilled(EnemyHealth health)
         {
             _enemiesWasKilled++;
+        }
+
+        protected override void OnDestroy()
+        {
+            EnemyHealth.onEnemyKilled -= OnEnemyWasKilled;
+            base.OnDestroy();
         }
 
         public static int CalculatePlayerDamage()
@@ -40,8 +46,8 @@ namespace Game.Scripts.Client.Logic.Game
         }
         protected override void OnDespawned(bool asServer)
         {
-            base.OnDespawned(asServer);
             EnemyHealth.onEnemyKilled -= OnEnemyWasKilled;
+            base.OnDespawned(asServer);
 
         }
         

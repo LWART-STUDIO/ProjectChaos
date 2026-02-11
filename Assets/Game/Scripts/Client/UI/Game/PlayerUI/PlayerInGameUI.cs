@@ -9,18 +9,29 @@ namespace Game.Scripts.Client.UI.Game.PlayerUI
 {
     public class PlayerInGameUI : MonoBehaviour
     {
-        [SerializeField] private TMP_Text _healthText;
+
+        [SerializeField] private PlayerHealthDisplay _playerHealthDisplay;
         [SerializeField] private CompassPro _compassPro;
         [SerializeField] private TimerUI _timer;
+        [SerializeField] private TMP_Text _currentLevelText;
         private UIService _uiService => Service<UIService>.Instance;
 
         public void UpdateTimer(float time)
         {
             _timer.UpdateTimer(time);
         }
-        public void UpdateHealth(int health)
+        public void UpdateHealth(int current, int max)
         {
-            _healthText.text = health.ToString();
+            _playerHealthDisplay.UpdateHealth(current, max);
+        }
+        public void UpdateEnergyShield(int current, int max)
+        {
+            _playerHealthDisplay.UpdateEnergyShield(current, max);
+        }
+
+        public void UpdateCurrentLevel(int current)
+        {
+            _currentLevelText.text = current.ToString();
         }
 
         public void SetPlayerCompas(Transform playerTransform)

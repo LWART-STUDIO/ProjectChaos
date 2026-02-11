@@ -1,5 +1,45 @@
 # Changelog
 
+## 5.8.4 ##
+
+1.  Fix: `Searchable` rendered twice
+2.  Add: config to display `Searchable` to all inspector. Default is on.
+3.  Add: Support for ScriptableRendererData [#356](https://github.com/TylerTemp/SaintsField/issues/356)
+4.  Fix: `SaintsEvent` error when UI Toolkit clone elements in Unity 6k.3, fix error when try to remove on empty list [#357](https://github.com/TylerTemp/SaintsField/issues/357)
+5.  Improve: `SaintsEvent` dropdown now uses `TreeDropdown`
+
+## 5.8.3 ##
+
+1.  Fix: Auto Validator gives error on a field
+2.  Fix: layout system on horizontal now calculate width better, fix the issue that some elements might take all space
+3.  Fix: Value Buttons didn't re-calculate layout when width changes
+4.  Improve: layout system now support tags (color, icon etc.) for boxed group (tabs, titleBoxed, foldout etc.)
+
+## 5.8.2 ##
+
+Fix: `SaintsDictionary` failed to deserialize data in build when instantiate a prefab [#355](https://github.com/TylerTemp/SaintsField/issues/355)
+
+## 5.8.1 ##
+
+1.  Fix: incorrect GC alloc in Custom editor window [#354](https://github.com/TylerTemp/SaintsField/issues/354)
+2.  Improve: Tabs in layout system now can break lines if there are way too many tabs
+3.  Fix: `ShowInInspector` for property tried to invoke a `OnValueChanged` even there is not one
+
+## 5.8.0 ##
+
+1.  Fix: layout system can not detect field order inside a general struct/class
+2.  Change: layout system no longer requires `Microsoft.CodeAnalysis.CSharp`. You can safely uninstall it from Package Manager
+
+## 5.7.9 ##
+
+1.  Fix `RichText` did not work with `<field.subField/>`
+2.  Fix `AboveText`, `BelowText` did not update with `<field/>` tag
+3.  Add: static callback now support nested type finding
+4.  Change: `PlayEnableIf`/`PlayaDisableIf` now is `EnableIf`/`DisableIf`. And the original ones are now `FieldEnableIf`/`FieldDisableIf`
+5.  Fix: `ShowIf`/`HideIf`/`EnableIf`/`DisableIf` now gives an error box if the callback have errors
+6.  Fix: `ShowInInspector` for struct/class, switching type did not clean the old fields
+7.  Add: `OnValueChanged` now works with `ShowInInspector`
+
 ## 5.7.8 ##
 
 Fix: `ListView` & `ReferencePicker` property tracker clean-up so it does not give error now [#352](https://github.com/TylerTemp/SaintsField/issues/352)
@@ -20,7 +60,7 @@ Fix: `ShowInInspector` inside `struct` can not read a real-time but cached value
 
 ## 5.7.4 ##
 
-1.  Change: `Button` no longer use `MeansImplicitUse`. Add `SAINTSFIELD_BUTTON_IMPLICIT_USE` macro instead.
+1.  Change: `Button` no longer use `MeansImplicitUse`. Add `SAINTSFIELD_IMPLICIT_USE` macro instead.
 2.  Fix: `OnValueChanged`, `Button` (including inline buttons) now can in-place change a struct's value [#240](https://github.com/TylerTemp/SaintsField/issues/240), [#287](https://github.com/TylerTemp/SaintsField/issues/287)
 
 ## 5.7.3 ##

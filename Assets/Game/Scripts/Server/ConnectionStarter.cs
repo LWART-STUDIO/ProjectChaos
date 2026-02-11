@@ -1,9 +1,12 @@
+using System;
 using System.Collections;
+using Game.Scripts.Services.UI;
 using PurrLobby;
 using PurrNet;
 using PurrNet.Logging;
 using PurrNet.Steam;
 using PurrNet.Transports;
+using Sisus.Init;
 using Steamworks;
 //#if UNITY_EDITOR
 using Unity.Multiplayer.PlayMode;
@@ -35,6 +38,8 @@ namespace Game.Scripts.Server
             _lobbyDataHolder = FindFirstObjectByType<LobbyDataHolder>();
             if (_lobbyDataHolder)
                 _isFromLobby = true;
+            
+                
         }
 
         private void Start()
@@ -44,8 +49,13 @@ namespace Game.Scripts.Server
                 PurrLogger.LogError($"Failed to start connection. {nameof(NetworkManager)} is null!", this);
                 return;
             }
-            if(_isFromLobby)
+
+            if (_isFromLobby)
+            {
                 StartFromLobby();
+                _steamTransport.onDisconnected += OnDisconnect;
+            }
+            
             else
                 StartNormal();
 
@@ -79,6 +89,19 @@ namespace Game.Scripts.Server
                     StartCoroutine(StartClient());
                 }
             }
+        }
+
+        private void OnDisable()
+        {
+            if(_isFromLobby)
+                _steamTransport.onDisconnected -= OnDisconnect;
+        }
+
+        private void OnDisconnect(Connection conn, DisconnectReason reason, bool asServer)
+        {
+            LeaveLobbyHandler.LeaveAnyLobby();
+            Service<UIService>.Instance.ExitToMenu();
+          
         }
 
         public void LeaveLobby()

@@ -23,6 +23,7 @@ namespace ProjectDawn.Navigation.Astar
         EntityQuery m_Query;
         GCHandle m_EntityManagerHandle;
 
+        ComponentTypeHandle<AgentAstarPath> PathTypeHandleRO;
         ComponentTypeHandle<LocalTransform> LocalTransformTypeHandleRO;
         ComponentTypeHandle<MovementState> MovementStateTypeHandleRW;
         ComponentTypeHandle<ManagedState> ManagedStateTypeHandleRW;
@@ -42,6 +43,7 @@ namespace ProjectDawn.Navigation.Astar
                 .WithNone<LinkTraversal>()
                 .Build();
 
+            PathTypeHandleRO = state.GetComponentTypeHandle<AgentAstarPath>(true);
             LocalTransformTypeHandleRO = state.GetComponentTypeHandle<LocalTransform>(true);
             MovementStateTypeHandleRW = state.GetComponentTypeHandle<MovementState>(false);
             ManagedStateTypeHandleRW = state.EntityManager.GetComponentTypeHandle<ManagedState>(false);
@@ -57,6 +59,7 @@ namespace ProjectDawn.Navigation.Astar
         [BurstCompile]
         void ISystem.OnUpdate(ref SystemState state)
         {
+            PathTypeHandleRO.Update(ref state);
             LocalTransformTypeHandleRO.Update(ref state);
             MovementStateTypeHandleRW.Update(ref state);
             ManagedStateTypeHandleRW.Update(ref state);
@@ -67,6 +70,7 @@ namespace ProjectDawn.Navigation.Astar
             {
                 EntityManagerHandle = m_EntityManagerHandle,
 
+                PathTypeHandleRO = PathTypeHandleRO,
                 LocalTransformTypeHandleRO = LocalTransformTypeHandleRO,
                 MovementStateTypeHandleRW = MovementStateTypeHandleRW,
                 ManagedStateTypeHandleRW = ManagedStateTypeHandleRW,
@@ -78,6 +82,8 @@ namespace ProjectDawn.Navigation.Astar
         struct AstarDisplacementJob : IJobChunk
         {
             public GCHandle EntityManagerHandle;
+            [ReadOnly]
+            public ComponentTypeHandle<AgentAstarPath> PathTypeHandleRO;
             [ReadOnly]
             public ComponentTypeHandle<LocalTransform> LocalTransformTypeHandleRO;
             public ComponentTypeHandle<MovementState> MovementStateTypeHandleRW;
@@ -113,6 +119,7 @@ namespace ProjectDawn.Navigation.Astar
 
                 unsafe
                 {
+                    var paths = (AgentAstarPath*) chunk.GetNativeArray(ref PathTypeHandleRO).GetUnsafeReadOnlyPtr();
                     var localTransforms = (LocalTransform*) chunk.GetNativeArray(ref LocalTransformTypeHandleRO).GetUnsafeReadOnlyPtr();
                     var movementStates = (MovementState*) chunk.GetNativeArray(ref MovementStateTypeHandleRW).GetUnsafePtr();
                     var shapes = (AgentShape*) chunk.GetNativeArray(ref ShapeTypeHandleRO).GetUnsafeReadOnlyPtr();
@@ -122,6 +129,9 @@ namespace ProjectDawn.Navigation.Astar
                     for (int i = 0; i < chunk.Count; i++)
                     {
                         if (bodies[i].IsStopped)
+                            continue;
+
+                        if (paths[i].Grounded == Grounded.None)
                             continue;
 
                         var agentCylinderShape = new AgentCylinderShape
@@ -141,7 +151,8 @@ namespace ProjectDawn.Navigation.Astar
                         // TODO: Astar
                         var movementSetting = new MovementSettings
                         {
-                            stopDistance = 0.5f
+                            stopDistance = 0.5f,
+                            positionSmoothing = 0.5f,
                         };
 
                         var previousCloesestOnNavmesh = movementStates[i].closestOnNavmesh;
@@ -150,6 +161,7 @@ namespace ProjectDawn.Navigation.Astar
                             ref movementStates[i],
                             ref agentCylinderShape,
                             ref agentMovementPlane,
+                            ref paths[i].AutoRepath,
                             ref destinationPoint,
                             default,
                             managedStates[i],
@@ -160,8 +172,10 @@ namespace ProjectDawn.Navigation.Astar
                             false
                             );
 
-                        localTransforms[i].Position = movementStates[i].closestOnNavmesh;
-                        //localTransforms[i].Position = ClampToNavmesh(localTransforms[i].Position, movementStates[i].closestOnNavmesh, agentCylinderShape, agentMovementPlane);
+                        if (paths[i].Grounded == Grounded.XZ)
+                            localTransforms[i].Position.xz = movementStates[i].closestOnNavmesh.xz;
+                        else
+                            localTransforms[i].Position = movementStates[i].closestOnNavmesh;
                     }
                 }
 

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 0a916056800b88e4aabaf3190418a25f
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 295704
+  packageName: Workshop Friendly Localization
+  packageVersion: 1.0
+  assetPath: Assets/SoftKitty/WorkshopFriendlyLocalization/Configuration/ExampleLocalizationSettings.asset
+  uploadId: 690837

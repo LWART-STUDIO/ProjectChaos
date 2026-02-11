@@ -10,8 +10,8 @@ namespace ProjectDawn.Navigation.Hybrid
 {
     [BurstCompile]
     [RequireMatchingQueriesForUpdate]
-    [UpdateInGroup(typeof(SimulationSystemGroup))]
-    [UpdateAfter(typeof(FixedStepSimulationSystemGroup))]
+    [UpdateInGroup(typeof(SimulationSystemGroup), OrderLast = true)]
+    [UpdateAfter(typeof(EndSimulationEntityCommandBufferSystem))]
     public partial struct ReadAgentTransformSystem : ISystem
     {
         EntityQuery m_Query;

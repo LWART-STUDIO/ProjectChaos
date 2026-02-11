@@ -1028,26 +1028,22 @@ namespace SaintsField.Editor.Utils
 
         private static (string error, object returnValue) InvokeMethodInfo(MethodInfo methodInfo, object defaultValue, SerializedProperty property, MemberInfo memberInfo, object target, IReadOnlyList<object> overrideParams)
         {
-            object[] passParams;
-            if (property == null || memberInfo == null || target == null)
-            {
-                passParams = Array.Empty<object>();
-            }
-            else
-            {
-                (string error, int arrayIndex, object curValue) = GetValue(property, memberInfo, target);
-                if (error != "")
-                {
-                    return (error, defaultValue);
-                }
+            IReadOnlyList<object> baseParams;
 
-                IReadOnlyList<object> baseParams;
-                if (overrideParams != null)
+            if (overrideParams == null)
+            {
+                if (property == null || memberInfo == null || target == null)
                 {
-                    baseParams = overrideParams;
+                    baseParams = Array.Empty<object>();
                 }
                 else
                 {
+                    (string error, int arrayIndex, object curValue) = GetValue(property, memberInfo, target);
+                    if (error != "")
+                    {
+                        return (error, defaultValue);
+                    }
+
                     baseParams = arrayIndex == -1
                         ? new[]
                         {
@@ -1059,18 +1055,21 @@ namespace SaintsField.Editor.Utils
                             arrayIndex,
                         };
                 }
+            }
+            else
+            {
+                baseParams = overrideParams;
+            }
 
-                string paramError;
-                (paramError, passParams) = ReflectUtils.MethodParamsFill(methodInfo.GetParameters(), baseParams);
-                if (paramError != "")
-                {
-                    return (paramError, null);
-                }
+            (string paramError, object[] passParams) = ReflectUtils.MethodParamsFill(methodInfo.GetParameters(), baseParams);
+            if (paramError != "")
+            {
+                return (paramError, null);
+            }
 
 #if SAINTSFIELD_DEBUG && SAINTSFIELD_DEBUG_UTIL_GET_OF
-                   Debug.Log($"#Util# arrayIndex={arrayIndex}, rawValue={rawValue}, curValue={curValue}, fill={string.Join(",", passParams)}");
+            Debug.Log($"#Util# arrayIndex={arrayIndex}, rawValue={rawValue}, curValue={curValue}, fill={string.Join(",", passParams)}");
 #endif
-            }
 
             object genResult;
             try
@@ -1211,7 +1210,7 @@ namespace SaintsField.Editor.Utils
             }
         }
 
-        private static Type FindTypeInAssmbly(Assembly assembly, IReadOnlyList<string> split)
+        private static Type FindTypeInAssembly(Assembly assembly, IReadOnlyList<string> split)
         {
             return split.Count > 1
                 ? assembly.GetType(string.Join(".", split), false)
@@ -1241,13 +1240,13 @@ namespace SaintsField.Editor.Utils
             if(target != null)
             {
                 Assembly assembly = target.GetType().Assembly;
-                type = FindTypeInAssmbly(assembly, split);
+                type = FindTypeInAssembly(assembly, split);
             }
             if (type == null && fullSearch)
             {
                 foreach (Assembly searchAssembly in AppDomain.CurrentDomain.GetAssemblies())
                 {
-                    type = FindTypeInAssmbly(searchAssembly, split);
+                    type = FindTypeInAssembly(searchAssembly, split);
                     if (type != null)
                     {
                         break;
@@ -1328,7 +1327,48 @@ namespace SaintsField.Editor.Utils
 
             if (errors.Count == 0)
             {
-                return ($"No method/field/property {fieldOrMethod} found", defaultValue);
+                if (target != null)  // search nested target inside type
+                {
+                    Type targetType = target.GetType();
+                    Type accType = targetType;
+                    foreach (string literType in split)
+                    {
+                        accType = accType.GetNestedType(literType, BindingFlags.Public | BindingFlags.NonPublic);
+                        // Debug.Log($"accType={accType} for {literType}");
+                        if (accType == null)
+                        {
+                            break;
+                        }
+                    }
+
+                    if (accType != null)
+                    {
+                        FieldInfo nestedFieldInfo = type.GetField(fieldOrMethod, bindAttr);
+                        if (nestedFieldInfo != null)
+                        {
+                            object genResult;
+                            try
+                            {
+                                genResult = nestedFieldInfo.GetValue(null);
+                            }
+                            catch (Exception e)
+                            {
+                                // _error = e.Message;
+#if SAINTSFIELD_DEBUG
+                                Debug.LogException(e);
+#endif
+                                return (e.Message, defaultValue);
+                            }
+
+                            return ConvertTo(genResult, defaultValue);
+                        }
+                    }
+
+                }
+#if SAINTSFIELD_DEBUG
+                Debug.LogWarning($"No method/field/property {fieldOrMethod} found for {string.Join(".", split)}");
+#endif
+                return ($"No method/field/property {fieldOrMethod} found for {string.Join(".", split)}", defaultValue);
             }
 
             string finalError = string.Join("\n", errors);
@@ -1904,9 +1944,7 @@ namespace SaintsField.Editor.Utils
 
                 if(!foundResult)
                 {
-                    (string error, object getResult) = conditionStringTarget.Contains(".")
-                        ? AccGetOf<object>(conditionStringTarget, null, property, target, null)
-                        : FlatGetOf<object>(conditionStringTarget, null, property, info, target, null);
+                    (string error, object getResult) = GetOf<object>(conditionStringTarget, null, property, info, target, null);
 
                     if (error != "")
                     {
@@ -2237,7 +2275,7 @@ namespace SaintsField.Editor.Utils
             }
 
             // Debug.Log($"get value at {arrayIndex} from rawValue {((IEnumerable)rawValue).Cast<object>().Count()}");
-            (string indexError, object indexResult) = GetValueAtIndex(rawValue, arrayIndex);
+            (string indexError, object indexResult) = GetValueAtIndexFromCollection(rawValue, arrayIndex);
             if (indexError != "")
             {
                 return (indexError, -1, null);
@@ -2297,7 +2335,7 @@ namespace SaintsField.Editor.Utils
         }
 
 
-        public static (string error, object result) GetValueAtIndex(object source, int index)
+        public static (string error, object result) GetValueAtIndexFromCollection(object source, int index)
         {
             // ReSharper disable once UseNegatedPatternInIsExpression
             if (!(source is IEnumerable enumerable))
@@ -2686,6 +2724,8 @@ namespace SaintsField.Editor.Utils
                 {
                     useLabel = EnumLabelRegex.Replace(value, enumValue.ToString());
                 }
+
+                // Debug.Log($"Found: {enumValue}");
 
                 yield return (enumValue, value, useLabel);
             }

@@ -2,6 +2,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 using ProjectDawn.Navigation;
+using static Unity.Entities.SystemAPI;
 
 namespace ProjectDawn.Navigation.Sample.Zerg
 {
@@ -10,10 +11,12 @@ namespace ProjectDawn.Navigation.Sample.Zerg
     {
         protected override void OnUpdate()
         {
-            Entities.ForEach((Animator animator, in UnitBrain brain, in UnitAnimator unit, in AgentBody body) =>
+            foreach (var (brain, unit, body, entity) in SystemAPI.Query<UnitBrain, UnitAnimator, AgentBody>().WithEntityAccess())
             {
-                if (!animator)
-                    return;
+                if (!ManagedAPI.HasComponent<Animator>(entity))
+                    continue;
+
+                var animator = ManagedAPI.GetComponent<Animator>(entity);
 
                 animator.SetBool(unit.AttackId, brain.State == UnitBrainState.Attack);
 
@@ -21,7 +24,7 @@ namespace ProjectDawn.Navigation.Sample.Zerg
 
                 animator.SetFloat(unit.MoveSpeedId, speed);
                 animator.speed = speed > 0.3f ? speed * unit.MoveSpeed : 1f;
-            }).WithoutBurst().Run();
+            }
         }
     }
 }

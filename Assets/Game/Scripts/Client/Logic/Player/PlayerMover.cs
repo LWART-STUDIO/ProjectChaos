@@ -1,3 +1,4 @@
+using Game.Scripts.Client.Logic.Player.Stats;
 using KinematicCharacterController;
 using UnityEngine;
 
@@ -36,6 +37,7 @@ namespace Game.Scripts.Client.Logic.Player
 
     public class PlayerMover : MonoBehaviour, ICharacterController
     {
+        [SerializeField] private PlayerStatsHolder _statsHolder;
         [SerializeField] private KinematicCharacterMotor _motor;
 
         [Space] [SerializeField] private float _walkSpeed = 20f;
@@ -86,7 +88,7 @@ namespace Game.Scripts.Client.Logic.Player
         public bool Jump;
         public bool Slide => _state.Stance is Stance.Slide;
         public bool Crouch => _state.Stance is Stance.Crouch;
-        public float MoveSpeed => _walkSpeed;
+        public float MoveSpeed => _walkSpeed * _statsHolder.GetStatValue(StatBonus.MoveSpeed);
 
         public void Initialize()
         {
@@ -195,7 +197,7 @@ namespace Game.Scripts.Client.Logic.Player
 
                 if (_state.Stance is Stance.Stand or Stance.Crouch)
                 {
-                    var speed = _state.Stance is Stance.Stand ? _walkSpeed : _crouchSpeed;
+                    var speed = _state.Stance is Stance.Stand ? MoveSpeed : _crouchSpeed;
                     var acceleration = _state.Stance is Stance.Crouch ? _walkAcceleration : _crouchAcceleration;
                     var targetVelocity = groundedMovement * speed;
                     currentVelocity = Vector3.Lerp(currentVelocity, targetVelocity,

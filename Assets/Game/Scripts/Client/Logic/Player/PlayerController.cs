@@ -1,9 +1,10 @@
-using CMF;
 using Game.Scripts.Client.Logic.Colectables;
+using Game.Scripts.Client.Logic.Collectables;
+using Game.Scripts.Services.Audio;
+using Game.Scripts.Services.Input;
 using PurrNet;
-using Unity.Cinemachine;
+using Sisus.Init;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 namespace Game.Scripts.Client.Logic.Player
 {
@@ -16,6 +17,7 @@ namespace Game.Scripts.Client.Logic.Player
        private bool _spawned = false;
 
        private PlayerInputActions _inputActions;
+       private InputService _input => Service<InputService>.Instance;
 
        public void SetStartPosition(Vector3 position)
        {
@@ -25,7 +27,11 @@ namespace Game.Scripts.Client.Logic.Player
        {
            base.OnSpawned();
            if (isOwner)
+           {
                _camera.transform.parent.gameObject.SetActive(true);
+               AudioService.instance.AttachAudioListenerToObject(_camera.transform);
+           }
+              
            _spawned = true;
            if(!isOwner)
                return;
@@ -48,16 +54,26 @@ namespace Game.Scripts.Client.Logic.Player
            Teleport(_startPosition.value);
        }
 
-       private void OnDestroy()
+       private void OnDisable()
        {
-           _inputActions.Dispose();
+           if(isOwner)
+               AudioService.instance.DetachAudioListener();
+           if (_inputActions != null)
+           {
+               _inputActions.Disable();
+               _inputActions.Dispose();
+           }
+           StopAllCoroutines();
        }
-
+       
+       
        private void Update()
        {
            if(!_spawned)
                return;
            if(!isOwner)
+               return;
+           if(_input.InputBlocked)
                return;
            PlayerInputActions.GameplayActions input = _inputActions.Gameplay;
            CrouchInput crouch =CrouchInput.None;
@@ -82,6 +98,7 @@ namespace Game.Scripts.Client.Logic.Player
            };
            _playerMover.UpdateInput(characterInput);
            //Debug
+           
            if (_inputActions.Debug.Magnet.WasPressedThisFrame())
            {
                ExpOrbManager.MagnetAllOrbsToPlayer(transform);

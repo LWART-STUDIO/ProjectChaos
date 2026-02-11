@@ -17,8 +17,13 @@ namespace ProjectDawn.Navigation
     [UpdateAfter(typeof(AgentColliderSystem))]
     public partial struct NavMeshDisplacementSystem : ISystem
     {
+        void ISystem.OnCreate(ref SystemState state)
+        {
+            state.RequireForUpdate<Agent>();
+        }
+
         [BurstCompile]
-        public void OnUpdate(ref SystemState state)
+        void ISystem.OnUpdate(ref SystemState state)
         {
             var navmesh = GetSingleton<NavMeshQuerySystem.Singleton>();
             new NavMeshPositionJob
@@ -47,11 +52,15 @@ namespace ProjectDawn.Navigation
 
                 var newLocation = NavMesh.MoveLocation(location, transform.Position, path.AreaMask);
 
-                if (path.Grounded)
+                if (path.Grounded != Grounded.None)
                 {
-                    transform.Position = newLocation.position;
+                    if (path.Grounded == Grounded.XZ)
+                        transform.Position.xz = ((float3)newLocation.position).xz;
+                    else
+                        transform.Position = newLocation.position;
 
-#if EXPERIMENTAL_SONAR_TIME
+
+#if !DISABLE_SONAR_HORIZON
                     float stepLength = math.distance(location.position, newLocation.position) / DeltaTime;
                     float speed = math.length(body.Velocity);
                     if (stepLength > speed)

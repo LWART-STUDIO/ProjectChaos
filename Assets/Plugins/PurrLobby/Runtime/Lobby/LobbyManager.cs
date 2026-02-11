@@ -32,6 +32,7 @@ namespace PurrLobby
 
         public UnityEvent onInitialized = new UnityEvent();
         public UnityEvent onShutdown = new UnityEvent();
+        public UnityEvent OnGameStarted = new UnityEvent();
 
         public ILobbyProvider CurrentProvider => currentProvider as ILobbyProvider;
 
@@ -146,13 +147,19 @@ namespace PurrLobby
                 _lastKnownState = room;
                 _currentLobby = room;
                 OnRoomUpdated?.Invoke(room);
-
-                if (!IsStarting && room.Members.TrueForAll(x => x.IsReady))
+                if ( room.Members.TrueForAll(x => x.IsReady))
                 {
                     IsStarting = true; //Prevent calling ready again if lobby is updated after all ready
                     CallOnAllReady();
                 }
             });
+            _currentProvider.OnLobbyUpdated += room =>
+            {
+                if(room.Members.Count <= 0 || !room.IsValid||_currentProvider==null) return;
+                var value = GetLobbyData("WantStartGame");
+                if(value.Result=="true")
+                    InvokeDelayed(()=>OnGameStarted?.Invoke());
+            };
 
             _currentProvider.OnLobbyPlayerListUpdated += players => InvokeDelayed(() => OnPlayerListUpdated.Invoke(players));
             _currentProvider.OnError += error => InvokeDelayed(() => OnError.Invoke(error));
@@ -174,6 +181,14 @@ namespace PurrLobby
             _currentProvider.OnLobbyUpdated -= room => InvokeDelayed(() => OnRoomUpdated.Invoke(room));
             _currentProvider.OnLobbyPlayerListUpdated -= players => InvokeDelayed(() => OnPlayerListUpdated.Invoke(players));
             _currentProvider.OnError -= error => InvokeDelayed(() => OnError.Invoke(error));
+   
+            _currentProvider.OnLobbyUpdated -= room => 
+            {
+                if (room.IsValid)
+                {
+                    InvokeDelayed(() => OnGameStarted?.Invoke());
+                }
+            };
 
             // ReSharper disable once EventUnsubscriptionViaAnonymousDelegate
             _currentProvider.OnLobbyUpdated -= room =>
@@ -241,6 +256,16 @@ namespace PurrLobby
                 _currentLobby = room;
                 OnRoomUpdated?.Invoke(room);
             });
+        }
+        public void StartGame()
+        {
+            RunTask(async () =>
+            {
+                EnsureProviderSet();
+                await _currentProvider.SetLobbyDataAsync("WantStartGame", "true");
+             
+            });
+
         }
 
         /// <summary>
@@ -374,6 +399,42 @@ namespace PurrLobby
             var localLobbyUser = _currentLobby.Members.Find(x => x.Id == localUserId);
             SetIsReady(localUserId, !localLobbyUser.IsReady);
         }
+        public void LocalUnReady()
+        {
+            if (!_currentLobby.IsValid)
+            {
+                PurrLogger.LogError($"Can't toggle ready state, current lobby is invalid.");
+                return;
+            }
+            
+            var localUserId = _currentProvider.GetLocalUserIdAsync().Result;
+            if (string.IsNullOrEmpty(localUserId))
+            {
+                PurrLogger.LogError($"Can't toggle ready state, local user ID is null or empty.");
+                return;
+            }
+            
+            var localLobbyUser = _currentLobby.Members.Find(x => x.Id == localUserId);
+            SetIsReady(localUserId, false);
+        }
+        public void LocalReady()
+        {
+            if (!_currentLobby.IsValid)
+            {
+                PurrLogger.LogError($"Can't toggle ready state, current lobby is invalid.");
+                return;
+            }
+            
+            var localUserId = _currentProvider.GetLocalUserIdAsync().Result;
+            if (string.IsNullOrEmpty(localUserId))
+            {
+                PurrLogger.LogError($"Can't toggle ready state, local user ID is null or empty.");
+                return;
+            }
+            
+            var localLobbyUser = _currentLobby.Members.Find(x => x.Id == localUserId);
+            SetIsReady(localUserId, true);
+        }
 
         private void OnDestroy()
         {
@@ -426,6 +487,8 @@ namespace PurrLobby
             if (_currentProvider == null)
                 throw new InvalidOperationException("No lobby provider has been set.");
         }
+
+        
 
         public void SetLobbyStarted()
         {

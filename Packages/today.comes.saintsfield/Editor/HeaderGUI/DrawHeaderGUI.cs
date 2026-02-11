@@ -20,7 +20,7 @@ namespace SaintsField.Editor.HeaderGUI
 #endif
         public static void DelayInit()
         {
-            EditorApplication.delayCall += EnsureInitLoad;
+            EditorApplication.delayCall += () => EnsureInitLoad();
             EditorApplication.delayCall += LoadTypeToRenderTargetInfo;
             EditorApplication.delayCall += ManuallyUpdate;
         }
@@ -35,17 +35,17 @@ namespace SaintsField.Editor.HeaderGUI
 
         private static bool _initLoad;
 
-        public static void EnsureInitLoad()
+        public static bool EnsureInitLoad()
         {
             if (_initLoad)
             {
-                return;
+                return true;
             }
 
-            InitLoad();
+            return InitLoad();
         }
 
-        private static void InitLoad()
+        private static bool InitLoad()
         {
             const BindingFlags flags = BindingFlags.NonPublic | BindingFlags.Static;
             if(_sEditorHeaderItemsMethods == null)
@@ -54,15 +54,15 @@ namespace SaintsField.Editor.HeaderGUI
             }
             if (_sEditorHeaderItemsMethods == null)
             {
-                return;  // API is changed internally, and it's now gone
+                return false;  // API is changed internally, and it's now gone
             }
 
             IList value = (IList)_sEditorHeaderItemsMethods.GetValue(null);
             // Debug.Log($"value={value}");
             if (value == null)
             {
-                EditorApplication.delayCall += InitLoad;
-                return;
+                // EditorApplication.delayCall += InitLoad;
+                return false;
             }
 
             Type delegateType = value.GetType().GetGenericArguments()[0];
@@ -76,6 +76,7 @@ namespace SaintsField.Editor.HeaderGUI
             // ReSharper disable once AssignNullToNotNullAttribute
             value.Add(Delegate.CreateDelegate(delegateType, methodInfo));
             _initLoad = true;
+            return true;
         }
 
         public enum MemberType
@@ -282,16 +283,16 @@ namespace SaintsField.Editor.HeaderGUI
                     .ToList();
             }
 
-            HashSet<ISearchable> removeSaintsEditor = new HashSet<ISearchable>();
+            HashSet<object> removeSaintsEditor = new HashSet<object>();
 
-            // Debug.Log($"SearchableSaintsEditors={SearchableSaintsEditors.Count}");
+            // Debug.Log($"SearchableSaintsEditors={SearchableSaintsEditors.Count}; {string.Join(", ", SearchableSaintsEditors.Select(each => each.target))}");
 
-            foreach (ISearchable searchableSaintsEditor in SearchableSaintsEditors)
+            foreach (ISearchable searchableSaintsEditor in SearchableSaintsEditors.Values)
             {
                 // Debug.Log(searchableSaintsEditor);
                 if (!(Object)searchableSaintsEditor)
                 {
-                    removeSaintsEditor.Add(searchableSaintsEditor);
+                    removeSaintsEditor.Add(searchableSaintsEditor.target);
                     continue;
                 }
 
@@ -312,24 +313,29 @@ namespace SaintsField.Editor.HeaderGUI
                 //     height = useRect.height - 2,
                 // };
 
-                GUIStyle btnStyle = CacheAndUtil.GetIconButtonStyle();
+                GUIContent content = new GUIContent(EditorGUIUtility.IconContent("d_Search Icon"))
+                {
+                    tooltip = "Search Fields",
+                };
 
-                if (GUI.Button(useRect, GUIContent.none, btnStyle))
+                using EditorGUI.ChangeCheckScope change = new EditorGUI.ChangeCheckScope();
+                GUI.Toggle(
+                    useRect,
+                    searchableSaintsEditor.IsSearchableOn(),
+                    content,
+                    CacheAndUtil.GetIconButtonStyle()
+                );
+                if (change.changed)
                 {
                     searchableSaintsEditor.OnHeaderButtonClick();
                 }
-
-                string richLabel = searchableSaintsEditor.GetRichLabel();
-                if (!CacheAndUtil.ParsedXmlCache.TryGetValue(richLabel,
-                        out IReadOnlyList<RichTextDrawer.RichTextChunk> chunks))
-                {
-                    CacheAndUtil.ParsedXmlCache[richLabel] = chunks = RichTextDrawer.ParseRichXml(richLabel, "", null, null, firstTarget).ToArray();
-                }
-
-                CacheAndUtil.GetCachedRichTextDrawer().DrawChunks(useRect, GUIContent.none, chunks);
             }
 
-            SearchableSaintsEditors.ExceptWith(removeSaintsEditor);
+            foreach (object toRemove in removeSaintsEditor)
+            {
+                SearchableSaintsEditors.Remove(toRemove);
+            }
+            // SearchableSaintsEditors.Remove(removeSaintsEditor);
 
             if (renderTargetInfos.Count == 0)
             {
@@ -791,11 +797,17 @@ namespace SaintsField.Editor.HeaderGUI
             HeaderButtonDrawer.Update();
         }
 
-        private static readonly HashSet<ISearchable> SearchableSaintsEditors = new HashSet<ISearchable>();
+        private static readonly Dictionary<object, ISearchable> SearchableSaintsEditors = new Dictionary<object, ISearchable>();
 
         public static void SaintsEditorEnqueueSearchable(SaintsEditor saintsEditor)
         {
-            SearchableSaintsEditors.Add(saintsEditor);
+            SearchableSaintsEditors[saintsEditor.target] = saintsEditor;
+            // if (!SearchableSaintsEditors.Contains(saintsEditor))
+            // {
+            //     SearchableSaintsEditors.Add(saintsEditor);
+            //     Debug.Log($"add {saintsEditor.target}; newValue={SearchableSaintsEditors.Count}");
+            // }
+            // SearchableSaintsEditors.Add(saintsEditor);
         }
     }
 }

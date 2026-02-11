@@ -18,6 +18,7 @@ namespace ProjectDawn.Navigation
         public void OnCreate(ref SystemState state)
         {
             m_SmartStopLookup = state.GetComponentLookup<AgentSmartStop>(isReadOnly: true);
+            state.RequireForUpdate<AgentSmartStop>();
         }
 
         [BurstCompile]
@@ -120,9 +121,10 @@ namespace ProjectDawn.Navigation
                     if (!body.IsStopped)
                         return;
 
+                    float hiveMindStopRadiusSq = SmartStop.HiveMindStop.Radius * SmartStop.HiveMindStop.Radius;
+
                     // Check if they collide
-                    float distance = math.distance(Transform.Position, transform.Position);
-                    if (SmartStop.HiveMindStop.Radius < distance)
+                    if (hiveMindStopRadiusSq < math.distancesq(Transform.Position, transform.Position))
                         return;
 
                     if (SmartStop.GiveUpStop.Enabled)
@@ -133,8 +135,10 @@ namespace ProjectDawn.Navigation
                         return;
 
                     // Check if they have similar destinations within the radius
-                    float distance2 = math.distance(Body.Destination, body.Destination);
-                    if (SmartStop.HiveMindStop.Radius < distance2)
+                    if (hiveMindStopRadiusSq < math.distancesq(Body.Destination, body.Destination))
+                        return;
+
+                    if (SmartStop.HiveMindStop.MinDistance < body.RemainingDistance)
                         return;
 
                     Stop = true;

@@ -29,6 +29,7 @@ namespace Game.Scripts.Client.Logic.Player.Stats
         SkillSpeed = 3,
         SkillDuration = 4,
         WallBounce = 5,
+        MoveSpeed = 30,
        
     }
 }

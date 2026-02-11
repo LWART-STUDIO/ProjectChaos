@@ -3,6 +3,7 @@ using System.Collections;
 using System.Runtime.InteropServices.ComTypes;
 using Game.Scripts.Client.UI;
 using Game.Scripts.Client.UI.Lobby;
+using Game.Scripts.Client.UI.Menu;
 using Game.Scripts.Services.ResourceLoader;
 using Game.Scripts.Services.StaticService;
 using Sisus.Init;
@@ -12,10 +13,15 @@ namespace Game.Scripts.Services.UI
 {
     public class GameCanvas : MonoBehaviour
     {
+        [SerializeField] private MenuManager _menuManager;
         private ResourceLoaderService _resourceLoaderService => Service<ResourceLoaderService>.Instance;
         private LobbyUI _lobbyUI;
         private MainMenu _mainMenu;
 
+        public MenuManager GetMenuManager()
+        {
+            return _menuManager;
+        }
 
         public LobbyUI GetLobbyUI()
         {
@@ -43,27 +49,7 @@ namespace Game.Scripts.Services.UI
                 GetLobbyUI();
             _lobbyUI.gameObject.SetActive(false);
         }
-        public MainMenu GetMainMenu()
-        {
-            _mainMenu = FindFirstObjectByType<MainMenu>(FindObjectsInactive.Include);
-            if (_mainMenu != null)
-                return _mainMenu;
-            GameObject mainMenu = _resourceLoaderService.Load<GameObject>(StaticPath.MainMenu);
-            if (mainMenu != null)
-            {
-                _mainMenu = mainMenu.GetComponent<MainMenu>();
-                _mainMenu = Instantiate(_mainMenu, transform);
-                return _mainMenu;
-            }
-            return null;
-        }
-        public void HideMainMenu()
-        {
-            if (_mainMenu == null)
-                GetMainMenu();
-            Destroy(_mainMenu.gameObject);
-            _mainMenu = null;
-        }
+        
 
      
         

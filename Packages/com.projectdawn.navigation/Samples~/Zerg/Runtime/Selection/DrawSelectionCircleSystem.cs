@@ -12,7 +12,7 @@ namespace ProjectDawn.Navigation.Sample.Zerg
 
         protected override void OnCreate()
         {
-            m_SelectionCircle = GameObject.FindObjectOfType<SelectionCircle>(true);
+            m_SelectionCircle = GameObject.FindFirstObjectByType<SelectionCircle>(FindObjectsInactive.Include);
         }
 
         protected override void OnUpdate()

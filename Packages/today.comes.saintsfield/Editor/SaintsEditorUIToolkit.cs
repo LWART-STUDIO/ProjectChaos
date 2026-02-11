@@ -5,6 +5,7 @@ using SaintsField.Editor.HeaderGUI;
 using SaintsField.Editor.Playa;
 using SaintsField.Editor.Utils;
 using SaintsField.Playa;
+using SaintsField.Utils;
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
@@ -74,12 +75,19 @@ namespace SaintsField.Editor
             }
 
             SearchableAttribute searchableAttribute = null;
-            foreach (IPlayaClassAttribute playaClassAttribute in playaClassAttributes)
+            if (SaintsFieldConfigUtil.GetMonoBehaviorSearchable())
             {
-                if (playaClassAttribute is SearchableAttribute sa)
+                searchableAttribute = new SearchableAttribute();
+            }
+            else
+            {
+                foreach (IPlayaClassAttribute playaClassAttribute in playaClassAttributes)
                 {
-                    searchableAttribute = sa;
-                    break;
+                    if (playaClassAttribute is SearchableAttribute sa)
+                    {
+                        searchableAttribute = sa;
+                        break;
+                    }
                 }
             }
 
@@ -91,7 +99,8 @@ namespace SaintsField.Editor
                     {
                         // flexGrow = 1,
                         display = DisplayStyle.None,
-                        width = Length.Percent(100),
+                        // width = Length.Percent(100),
+                        width = StyleKeyword.None,
                     },
 #if UNITY_6000_0_OR_NEWER
                     placeholderText = "Search Field Name",

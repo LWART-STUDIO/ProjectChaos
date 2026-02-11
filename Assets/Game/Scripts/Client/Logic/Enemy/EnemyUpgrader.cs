@@ -1,3 +1,5 @@
+using SaintsField.Playa;
+using UnityEditor;
 using UnityEngine;
 
 namespace Game.Scripts.Client.Logic.Enemy
@@ -17,5 +19,26 @@ namespace Game.Scripts.Client.Logic.Enemy
             _enemyHealth.Upgrade(value);
             _enemyAttackMelee.Upgrade(value);
         }
+#if UNITY_EDITOR
+        
+
+        [Button]
+        public void ApplyDamageCurve()
+        {
+            _enemyAttackMelee.ApplyDamageCurve();
+            EditorUtility.SetDirty(gameObject);
+
+        }
+
+      
+
+        [Button]
+        public void ApplyHpCurve()
+        {
+            _enemyHealth.ApplyHpCurve();
+            EditorUtility.SetDirty(gameObject);
+            
+        }
+#endif
     }
 }

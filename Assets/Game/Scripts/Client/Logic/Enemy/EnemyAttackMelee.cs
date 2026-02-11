@@ -53,25 +53,6 @@ namespace Game.Scripts.Client.Logic.Enemy
         {
             _damage.value =_damageByLevel[value];
         }
-#if UNITY_EDITOR
-        
-
-        [Button]
-        public void ApplyDamageCurve()
-        {
-            int count = _damageByLevel.Count;
-            if (count == 0) return;
-
-            for (int i = 0; i < count; i++)
-            {
-                float t = i / (float)(count - 1); // 0..1 по всем уровням
-                float damage = _damageByLevel[i];
-                damage = _damageCurve.Evaluate(t);
-                _damageByLevel[i] = damage;
-            }
-            EditorUtility.SetDirty(gameObject);
-        }
-
         public void OnTick(float delta)
         {
             
@@ -98,16 +79,29 @@ namespace Game.Scripts.Client.Logic.Enemy
                 return;
             }
         }
+#if UNITY_EDITOR
+        
 
         [Button]
-        public void ApplyHpCurve()
+        public void ApplyDamageCurve()
         {
-            _enemyHealth.ApplyHpCurve();
+            int count = _damageByLevel.Count;
+            if (count == 0) return;
+
+            for (int i = 0; i < count; i++)
+            {
+                float t = i / (float)(count - 1); // 0..1 по всем уровням
+                float damage = _damageByLevel[i];
+                damage = _damageCurve.Evaluate(t);
+                _damageByLevel[i] = damage;
+            }
             EditorUtility.SetDirty(gameObject);
-            
         }
+
+      
+
 #endif
-        private void OnDestroy()
+        private void OnDisable()
         {
             StopAllCoroutines();
         }

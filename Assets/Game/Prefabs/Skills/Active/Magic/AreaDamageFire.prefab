@@ -15213,7 +15213,7 @@ ParticleSystem:
           m_PostInfinity: 2
           m_RotationOrder: 4
   EmissionModule:
-    enabled: 1
+    enabled: 0
     serializedVersion: 4
     rateOverTime:
       serializedVersion: 2
@@ -19311,11 +19311,6 @@ MonoBehaviour:
   _directChildren: []
   _networkRules: {fileID: 0}
   _visitiblityRules: {fileID: 0}
-  _groundMask:
-    serializedVersion: 2
-    m_Bits: 321
-  _groundRayHeight: 5
-  _groundRayDistance: 10
 --- !u!114 &1875889097479280553
 MonoBehaviour:
   m_ObjectHideFlags: 0

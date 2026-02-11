@@ -6,6 +6,7 @@ namespace SaintsField.Samples.Scripts
 {
     public class CurveRangeExample: SaintsMonoBehaviour
     {
+        [DebugTool.WhichFramework]
         [OnValueChanged(":Debug.Log")]
         [CurveRange(-1, -1, 1, 1)][FieldLabelText("<icon=star.png /><label />")]
         public AnimationCurve curve;
@@ -47,7 +48,7 @@ namespace SaintsField.Samples.Scripts
 
         public Nest1 nest1;
 
-        [ReadOnly]
+        [FieldReadOnly]
         [CurveRange(0, 0, 5, 5, EColor.Red)]
         public AnimationCurve curveDisable;
     }

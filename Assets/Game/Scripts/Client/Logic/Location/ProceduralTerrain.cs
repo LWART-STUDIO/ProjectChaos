@@ -1,13 +1,19 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
+using Game.Scripts.Client.Logic.Player;
 using SaintsField.Playa;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Game.Scripts.Client.Logic.Location
 {
     public class ProceduralTerrain : MonoBehaviour
     {
-        #if UNITY_EDITOR
+    
         [SerializeField] private GridElement _blockPrefab;
         [Range(0, 1f)][SerializeField] private float _hilliness = 0.5f;
         [SerializeField] private int _mapSize = 20;
@@ -15,11 +21,81 @@ namespace Game.Scripts.Client.Logic.Location
         [SerializeField] private int _blockSpacingVertical = 20;
         [SerializeField] private int _maxBlocks = 300;
         [SerializeField] private int _maxHeight = 5;
+        [SerializeField] private List<GridElement> _allBlocks = new List<GridElement>();
+        private float _minDistanceToPlayer = 60f;
+        private int _checksPerFrame = 10;
+        private bool _isSearchingPosition;
 
         private GridElement[,] _gridElements;
-        private List<GridElement> _allBlocks = new List<GridElement>();
+       
         private Vector2Int lockedDirection = Vector2Int.zero;
 
+        public void GetPositionForEvent(Action<Vector3> onResult)
+        {
+            if (_isSearchingPosition)
+            {
+                // fallback — чтобы ивент не завис
+                onResult?.Invoke(Vector3.zero);
+                return;
+            }
+            StartCoroutine(FindPositionCoroutine(onResult));
+        }
+        private IEnumerator FindPositionCoroutine(Action<Vector3> onResult)
+        {
+            _isSearchingPosition = true;
+
+            // 1️⃣ Копируем и перемешиваем
+            List<GridElement> shuffledElements = new List<GridElement>(_allBlocks);
+            Shuffle(shuffledElements);
+            int checks = 0;
+
+            foreach (var element in shuffledElements)
+            {
+                if (++checks >= _checksPerFrame)
+                {
+                    checks = 0;
+                    yield return null;
+                }
+                if (element.IsSlope || element.HaveEvent)
+                    continue;
+                if (IsTooCloseToAnyPlayer(element.transform.position))
+                    continue;
+                Vector3 spawnPos = element.GetSpawnEventPosition();
+                _isSearchingPosition = false;
+                onResult?.Invoke(spawnPos);
+                yield break;
+           
+            }
+
+            // 3️⃣ fallback
+            _isSearchingPosition = false;
+            onResult?.Invoke(Vector3.zero);
+        }
+        private void Shuffle<T>(List<T> list)
+        {
+            for (int i = list.Count - 1; i > 0; i--)
+            {
+                int j = UnityEngine.Random.Range(0, i + 1);
+                (list[i], list[j]) = (list[j], list[i]);
+            }
+        }
+
+        private bool IsTooCloseToAnyPlayer(Vector3 position)
+        {
+            float minSqr = _minDistanceToPlayer * _minDistanceToPlayer;
+
+            foreach (var player in PlayerHealth.AllPlayers)
+            {
+                if (!player.Value)
+                    continue;
+
+                if ((player.Value.transform.position - position).sqrMagnitude < minSqr)
+                    return true;
+            }
+
+            return false;
+        }
+#if UNITY_EDITOR
         [Button]
         private void DestroyTerrain()
         {

@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 313657c04400c4549b986e571d5ceef5
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 295704
+  packageName: Workshop Friendly Localization
+  packageVersion: 1.0
+  assetPath: Assets/SoftKitty/WorkshopFriendlyLocalization/Scripts/Ui/LocalizationTMP.cs
+  uploadId: 690837

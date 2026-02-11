@@ -18,10 +18,10 @@ namespace ProjectDawn.Navigation.Hybrid
         /// <summary>
         /// Returns default component of <see cref="AgentSpatialPartitioningSystem.Settings"/>.
         /// </summary>
-        public AgentSpatialPartitioningSystem.Settings DefaultSettings => new AgentSpatialPartitioningSystem.Settings
+        /*public AgentSpatialPartitioningSystem.Settings DefaultSettings => new AgentSpatialPartitioningSystem.Settings
         {
             CellSize = CellSize,
-        };
+        };*/
 
         public override Entity GetOrCreateEntity()
         {

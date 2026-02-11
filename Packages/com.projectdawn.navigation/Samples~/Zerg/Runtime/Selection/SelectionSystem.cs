@@ -1,8 +1,8 @@
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Transforms;
-using Unity.Jobs;
 using UnityEngine;
+using static Unity.Entities.SystemAPI;
 
 namespace ProjectDawn.Navigation.Sample.Zerg
 {
@@ -16,8 +16,8 @@ namespace ProjectDawn.Navigation.Sample.Zerg
         protected override void OnCreate()
         {
             m_SelectedEntities = new NativeList<Entity>(Allocator.Persistent);
-            m_SelectionRectangle = GameObject.FindObjectOfType<SelectionRectangle>(true);
-            m_Gestures = GameObject.FindObjectOfType<Gestures>(true);
+            m_SelectionRectangle = GameObject.FindFirstObjectByType<SelectionRectangle>(FindObjectsInactive.Include);
+            m_Gestures = GameObject.FindFirstObjectByType<Gestures>(FindObjectsInactive.Include);
 
             World.EntityManager.CreateSingleton(new Singleton
             {
@@ -54,14 +54,14 @@ namespace ProjectDawn.Navigation.Sample.Zerg
             if (m_Gestures.SelectionExit(out rect))
             {
                 selectectEntities.Clear();
-                Entities.ForEach((Entity entity, in Unit unit, in LocalTransform transform) =>
+                foreach (var (unit, transform, entity) in Query<Unit, LocalTransform>().WithEntityAccess())
                 {
                     Vector3 position = Camera.main.WorldToScreenPoint(transform.Position);
                     if (rect.Contains(position) && unit.Owner == PlayerId.Red)
                     {
                         selectectEntities.Add(entity);
                     }
-                }).WithoutBurst().Run();
+                }
                 m_SelectionRectangle.Hide();
             }
         }

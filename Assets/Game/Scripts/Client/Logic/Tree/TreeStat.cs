@@ -1,9 +1,11 @@
 using System.Collections.Generic;
+using Game.Scripts.Client.Logic.Player.Stats;
 using SaintsField;
 using SaintsField.Playa;
+using SoftKitty.WSFL;
 using UnityEngine;
 
-namespace Game.Scripts.Client.Logic.Player.Stats
+namespace Game.Scripts.Client.Logic.Tree
 {
     [CreateAssetMenu(fileName = "TreeStat", menuName = "Skills/Tree/TreeStat")]
     public class TreeStat : ScriptableObject
@@ -15,12 +17,12 @@ namespace Game.Scripts.Client.Logic.Player.Stats
         
 
         [Button]
-        private void UpdateDescription()
+        public void UpdateDescription()
         {
             description = "";
-            foreach (var bonuse in bonuses)
+            foreach (var bonus in bonuses)
             {
-                description += $"{bonuse.description}  \n";
+                description += $"{Localization.GetString(bonus.description)}  \n";
             }
            
         }

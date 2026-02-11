@@ -64,6 +64,17 @@ namespace ProjectDawn.Navigation.Sample.Zerg
         public int AttackId;
     }
 
+#if MODULE_ANIMATRON
+    public struct UnitAnimatron : IComponentData
+    {
+        public Animation.AnimationIndex Attack;
+        public Animation.AnimationIndex Move;
+        public Animation.AnimationIndex Idle;
+        public int State;
+        public Entity Animatron;
+    }
+#endif
+
     public struct UnitSmartStop : IComponentData
     {
         public float Radius;

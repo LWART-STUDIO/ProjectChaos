@@ -52,10 +52,26 @@ namespace Game.Scripts.Client.Logic.Player
             attack.Initialize(_shootPoint,skillData,0,_playerStatsHolder);
             _activeSkills[skillData.skillId] = attack;
         }
+        public void AddPassiveSkill(SkillData skillData)
+        {
+            if (_passiveSkills.TryGetValue(skillData.skillId, out var skill))
+            {
+                int newLevel = skill.level + 1;
+                skill.Initialize(_shootPoint,skillData,newLevel,_playerStatsHolder);
+                return;
+            }
+            var attack = Instantiate(skillData.prefab,_shootPoint.position,Quaternion.identity,_shootPoint);
+            attack.Initialize(_shootPoint,skillData,0,_playerStatsHolder);
+            _passiveSkills[skillData.skillId] = attack;
+        }
 
         public int GetSkillLevel(string id)
         {
             return _activeSkills.TryGetValue(id, out var skill) ? skill.level : -1;
+        }
+        public int GetPassiveSkillLevel(string id)
+        {
+            return _passiveSkills.TryGetValue(id, out var skill) ? skill.level : -1;
         }
 
         public int GetALLDamage()

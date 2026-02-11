@@ -15,6 +15,38 @@ MonoBehaviour:
   m_Active: 1
   renderOrder: 0
   canvasDisappearWorkaround: 0
+--- !u!114 &-5162230031350686397
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8162b2948764a4aa2ad41e485a185cfe, type: 3}
+  m_Name: RadiantShadowMapRenderFeature
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::RadiantGI.Universal.RadiantShadowMapRenderFeature
+  m_Active: 1
+--- !u!114 &-2634425761385051265
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88bd13fabf96a4cc1aaf221e40805c5c, type: 3}
+  m_Name: RadiantRenderFeature
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::RadiantGI.Universal.RadiantRenderFeature
+  m_Active: 1
+  renderingPath: 1
+  ignorePostProcessingOption: 1
+  ignoreOverlayCameras: 1
+  camerasLayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
 --- !u!114 &-456278907218570282
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -28,6 +60,23 @@ MonoBehaviour:
   m_Name: HTrace Ambient Occlusion
   m_EditorClassIdentifier: 
   m_Active: 1
+--- !u!114 &-214139559445093634
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 163d34cee9b7a428d9899ab92abd7e0d, type: 3}
+  m_Name: UmbraRenderFeature
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::Umbra.UmbraRenderFeature
+  m_Active: 1
+  m_Shader: {fileID: 0}
+  camerasLayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -55,7 +104,13 @@ MonoBehaviour:
   m_RendererFeatures:
   - {fileID: -456278907218570282}
   - {fileID: 7064283261854145355}
-  m_RendererFeatureMap: d6d3bb58c0f8aaf94bdb8dcf32600962
+  - {fileID: -214139559445093634}
+  - {fileID: 2818245042629939806}
+  - {fileID: -5162230031350686397}
+  - {fileID: -2634425761385051265}
+  - {fileID: 1074020609288006259}
+  - {fileID: 8816508185032893844}
+  m_RendererFeatureMap: d6d3bb58c0f8aaf94bdb8dcf32600962fea2ea8a343907fd5e92f63fef6a1c27431d7d1c23135cb87f8b8151baa370db736a0fc20db0e70e94a535807b875a7a
   m_UseNativeRenderPass: 1
   xrSystemData: {fileID: 0}
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
@@ -84,6 +139,80 @@ MonoBehaviour:
   m_DepthTextureFormat: 0
   m_AccurateGbufferNormals: 0
   m_IntermediateTextureMode: 0
+--- !u!114 &1074020609288006259
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 06597a717fbb9ab499547e7f62792f89, type: 3}
+  m_Name: Beautify
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::Beautify.Universal.BeautifyRendererFeature
+  m_Active: 1
+  shader: {fileID: 4800000, guid: 83f5da9f7eb3aec4d99d84c68acbca4e, type: 3}
+  renderPassEvent: 500
+  ignorePostProcessingOption: 0
+  clearXRColorBuffer: 0
+  cameraLayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  stripBeautifyTonemappingACES: 0
+  stripBeautifyTonemappingACESFitted: 0
+  stripBeautifyTonemappingAGX: 0
+  stripBeautifySharpen: 0
+  stripBeautifySharpenExclusionMask: 1
+  stripBeautifyDithering: 0
+  stripBeautifyEdgeAA: 0
+  stripBeautifyLUT: 0
+  stripBeautifyLUT3D: 1
+  stripBeautifyColorTweaks: 0
+  stripBeautifyBloom: 0
+  stripBeautifyLensDirt: 0
+  stripBeautifyChromaticAberration: 0
+  stripBeautifyDoF: 0
+  stripBeautifyDoFTransparentSupport: 1
+  stripBeautifyEyeAdaptation: 1
+  stripBeautifyPurkinje: 1
+  stripBeautifyVignetting: 0
+  stripBeautifyVignettingMask: 1
+  stripBeautifyOutline: 1
+  stripBeautifyNightVision: 1
+  stripBeautifyThermalVision: 1
+  stripBeautifyFrame: 1
+  stripBeautifyFilmGrain: 1
+  stripUnityFilmGrain: 0
+  stripUnityDithering: 0
+  stripUnityTonemapping: 0
+  stripUnityBloom: 0
+  stripUnityChromaticAberration: 0
+  stripUnityDistortion: 0
+  stripUnityDebugVariants: 0
+--- !u!114 &2818245042629939806
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf716a1be50b448e7b1d1968ab734946, type: 3}
+  m_Name: ShinySSRR
+  m_EditorClassIdentifier: ScreenSpaceReflections::ShinySSRR.ShinySSRR
+  m_Active: 0
+  renderPassEvent: 500
+  useDeferred: 0
+  enableScreenSpaceNormalsPass: 0
+  customSmoothnessMetallicPass: 0
+  customSmoothnessMetallicPassSource: 0
+  ignorePostProcessingOption: 1
+  cameraLayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  ignoreReflectionProbes: 1
 --- !u!114 &7064283261854145355
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -114,8 +243,8 @@ MonoBehaviour:
     overrideShaderPassIndex: 0
     overrideMode: 1
     overrideDepthState: 0
-    depthCompareFunction: 4
-    enableWrite: 1
+    depthCompareFunction: 0
+    enableWrite: 0
     stencilSettings:
       overrideStencilState: 0
       stencilReference: 0
@@ -128,3 +257,67 @@ MonoBehaviour:
       restoreCamera: 1
       offset: {x: 0, y: 0, z: 0, w: 0}
       cameraFieldOfView: 60
+--- !u!114 &8816508185032893844
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ad20adf61393c4428c8b31cf405bb26, type: 3}
+  m_Name: NiloToonAllInOneRendererFeature
+  m_EditorClassIdentifier: NiloToon.NiloToonURP.Runtime::NiloToon.NiloToonURP.NiloToonAllInOneRendererFeature
+  m_Active: 1
+  settings:
+    outlineSettings:
+      ShouldRenderOutline: 1
+      outlineWidthMultiplier: 1
+      outlineWidthExtraMultiplierForXR: 0.5
+      outlineTintColor: {r: 1, g: 1, b: 1, a: 1}
+      outlineWidthAutoAdjustToCameraDistanceAndFOV: 1
+      allowClassicOutlineInPlanarReflection: 0
+      AllowRenderScreenSpaceOutline: 0
+      AllowRenderScreenSpaceOutlineInSceneView: 0
+      extraThickOutlineRenderTiming: 500
+    MiscSettings:
+      ShouldReceiveURPShadows: 0
+      URPShadowIntensity: 1
+      URPShadowDepthBias: 0
+      URPShadowNormalBiasMultiplier: 1
+      EnableDepthTextureRimLigthAndShadow: 1
+      DepthTextureRimLightAndShadowWidthMultiplier: 1
+      DepthTexRimLightDepthDiffThresholdOffset: 0
+      EnableSkyboxDrawBeforeOpaque: 1
+      ForceMinimumShader: 0
+      ForceMinimumEnviShader: 0
+      ForceNoOutline: 0
+    sphereShadowTestSettings:
+      enableAverageShadow: 0
+    animePostProcessSettings:
+      allowRender: 1
+    uberPostProcessSettings:
+      renderPassEventTimingOffset: 0
+      allowRenderNiloToonBloom: 1
+    charSelfShadowSettings:
+      enableCharSelfShadow: 1
+      useMainLightAsCastShadowDirection: 1
+      shadowAngle: 30
+      shadowLRAngle: 0
+      shadowMapSize: 4096
+      useSoftShadow: 1
+      softShadowQuality: 2
+      useSoftShadowResharpen: 0
+      resharpenStregth: 0.5
+      shadowRange: 10
+      depthBias: 1
+      normalBias: 0.5
+      receiverDepthBias: 1
+      receiverNormalBias: 1
+      useNdotLFix: 1
+      perfectCullingForShadowCasters: 1
+      terrainCrashSafeGuard: 1
+    motionBlurSettings:
+      allowRender: 1
+    shaderStrippingSettingSO: {fileID: 0}

@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 446c0f7d916ab7e4fa9b5f3989455e2b
+AssemblyDefinitionImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 269741
+  packageName: Saints Field
+  packageVersion: 5.8.4
+  assetPath: Packages/today.comes.saintsfield/Runtime/ScriptableRenderer/SaintsField.Runtime.ScriptableRenderer.asmdef
+  uploadId: 849606

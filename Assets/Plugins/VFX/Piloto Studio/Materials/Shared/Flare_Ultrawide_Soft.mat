@@ -196,7 +196,7 @@ Material:
     - _LastColor: {r: 1, g: 0, b: 0, a: 0}
     - _MainAlphaChannel: {r: 0, g: 0, b: 0, a: 1}
     - _MainAlphaPanning: {r: 0, g: 0, b: 0, a: 0}
-    - _MainTextureChannel: {r: 1, g: 1, b: 1, a: 0}
+    - _MainTextureChannel: {r: 2, g: 2, b: 2, a: 0}
     - _MainTexturePanning: {r: 0, g: 0, b: 0, a: 0}
     - _MidColor: {r: 1, g: 0.44479147, b: 0, a: 0}
     - _Resolution: {r: 64, g: 64, b: 0, a: 0}

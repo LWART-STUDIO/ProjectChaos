@@ -37,6 +37,7 @@ namespace ProjectDawn.Navigation
         {
             m_SpatialPartitioningSystem = state.WorldUnmanaged.GetExistingUnmanagedSystem<AgentSpatialPartitioningSystem>();
             m_Iterations = AgentsNavigationSettings.Get<ColliderSubSettings>().Iterations;
+            state.RequireForUpdate<AgentCollider>();
         }
 
         [BurstCompile]
@@ -85,7 +86,11 @@ namespace ProjectDawn.Navigation
                     ResolveFactor = ResolveFactor,
                 };
 
-                Spatial.QueryCylinder(transform.Position, shape.Radius, shape.Height, Spatial.m_QueryCapacity, ref action, collider.Layers);
+#if AGENTS_NAVIGATION_AABB_TREE
+                Spatial.QueryCylinder(transform.Position, shape.Radius, shape.Height, ref action, collider.Layers);
+#else
+                Spatial.QueryCylinder(transform.Position, shape.Radius, shape.Height, ref action, collider.Layers);
+#endif
 
                 if (action.Weight > 0)
                 {
@@ -104,7 +109,11 @@ namespace ProjectDawn.Navigation
                     ResolveFactor = ResolveFactor,
                 };
 
-                Spatial.QueryCircle(transform.Position, shape.Radius, Spatial.m_QueryCapacity, ref action, collider.Layers);
+#if AGENTS_NAVIGATION_AABB_TREE
+                Spatial.QueryCircle(transform.Position, shape.Radius, ref action, collider.Layers);
+#else
+                Spatial.QueryCircle(transform.Position, shape.Radius, ref action, collider.Layers);
+#endif
 
                 if (action.Weight > 0)
                 {

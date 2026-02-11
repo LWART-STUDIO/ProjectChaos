@@ -1,6 +1,84 @@
 # Changelog
 All notable changes to this package will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
+## [4.4.2] - 2025-11-03
+- Fixed astar integration
+- Fixed AABBTree Spatial component not to throw errors in entity hierarchy
+- Fixed AABBTree handle is already removed exception
+
+## [4.4.1] - 2025-10-22
+- Fixed destroyed agents in aabb tree not getting removed
+
+## [4.4.0] - 2025-10-22
+- Changed collision system no longer to use query capacity and always take all neighbours. I found from many users projects that cases where you would find this optimization useful, would prove too much unstable collision thus rendering it useless.
+- Changed default grid hash spatial partitioning with query capacity 0 to take all neighbours instead of falling back to non shape based spatial grid partitioning.
+- Added new agents navigation settings called `Spatial Partitioning Mode` that allow switching between different spatial partitioning backends
+- Added new spatial partitioning that uses aabb tree. It is nice alternative to default one as it provides more stable search and also makes it quite optimal for using in game code, which is commonly requested feature
+- Added new scene in unity scenarios `Unity Physics Locomotion` that shows example of integrating with unity ecs physics package
+- Added to spatial partitioning aabb tree new overloads `QueryLine`, `QuerySphere` and `QueryCylinder` that are enurator based instead of generics. This make easier API and closer to SystemAPI.Query
+- Fxed EntityBehaviour in some cases droping null reference exception on playmode stop
+
+## [4.3.1] - 2025-10-17
+- Fixed compilation errors caused by RegisterUnityEngineComponentType on prior to 1.4.0 ecs version
+
+## [4.3.0] - 2025-10-08
+- Fixed for ECS 1.4 RectTransform and Animator errors
+- Fixed NavMeshCorners.TryGetCorners properly work with more than 2 navmesh nodes
+- Updated zerg samples not to produce warnings on Unity 6
+- Increased performance optimization for smart stop
+- Added new sample zerg animatron
+- Changed NavMeshSteeringSystem to set AgentBody RemainingDistance to heuristic distance instead of max float value
+
+## [4.2.5] - 2025-09-08
+- Removed wantsToRecalculatePath logging from astar
+
+## [4.2.4] - 2025-09-01
+- Removed accidental leftover of priting pending path in astar
+- Added in settings new option `Log Verbose` that for now controlls navmesh not found warrning
+
+## [4.2.3] - 2025-08-19
+- Fixed error `Loading from a non-readonly static field`
+
+## [4.2.2] - 2025-08-17
+- Fixed regression where agent inspector properties are not shown for default locomotion
+- Fixed burst error for AgentGroundingSlopeSystem and AgentGroundingSystem on domain reload
+- Added new Scenario sample scene `Physics Grounding`
+
+## [4.2.1] - 2025-08-16
+- Fixed regression where imported agents navigation package loads old version
+
+## [4.2.0] - 2025-08-15
+- Changed AgentAstarPath grounded option to enum
+- Changed NavMeshPath grounded option to enum
+- Added new component AgentGrounding that uses unity builtin physics for height correction
+- Added to all component new ref based entity data returning as result simplying option changing
+
+## [4.1.1] - 2025-06-21
+- Fixed build errors
+
+## [4.1.0] - 2025-06-17
+- Added to navmesh `OptimizePath` feature that improves path quality for highly non uniform navmesh surfaces
+- Fixed navmesh init to wait for query
+- Fixed AgentCollider to work, if it is created disabled
+- Changed SonarHorizon to be enabled by default, you can still disable it
+- Changed AgentSonarAvoid some angle tooltips to be more clear
+- Changed a lot of systems not to run without existing components
+- Changed hive stop comment
+- Changed not to print `Failed to map agent` in non development builds
+
+## [4.0.15] - 2025-03-10
+- Fixed Astar pathing resulting in errors during carving
+
+## [4.0.14] - 2025-03-04
+- Fixed TryGetCorners not working
+
+## [4.0.13] - 2025-01-23
+- Added root motion locomotion sample
+
+## [4.0.12] - 2025-01-02
+- Fixed A* Pathfinding Project 5.3.0 version to work
+- Fixed selecting agent in subscene would result in errors
+
 ## [4.0.11] - 2025-01-02
 - Fixed all warnings in Unity 6 version
 

@@ -14,6 +14,7 @@ namespace PurrLobby
             serializedLobby = newLobby;
         }
         
+        
         private void Awake()
         {
             DontDestroyOnLoad(gameObject);

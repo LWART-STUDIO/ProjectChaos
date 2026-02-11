@@ -1,9 +1,10 @@
 using System.Collections.Generic;
+using PurrNet;
 using UnityEngine;
 
 namespace Game.Scripts.Client.Logic.Location
 {
-    public class GridElement : MonoBehaviour
+    public class GridElement : NetworkBehaviour
     {
         [SerializeField] private GameObject _straightElement;
         [SerializeField] private GameObject _slopeElement;
@@ -15,17 +16,31 @@ namespace Game.Scripts.Client.Logic.Location
         private Vector3Int coordinates;
         private bool isSlope = false;
         private Vector2Int slopeDirection = Vector2Int.zero;
+        private bool _haveEvent = false;
 
         public Vector3Int Coordinates => coordinates;
         private List<GameObject> _currentGrass = new List<GameObject>();
-        private List<GameObject> _currentTrees = new List<GameObject>();
-        private List<GameObject> _currentRocks = new List<GameObject>();
+        [SerializeField] private List<GameObject> _currentTrees = new List<GameObject>();
+        [SerializeField] private List<GameObject> _currentRocks = new List<GameObject>();
+        public bool IsSlope => isSlope;
+        public bool HaveEvent => _haveEvent;
 
         public void SetCoordinates(Vector3Int coords)
         {
             coordinates = coords;
         }
 
+        public Vector3 GetSpawnEventPosition()
+        {
+            _haveEvent = true;
+            foreach (GameObject tree in _currentTrees)
+                Destroy(tree);
+            foreach (GameObject rock in _currentRocks)
+                Destroy(rock);
+            Vector3 spawnPosition = new Vector3(transform.position.x, transform.position.y+transform.localScale.y/2, transform.position.z);
+            return spawnPosition;
+        }
+        #if UNITY_EDITOR
         public void SpawnGrass()
         {
             foreach (GameObject grass in _currentGrass)
@@ -376,5 +391,7 @@ namespace Game.Scripts.Client.Logic.Location
             float centerY = targetTopY - newWorldHeight * 0.5f;
             transform.position = new Vector3(transform.position.x, centerY, transform.position.z);
         }
+#endif
     }
+ 
 }

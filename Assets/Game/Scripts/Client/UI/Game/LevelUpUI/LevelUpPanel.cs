@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using Game.Scripts.Client.Logic.Game;
 using Game.Scripts.Client.Logic.Skills;
+using Game.Scripts.Client.UI.Game.LevelUpUI;
+using Game.Scripts.Services.Input;
 using Game.Scripts.Services.UI;
 using Michsky.MUIP;
 using Sisus.Init;
@@ -18,6 +20,7 @@ namespace Game.Scripts.Client.UI.Game
         [SerializeField] private GameObject _waitingScreen;
         [SerializeField] private Transform _upgradeHolder;
         [SerializeField] private SkillLevelUp _skillLevelUpPrefab;
+        private InputService _input => Service<InputService>.Instance;
 
 
         public void ShowWaitOtherPlayerText()
@@ -44,7 +47,7 @@ namespace Game.Scripts.Client.UI.Game
         }
         public void CloseWindow()
         {
-           
+           _input.UnblockInput();
             _modalWindowManager.CloseWindow();
             Cursor.visible = false;
             //HideWaitOtherPlayerText();
@@ -53,6 +56,7 @@ namespace Game.Scripts.Client.UI.Game
         }
         public void CloseWindowImmediately()
         {
+            _input.UnblockInput();
             _modalWindowManager.UpdateUI();
             _modalWindowManager.CloseWindow();
             _modalWindowManager.gameObject.SetActive(false);
@@ -63,6 +67,7 @@ namespace Game.Scripts.Client.UI.Game
         }
         public void OpenWaitWindow()
         {
+            _input.BlockInput();
             ShowWaitOtherPlayerText();
             foreach (Transform child in _upgradeHolder) 
                 Destroy(child.gameObject);
@@ -74,6 +79,7 @@ namespace Game.Scripts.Client.UI.Game
 
         public void OpenWindow(List<SkillData> skills,GameStateLevelUp state)
         {
+            _input.BlockInput();
             _modalWindowManager.titleText = "Выберите скилл";
             _modalWindowManager.UpdateUI();
           //  HideWaitOtherPlayerText();
@@ -82,6 +88,23 @@ namespace Game.Scripts.Client.UI.Game
             {
                  var skillPanel = Instantiate(_skillLevelUpPrefab, _upgradeHolder);
                  skillPanel.Init(skill,state);
+            }
+            _modalWindowManager.OpenWindow();
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+            
+        }
+        public void OpenWindowPassives(List<SkillData> skills,GameStatePassiveSkillGrant state)
+        {
+            _input.BlockInput();
+            _modalWindowManager.titleText = "Выберите скилл";
+            _modalWindowManager.UpdateUI();
+            //  HideWaitOtherPlayerText();
+            ShowLevelScreen();
+            foreach (var skill in skills)
+            {
+                var skillPanel = Instantiate(_skillLevelUpPrefab, _upgradeHolder);
+                skillPanel.Init(skill,state);
             }
             _modalWindowManager.OpenWindow();
             Cursor.lockState = CursorLockMode.None;

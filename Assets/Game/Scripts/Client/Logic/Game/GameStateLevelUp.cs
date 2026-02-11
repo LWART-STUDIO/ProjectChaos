@@ -14,6 +14,7 @@ namespace Game.Scripts.Client.Logic.Game
     {
         [SerializeField] private StateNode _runningState;
         [SerializeField] private List<SkillData> _allSkill = new List<SkillData>();
+        private int _currentLevel = 1;
         
         private List<PlayerID> _readyPlayers = new List<PlayerID>();
         private List<PlayerID> _skillSelected = new List<PlayerID>();
@@ -26,8 +27,15 @@ namespace Game.Scripts.Client.Logic.Game
             _readyPlayers.Clear();
             _skillSelected.Clear();
             SetUpLevelOptions();
+            UpdateLevel();
             Time.timeScale = 0;
             
+        }
+        [ObserversRpc(runLocally: true)]
+        private void UpdateLevel()
+        {
+            _currentLevel++;
+            Service<UIService>.Instance.GetPlayerInGameUI().UpdateCurrentLevel(_currentLevel); 
         }
 
         public override void Exit(bool asServer)

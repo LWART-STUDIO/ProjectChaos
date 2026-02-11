@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using Game.Scripts.Client.Logic.Player.Stats;
-using Game.Scripts.Services.Pool;
 using UnityEngine;
 
 namespace Game.Scripts.Client.Logic.Skills.Projectiles.Spark

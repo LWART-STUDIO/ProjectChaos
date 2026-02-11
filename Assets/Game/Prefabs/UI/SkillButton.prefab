@@ -2113,19 +2113,7 @@ MonoBehaviour:
   animationSolution: 1
   onClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 5847289957201180500}
-        m_TargetAssemblyTypeName: Game.Scripts.Client.UI.Game.SkillLevelUp, Assembly-CSharp
-        m_MethodName: PickUpUpgrade
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   onDoubleClick:
     m_PersistentCalls:
       m_Calls: []
@@ -2145,7 +2133,7 @@ MonoBehaviour:
   renderOnTop: 1
   centered: 0
   isPreset: 1
-  latestTabIndex: 1
+  latestTabIndex: 0
 --- !u!114 &2631815080727501346
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2172,7 +2160,7 @@ MonoBehaviour:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 120, y: 30, z: 0}
   ComponentScale: {x: 1, y: 1, z: 1}
-  FillSize: {x: 240, y: 60, z: 0}
+  FillSize: {x: 1680, y: 932, z: 0}
   ShrinkSize: {x: 999999, y: 999999, z: 999999}
   TargetPosition: {x: 0, y: 0, z: 0}
   TargetRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -2271,6 +2259,7 @@ MonoBehaviour:
   - Icon: {fileID: 1393977489793712510}
     Title: {fileID: 485945049774264800}
     Description: {fileID: 8086162028344556958}
+  _buttonManager: {fileID: 4121333847867669301}
 --- !u!1 &6935055906236609432
 GameObject:
   m_ObjectHideFlags: 0

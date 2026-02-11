@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 70c3c2dd02715a84ba22b09b9cdeed7d
+DefaultImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 295704
+  packageName: Workshop Friendly Localization
+  packageVersion: 1.0
+  assetPath: Assets/SoftKitty/WorkshopFriendlyLocalization/ExampleScene/LocalizationExample/Meta.ini
+  uploadId: 690837

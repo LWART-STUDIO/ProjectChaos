@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 5eb0057e87610fc47bccbc1b4fa54776
+TextScriptImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 295704
+  packageName: Workshop Friendly Localization
+  packageVersion: 1.0
+  assetPath: Assets/SoftKitty/WorkshopFriendlyLocalization/ExampleScene/LocalizationExample/Japanese.txt
+  uploadId: 690837

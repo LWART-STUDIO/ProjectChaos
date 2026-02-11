@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 3646345d2c6e68c4e9b8b908ce240e54
+TextScriptImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 295704
+  packageName: Workshop Friendly Localization
+  packageVersion: 1.0
+  assetPath: Assets/SoftKitty/WorkshopFriendlyLocalization/ExampleScene/LocalizationExample/German.txt
+  uploadId: 690837

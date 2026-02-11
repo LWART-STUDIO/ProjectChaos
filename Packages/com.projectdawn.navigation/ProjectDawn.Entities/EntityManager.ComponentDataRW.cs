@@ -2,10 +2,11 @@
 using System;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
+using Unity.Entities;
 
-namespace Unity.Entities
+namespace ProjectDawn.Entities
 {
-    public unsafe partial struct EntityManager : IEquatable<EntityManager>
+    public static unsafe class EntityManagerEx
     {
         // From https://forum.unity.com/threads/really-hoped-for-refrw-refro-getcomponentrw-ro-entity.1369275/
         /// <summary>
@@ -17,9 +18,9 @@ namespace Unity.Entities
         /// <exception cref="ArgumentException">Thrown if the component type has no fields.</exception>
         /// <exception cref="InvalidOperationException">Thrown if the system isn't from thie world.</exception>
         [GenerateTestsForBurstCompatibility(GenericTypeArguments = new[] { typeof(BurstCompatibleComponentData) })]
-        public RefRW<T> GetComponentDataRW<T>(Entity entity) where T : unmanaged, IComponentData
+        public static RefRW<T> GetComponentDataRW<T>(this EntityManager entityManager, Entity entity) where T : unmanaged, IComponentData
         {
-            var access = GetUncheckedEntityDataAccess();
+            var access = entityManager.GetUncheckedEntityDataAccess();
 
             var typeIndex = TypeManager.GetTypeIndex<T>();
             var data = access->GetComponentDataRW_AsBytePointer(entity, typeIndex);

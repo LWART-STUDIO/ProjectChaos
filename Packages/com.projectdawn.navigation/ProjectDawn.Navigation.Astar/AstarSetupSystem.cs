@@ -12,6 +12,7 @@ namespace ProjectDawn.Navigation.Astar
         public AstarLinkTraversalMode LinkTraversalMode;
     }
 
+    [RequireMatchingQueriesForUpdate]
     [UpdateInGroup(typeof(InitializationSystemGroup))]
     public partial struct AstarSetupSystem : ISystem
     {
@@ -21,7 +22,7 @@ namespace ProjectDawn.Navigation.Astar
 
             foreach (var (setup, entity) in Query<SetupManagedState>().WithEntityAccess())
             {
-                var managedState = new ManagedState();
+                var managedState = new ManagedSettings();
                 managedState.enableLocalAvoidance = false;
                 managedState.pathfindingSettings.graphMask = setup.graphMask;
                 ecb.AddComponent(entity, managedState);

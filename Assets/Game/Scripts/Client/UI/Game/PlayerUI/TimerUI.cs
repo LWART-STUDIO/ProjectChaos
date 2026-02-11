@@ -6,7 +6,7 @@ namespace Game.Scripts.Client.UI.Game.PlayerUI
     public class TimerUI : MonoBehaviour
     {
         [SerializeField] private TMP_Text _timerText;
-        private float _startMinutes = 30f;
+        private float _startMinutes = 15f;
 
         private void Start()
         {

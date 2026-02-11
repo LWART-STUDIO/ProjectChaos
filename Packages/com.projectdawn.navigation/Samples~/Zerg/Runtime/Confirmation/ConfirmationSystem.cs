@@ -11,7 +11,7 @@ namespace ProjectDawn.Navigation.Sample.Zerg
         Confirmation m_Confirmation;
         protected override void OnCreate()
         {
-            m_Confirmation = GameObject.FindObjectOfType<Confirmation>(true);
+            m_Confirmation = GameObject.FindAnyObjectByType<Confirmation>(FindObjectsInactive.Include);
 
             World.EntityManager.CreateSingleton(new Singleton
             {

@@ -35,8 +35,12 @@ namespace Game.Scripts.Client.Logic.Tree
         public void Init(PlayerSkillTree skillTree)
         {
             tree = skillTree;
-            if(node!=null&&_tooltip!=null)
+            if (node != null && _tooltip != null)
+            {
+                node.UpdateDescription();
                 _tooltip.description = node.description;
+            }
+                
             Refresh(tree);
         }
 #if UNITY_EDITOR

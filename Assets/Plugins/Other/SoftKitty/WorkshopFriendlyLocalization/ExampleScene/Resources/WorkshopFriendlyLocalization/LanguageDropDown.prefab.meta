@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 32a06bf7ee6e2054ea81ef7e925e3255
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 295704
+  packageName: Workshop Friendly Localization
+  packageVersion: 1.0
+  assetPath: Assets/SoftKitty/WorkshopFriendlyLocalization/ExampleScene/Resources/WorkshopFriendlyLocalization/LanguageDropDown.prefab
+  uploadId: 690837

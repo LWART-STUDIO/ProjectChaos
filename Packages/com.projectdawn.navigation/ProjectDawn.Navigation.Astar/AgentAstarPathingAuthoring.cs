@@ -1,7 +1,7 @@
 using Unity.Entities;
 using UnityEngine;
 using ProjectDawn.Navigation.Hybrid;
-using System;
+using ProjectDawn.Entities;
 
 #if ENABLE_ASTAR_PATHFINDING_PROJECT
 using Pathfinding.ECS;
@@ -27,9 +27,8 @@ namespace ProjectDawn.Navigation.Astar
         AgentAstarPath m_Path = AgentAstarPath.Default;
 
         [SerializeField]
-        ManagedState m_ManagedState = new()
+        ManagedSettings m_ManagedState = new()
         {
-            enableLocalAvoidance = false,
             pathfindingSettings = PathRequestSettings.Default,
         };
 
@@ -48,7 +47,7 @@ namespace ProjectDawn.Navigation.Astar
         /// <summary>
         /// <see cref="Pathfinding.ECS.ManagedState"/> component of this <see cref="AgentAuthoring"/> Entity.
         /// </summary>
-        public ManagedState ManagedState => m_ManagedState;
+        public ManagedSettings ManagedState => m_ManagedState;
 
         /// <summary>
         /// <see cref="AgentAstarPath"/> component of this <see cref="AgentAuthoring"/> Entity.
@@ -109,7 +108,6 @@ namespace ProjectDawn.Navigation.Astar
                 if (m_LinkTraversalMode == AstarLinkTraversalMode.StateMachine)
                     world.EntityManager.RemoveComponent<AstarLinkTraversalStateMachine>(m_Entity);
             }
-            m_ManagedState.Dispose();
         }
 
         void OnEnable()
@@ -134,11 +132,7 @@ namespace ProjectDawn.Navigation.Astar
             {
                 var entity = GetEntity(TransformUsageFlags.Dynamic);
                 AddComponent(entity, authoring.DefaultPath);
-                AddComponent(entity, new SetupManagedState
-                {
-                    graphMask = authoring.ManagedState.pathfindingSettings.graphMask,
-                    LinkTraversalMode = authoring.m_LinkTraversalMode
-                });
+                AddComponentObject(entity, authoring.m_ManagedState);
                 AddComponent(entity, authoring.DefaultMovementState);
             }
         }

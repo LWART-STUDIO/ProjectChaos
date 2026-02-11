@@ -12,49 +12,11 @@ using Unity.Transforms;
 using UnityEngine;
 using static Unity.Entities.SystemAPI;
 using static Unity.Mathematics.math;
+using ProjectDawn.Collections;
+using ProjectDawn.Navigation.LowLevel.Unsafe;
 
 namespace ProjectDawn.Navigation
 {
-    [System.Serializable]
-    public class SpatialPartitioningSubSettings : ISubSettings
-    {
-        [SerializeField]
-        [Tooltip("The size of single cell.")]
-        float3 m_CellSize = 3;
-
-        [SerializeField]
-        [Tooltip("The maximum number of nearby neighbors will be checked to find closest.")]
-        QueryCheckMode m_QueryCheck = QueryCheckMode._32;
-
-        [SerializeField]
-        [Range(0, 16), Tooltip("The maximum number of nearby neighbors to be included in the avoidance/collision systems will be determined.")]
-        int m_QueryCapacity = 0;
-
-        [SerializeField]
-        NavigationLayerNames m_Layers = new();
-
-        /// <summary>
-        /// The size of single cell.
-        /// </summary>
-        public float3 CellSize => m_CellSize;
-        /// <summary>
-        /// The maximum number of nearby neighbors to be included in the avoidance/collision systems will be determined.
-        /// </summary>
-        public int QueryCapacity => m_QueryCapacity;
-        /// <summary>
-        /// The maximum number of nearby neighbors will be checked to find closest.
-        /// </summary>
-        public int QueryChecks => (int)m_QueryCheck;
-
-        public string[] LayerNames => m_Layers.Names;
-
-        public enum QueryCheckMode : int
-        {
-            _16 = 16,
-            _32 = 32,
-        }
-    }
-
     /// <summary>
     /// Partitions agents into arbitary size cells. This allows to query nearby agents more efficiently.
     /// Space is partitioned using multi hash map.
@@ -62,26 +24,45 @@ namespace ProjectDawn.Navigation
     [BurstCompile]
     [RequireMatchingQueriesForUpdate]
     [UpdateInGroup(typeof(AgentSpatialSystemGroup))]
-    public partial struct AgentSpatialPartitioningSystem : ISystem
+    public unsafe partial struct AgentSpatialPartitioningSystem : ISystem
     {
         internal const int InitialCapacity = 256;
         internal const int MaxCellsPerUnit = 16;
 
+#if AGENTS_NAVIGATION_AABB_TREE
+        UnsafeStack<int>* m_FreeIndices;
+        UnsafeBHVTree<AABB, int>* m_Tree;
+        float3 m_Padding;
+#else
         NativeParallelMultiHashMap<int3, int> m_Map;
+        int m_Capacity;
+        float3 m_CellSize;
+        EntityQuery m_Query;
+#endif
         NativeList<Agent> m_Agents;
         NativeList<Entity> m_Entities;
         NativeList<AgentBody> m_Bodies;
         NativeList<AgentShape> m_Shapes;
         NativeList<LocalTransform> m_Transforms;
-        int m_Capacity;
-        float3 m_CellSize;
-        int m_QueryCapacity;
-        EntityQuery m_Query;
 
-        bool UseLimitedQuery => m_QueryCapacity > 0;
+        int m_QueryCapacity;
+
+        bool UseLimitedQuery => true;// m_QueryCapacity > 0;
 
         internal JobHandle ScheduleUpdate(ref SystemState state, JobHandle dependency)
         {
+#if AGENTS_NAVIGATION_AABB_TREE
+            return new UpdateAABBTreeNodesJob
+            {
+                Tree = m_Tree,
+                Entities = m_Entities,
+                Agents = m_Agents,
+                Bodies = m_Bodies,
+                Shapes = m_Shapes,
+                Transforms = m_Transforms,
+                Padding = m_Padding,
+            }.Schedule(dependency);
+#else
             int count = m_Query.CalculateEntityCount();
 
             if (count > m_Capacity)
@@ -146,28 +127,53 @@ namespace ProjectDawn.Navigation
             }
 
             return JobHandle.CombineDependencies(copyHandle, hashHandle);
+#endif
         }
 
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
             GetSingletonRW<Singleton>();
+
+#if AGENTS_NAVIGATION_AABB_TREE
+            var ecb = GetSingleton<EndInitializationEntityCommandBufferSystem.Singleton>();
+            state.Dependency = new RemoveAABBTreeNodesJob
+            {
+                FreeIndices = m_FreeIndices,
+                Tree = m_Tree,
+                Ecb = ecb.CreateCommandBuffer(state.WorldUnmanaged),
+
+            }.Schedule(state.Dependency);
+            state.Dependency = new AddAABBTreeNodesJob
+            {
+                FreeIndices = m_FreeIndices,
+                Tree = m_Tree,
+                Ecb = ecb.CreateCommandBuffer(state.WorldUnmanaged),
+
+                Entities = m_Entities,
+                Agents = m_Agents,
+                Bodies = m_Bodies,
+                Shapes = m_Shapes,
+                Transforms = m_Transforms,
+
+                Padding = m_Padding,
+            }.Schedule(state.Dependency);
+#endif
             state.Dependency = ScheduleUpdate(ref state, state.Dependency);
         }
 
        // [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
+#if AGENTS_NAVIGATION_AABB_TREE
+            m_FreeIndices = UnsafeStack<int>.Create(InitialCapacity, Allocator.Persistent);
+            m_Tree = UnsafeBHVTree<AABB, int>.Create(InitialCapacity, Allocator.Persistent);
+            m_Padding = AgentsNavigationSettings.Get<SpatialPartitioningSubSettings>().Padding;
+#else
             m_Capacity = InitialCapacity;
             m_CellSize = AgentsNavigationSettings.Get<SpatialPartitioningSubSettings>().CellSize;
             m_QueryCapacity = AgentsNavigationSettings.Get<SpatialPartitioningSubSettings>().QueryCapacity;
-
             m_Map = new NativeParallelMultiHashMap<int3, int>(UseLimitedQuery ? InitialCapacity * MaxCellsPerUnit : InitialCapacity, Allocator.Persistent);
-            m_Entities = new NativeList<Entity>(InitialCapacity, Allocator.Persistent);
-            m_Agents = new NativeList<Agent>(InitialCapacity, Allocator.Persistent);
-            m_Bodies = new NativeList<AgentBody>(InitialCapacity, Allocator.Persistent);
-            m_Shapes = new NativeList<AgentShape>(InitialCapacity, Allocator.Persistent);
-            m_Transforms = new NativeList<LocalTransform>(InitialCapacity, Allocator.Persistent);
 
             m_Query = QueryBuilder()
                 .WithAll<Agent>()
@@ -175,26 +181,43 @@ namespace ProjectDawn.Navigation
                 .WithAll<AgentShape>()
                 .WithAll<LocalTransform>()
                 .Build();
+#endif
+            m_Entities = new NativeList<Entity>(InitialCapacity, Allocator.Persistent);
+            m_Agents = new NativeList<Agent>(InitialCapacity, Allocator.Persistent);
+            m_Bodies = new NativeList<AgentBody>(InitialCapacity, Allocator.Persistent);
+            m_Shapes = new NativeList<AgentShape>(InitialCapacity, Allocator.Persistent);
+            m_Transforms = new NativeList<LocalTransform>(InitialCapacity, Allocator.Persistent);
 
             state.EntityManager.AddComponentData(state.SystemHandle, new Singleton
             {
+#if AGENTS_NAVIGATION_AABB_TREE
+                m_Tree = m_Tree,
+#else
                 m_Map = m_Map,
+                m_Capacity = m_Capacity,
+                m_CellSize = m_CellSize,
+                m_QueryChecks = AgentsNavigationSettings.Get<SpatialPartitioningSubSettings>().QueryChecks,
+#endif
                 m_Entities = m_Entities,
                 m_Agents = m_Agents,
                 m_Bodies = m_Bodies,
                 m_Shapes = m_Shapes,
                 m_Transforms = m_Transforms,
-                m_Capacity = m_Capacity,
-                m_CellSize = m_CellSize,
                 m_QueryCapacity = m_QueryCapacity,
-                m_QueryChecks = AgentsNavigationSettings.Get<SpatialPartitioningSubSettings>().QueryChecks,
             });
+
+            state.RequireForUpdate<Agent>();
         }
 
         [BurstCompile]
         public void OnDestroy(ref SystemState systemState)
         {
+#if AGENTS_NAVIGATION_AABB_TREE
+            UnsafeStack<int>.Destroy(m_FreeIndices);
+            UnsafeBHVTree<AABB, int>.Destroy(m_Tree);
+#else
             m_Map.Dispose();
+#endif
             m_Entities.Dispose();
             m_Agents.Dispose();
             m_Bodies.Dispose();
@@ -202,33 +225,67 @@ namespace ProjectDawn.Navigation
             m_Transforms.Dispose();
         }
 
-        [System.Obsolete("This class is obsolete, please use new settings workflow https://lukaschod.github.io/agents-navigation-docs/manual/settings.html.")]
-        public struct Settings : IComponentData
-        {
-            public float3 CellSize;
-            public int QueryCapacity;
-        }
-
         public struct Singleton : IComponentData
         {
+#if AGENTS_NAVIGATION_AABB_TREE
+            [NativeDisableUnsafePtrRestriction]
+            internal UnsafeBHVTree<AABB, int>* m_Tree;
+            public UnsafeBHVTree<AABB, int>* Tree => m_Tree;
+#else
             internal NativeParallelMultiHashMap<int3, int> m_Map;
+            internal int m_Capacity;
+            internal float3 m_CellSize;
+            internal int m_QueryChecks;
+#endif
             internal NativeList<Entity> m_Entities;
             internal NativeList<Agent> m_Agents;
             internal NativeList<AgentBody> m_Bodies;
             internal NativeList<AgentShape> m_Shapes;
             internal NativeList<LocalTransform> m_Transforms;
-            internal int m_Capacity;
-            internal float3 m_CellSize;
+
             internal int m_QueryCapacity;
-            internal int m_QueryChecks;
 
             public int QueryCapacity => m_QueryCapacity;
 
             /// <summary>
             /// Query agents that intersect with the line.
             /// </summary>
-            public int QueryLine<T>(float3 from, float3 to, ref T action, NavigationLayers layers = NavigationLayers.Everything) where T : unmanaged, ISpatialQueryEntity
+            public int QueryLine<T>(float3 from, float3 to, ref T action, NavigationLayers layers = NavigationLayers.Everything)
+                where T : unmanaged, ISpatialQueryEntity
             {
+#if AGENTS_NAVIGATION_AABB_TREE
+                if (m_Tree->IsEmpty)
+                    return 0;
+
+                int count = 0;
+
+                var handles = new UnsafeStack<UnsafeBHVTree<AABB, int>.Handle>(16, Allocator.Temp);
+                handles.Push(m_Tree->Root);
+                while (handles.TryPop(out var handle))
+                {
+                    var node = m_Tree->GetNode(handle);
+
+                    if (!node.Volume.Overlap(from, to))
+                        continue;
+
+                    if (node.IsLeaf)
+                    {
+                        var index = node.Value;
+                        if (!layers.Any(m_Agents[index].Layers))
+                            continue;
+                        action.Execute(m_Entities[index], m_Bodies[index], m_Shapes[index], m_Transforms[index]);
+                        count++;
+                    }
+                    else
+                    {
+                        handles.Push(node.LeftChild);
+                        handles.Push(node.RightChild);
+                    }
+                }
+                handles.Dispose();
+
+                return count;
+#else
                 int count = 0;
 
                 // Based on http://www.cse.yorku.ca/~amana/research/grid.pdf
@@ -312,19 +369,62 @@ namespace ProjectDawn.Navigation
                 }
 
                 return count;
+#endif
             }
 
             /// <summary>
             /// Query agents that intersect with the sphere.
             /// </summary>
-            public int QuerySphere<T>(float3 center, float radius, ref T action, NavigationLayers layers = NavigationLayers.Everything) where T : unmanaged, ISpatialQueryEntity
+            public int QuerySphere<T>(float3 center, float radius, ref T action, NavigationLayers layers = NavigationLayers.Everything)
+                where T : unmanaged, ISpatialQueryEntity
             {
+#if AGENTS_NAVIGATION_AABB_TREE
+                if (m_Tree->IsEmpty)
+                    return 0;
+
+                int count = 0;
+
+                var aabb = new AABB
+                {
+                    Min = center - radius,
+                    Max = center + radius,
+                };
+
+                var handles = new UnsafeStack<UnsafeBHVTree<AABB, int>.Handle>(16, Allocator.Temp);
+                handles.Push(m_Tree->Root);
+                while (handles.TryPop(out var handle))
+                {
+                    var node = m_Tree->GetNode(handle);
+
+                    if (!node.Volume.Overlap(aabb))
+                        continue;
+
+                    if (node.IsLeaf)
+                    {
+                        var index = node.Value;
+                        if (!layers.Any(m_Agents[index].Layers))
+                            continue;
+                        action.Execute(m_Entities[index], m_Bodies[index], m_Shapes[index], m_Transforms[index]);
+                        count++;
+                    }
+                    else
+                    {
+                        handles.Push(node.LeftChild);
+                        handles.Push(node.RightChild);
+                    }
+                }
+                handles.Dispose();
+
+                return count;
+#else
+
                 int count = 0;
 
                 // Find min and max point in radius
-                int3 min = (int3) math.round((center - radius) / m_CellSize);
-                int3 max = (int3) math.round((center + radius) / m_CellSize) + 1;
+                int3 min = (int3) round((center - radius) / m_CellSize);
+                int3 max = (int3) round((center + radius) / m_CellSize) + 1;
 
+                NativeHashSet<int> indexSet = new(1, Allocator.Temp);
                 for (int i = min.x; i < max.x; ++i)
                 {
                     for (int j = min.y; j < max.y; ++j)
@@ -338,23 +438,68 @@ namespace ProjectDawn.Navigation
                                 {
                                     if (!layers.Any(m_Agents[index].Layers))
                                         continue;
+                                    if (indexSet.Contains(index))
+                                        continue;
                                     action.Execute(m_Entities[index], m_Bodies[index], m_Shapes[index], m_Transforms[index]);
                                     count++;
+                                    indexSet.Add(index);
                                 }
                                 while (m_Map.TryGetNextValue(out index, ref iterator));
                             }
                         }
                     }
                 }
+                indexSet.Dispose();
 
                 return count;
+#endif
             }
 
             /// <summary>
             /// Query agents that intersect with the sphere.
             /// </summary>
-            public int QueryCircle<T>(float3 center, float radius, ref T action, NavigationLayers layers = NavigationLayers.Everything) where T : unmanaged, ISpatialQueryEntity
+            public int QueryCircle<T>(float3 center, float radius, ref T action, NavigationLayers layers = NavigationLayers.Everything)
+                where T : unmanaged, ISpatialQueryEntity
             {
+#if AGENTS_NAVIGATION_AABB_TREE
+                if (m_Tree->IsEmpty)
+                    return 0;
+
+                int count = 0;
+
+                var aabb = new AABB
+                {
+                    Min = center - radius,
+                    Max = center + radius,
+                };
+
+                var handles = new UnsafeStack<UnsafeBHVTree<AABB, int>.Handle>(16, Allocator.Temp);
+                handles.Push(m_Tree->Root);
+                while (handles.TryPop(out var handle))
+                {
+                    var node = m_Tree->GetNode(handle);
+
+                    if (!node.Volume.Overlap(aabb))
+                        continue;
+
+                    if (node.IsLeaf)
+                    {
+                        var index = node.Value;
+                        if (!layers.Any(m_Agents[index].Layers))
+                            continue;
+                        action.Execute(m_Entities[index], m_Bodies[index], m_Shapes[index], m_Transforms[index]);
+                        count++;
+                    }
+                    else
+                    {
+                        handles.Push(node.LeftChild);
+                        handles.Push(node.RightChild);
+                    }
+                }
+                handles.Dispose();
+
+                return count;
+#else
                 int count = 0;
 
                 // Find min and max point in radius
@@ -362,6 +507,7 @@ namespace ProjectDawn.Navigation
                 int2 max = (int2) round((center.xy + radius) / m_CellSize.xy) + 1;
                 int k = (int) round(center.z / m_CellSize.z);
 
+                NativeHashSet<int> indexSet = new(1, Allocator.Temp);
                 for (int i = min.x; i < max.x; ++i)
                 {
                     for (int j = min.y; j < max.y; ++j)
@@ -373,6 +519,8 @@ namespace ProjectDawn.Navigation
                             {
                                 if (!layers.Any(m_Agents[index].Layers))
                                     continue;
+                                if (indexSet.Contains(index))
+                                    continue;
                                 action.Execute(m_Entities[index], m_Bodies[index], m_Shapes[index], m_Transforms[index]);
                                 count++;
                             }
@@ -380,15 +528,72 @@ namespace ProjectDawn.Navigation
                         }
                     }
                 }
+                indexSet.Dispose();
 
                 return count;
+#endif
             }
 
             /// <summary>
             /// Query agents that intersect with the circle.
             /// </summary>
-            public int QueryCircle<T>(float3 center, float radius, int maxCount, ref T action, NavigationLayers layers = NavigationLayers.Everything) where T : unmanaged, ISpatialQueryEntity
+            public int QueryCircle<T>(float3 center, float radius, int maxCount, ref T action, NavigationLayers layers = NavigationLayers.Everything)
+                where T : unmanaged, ISpatialQueryEntity
             {
+#if AGENTS_NAVIGATION_AABB_TREE
+                if (m_Tree->IsEmpty)
+                    return 0;
+
+                int count = 0;
+
+                var aabb = new AABB
+                {
+                    Min = center - radius,
+                    Max = center + radius,
+                };
+
+                var handles = new UnsafeStack<UnsafeBHVTree<AABB, int>.Handle>(16, Allocator.Temp);
+                handles.Push(m_Tree->Root);
+                while (handles.TryPop(out var handle))
+                {
+                    var node = m_Tree->GetNode(handle);
+
+                    if (!node.Volume.Overlap(aabb))
+                        continue;
+
+                    if (node.IsLeaf)
+                    {
+                        var index = node.Value;
+                        if (!layers.Any(m_Agents[index].Layers))
+                            continue;
+                        action.Execute(m_Entities[index], m_Bodies[index], m_Shapes[index], m_Transforms[index]);
+                        count++;
+
+                        if (count == maxCount)
+                            break;
+                    }
+                    else
+                    {
+                        float distanceToLeft = m_Tree->GetNode(node.LeftChild).Volume.DistanceToPoint(center);
+                        float distanceToRight = m_Tree->GetNode(node.RightChild).Volume.DistanceToPoint(center);
+                        if (distanceToLeft < distanceToRight)
+                        {
+                            handles.Push(node.RightChild);
+                            handles.Push(node.LeftChild);
+
+                        }
+                        else
+                        {
+                            handles.Push(node.LeftChild);
+                            handles.Push(node.RightChild);
+                        }
+
+                    }
+                }
+                handles.Dispose();
+
+                return count;
+#else
                 if (maxCount == 0)
                     return QueryCircle(center, radius, ref action, layers);
 
@@ -415,7 +620,7 @@ namespace ProjectDawn.Navigation
                 for (int i = 0; i < maxIterations; i++)
                 {
                     // Check if current nodes is within the rectangle we want
-                    if (math.all(-halfSize <= point) && math.all(point <= halfSize))
+                    if (all(-halfSize <= point) && all(point <= halfSize))
                     {
                         // Find all entities in the bucket
                         if (map.TryGetFirstValue(new int3(point + offset, z), out int index, out var iterator))
@@ -460,19 +665,61 @@ namespace ProjectDawn.Navigation
                 }
 
                 return entry;
+#endif
             }
 
             /// <summary>
             /// Query agents that intersect with the cylinder.
             /// </summary>
-            public int QueryCylinder<T>(float3 center, float radius, float height, ref T action, NavigationLayers layers = NavigationLayers.Everything) where T : unmanaged, ISpatialQueryEntity
+            public int QueryCylinder<T>(float3 center, float radius, float height, ref T action, NavigationLayers layers = NavigationLayers.Everything)
+                where T : unmanaged, ISpatialQueryEntity
             {
+#if AGENTS_NAVIGATION_AABB_TREE
+                if (m_Tree->IsEmpty)
+                    return 0;
+
+                int count = 0;
+
+                var aabb = new AABB
+                {
+                    Min = center - new float3(radius, 0, radius),
+                    Max = center + new float3(radius, height, radius),
+                };
+
+                var handles = new UnsafeStack<UnsafeBHVTree<AABB, int>.Handle>(16, Allocator.Temp);
+                handles.Push(m_Tree->Root);
+                while (handles.TryPop(out var handle))
+                {
+                    var node = m_Tree->GetNode(handle);
+
+                    if (!node.Volume.Overlap(aabb))
+                        continue;
+
+                    if (node.IsLeaf)
+                    {
+                        var index = node.Value;
+                        if (!layers.Any(m_Agents[index].Layers))
+                            continue;
+                        action.Execute(m_Entities[index], m_Bodies[index], m_Shapes[index], m_Transforms[index]);
+                        count++;
+                    }
+                    else
+                    {
+                        handles.Push(node.LeftChild);
+                        handles.Push(node.RightChild);
+                    }
+                }
+                handles.Dispose();
+
+                return count;
+#else
                 int count = 0;
 
                 // Find min and max point in radius
-                int3 min = (int3) math.round((center - new float3(radius, 0, radius)) / m_CellSize);
-                int3 max = (int3) math.round((center + new float3(radius, height, radius)) / m_CellSize) + 1;
+                int3 min = (int3) round((center - new float3(radius, 0, radius)) / m_CellSize);
+                int3 max = (int3) round((center + new float3(radius, height, radius)) / m_CellSize) + 1;
 
+                NativeHashSet<int> indexSet = new(1, Allocator.Temp);
                 for (int i = min.x; i < max.x; ++i)
                 {
                     for (int j = min.y; j < max.y; ++j)
@@ -486,6 +733,8 @@ namespace ProjectDawn.Navigation
                                 {
                                     if (!layers.Any(m_Agents[index].Layers))
                                         continue;
+                                    if (indexSet.Contains(index))
+                                        continue;
                                     action.Execute(m_Entities[index], m_Bodies[index], m_Shapes[index], m_Transforms[index]);
                                     count++;
                                 }
@@ -494,15 +743,72 @@ namespace ProjectDawn.Navigation
                         }
                     }
                 }
+                indexSet.Dispose();
 
                 return count;
+#endif
             }
 
             /// <summary>
             /// Query agents that intersect with the sphere.
             /// </summary>
-            public int QueryCylinder<T>(float3 center, float radius, float height, int maxCount, ref T action, NavigationLayers layers = NavigationLayers.Everything) where T : unmanaged, ISpatialQueryEntity
+            public int QueryCylinder<T>(float3 center, float radius, float height, int maxCount, ref T action, NavigationLayers layers = NavigationLayers.Everything)
+                where T : unmanaged, ISpatialQueryEntity
             {
+#if AGENTS_NAVIGATION_AABB_TREE
+                if (m_Tree->IsEmpty)
+                    return 0;
+
+                int count = 0;
+
+                var aabb = new AABB
+                {
+                    Min = center - new float3(radius, 0, radius),
+                    Max = center + new float3(radius, height, radius),
+                };
+
+                var handles = new UnsafeStack<UnsafeBHVTree<AABB, int>.Handle>(16, Allocator.Temp);
+                handles.Push(m_Tree->Root);
+                while (handles.TryPop(out var handle))
+                {
+                    var node = m_Tree->GetNode(handle);
+
+                    if (!node.Volume.Overlap(aabb))
+                        continue;
+
+                    if (node.IsLeaf)
+                    {
+                        var index = node.Value;
+                        if (!layers.Any(m_Agents[index].Layers))
+                            continue;
+                        action.Execute(m_Entities[index], m_Bodies[index], m_Shapes[index], m_Transforms[index]);
+                        count++;
+
+                        if (count == maxCount)
+                            break;
+                    }
+                    else
+                    {
+                        float distanceToLeft = m_Tree->GetNode(node.LeftChild).Volume.DistanceToPoint(center);
+                        float distanceToRight = m_Tree->GetNode(node.RightChild).Volume.DistanceToPoint(center);
+                        if (distanceToLeft < distanceToRight)
+                        {
+                            handles.Push(node.RightChild);
+                            handles.Push(node.LeftChild);
+
+                        }
+                        else
+                        {
+                            handles.Push(node.LeftChild);
+                            handles.Push(node.RightChild);
+                        }
+
+                    }
+                }
+                handles.Dispose();
+
+                return count;
+#else
                 if (maxCount == 0)
                     return QueryCylinder(center, radius, height, ref action, layers);
 
@@ -527,7 +833,7 @@ namespace ProjectDawn.Navigation
                 for (int i = 0; i < maxIterations; i++)
                 {
                     // Check if current nodes is within the rectangle we want
-                    if (math.all(-halfSize <= point) && math.all(point <= halfSize))
+                    if (all(-halfSize <= point) && all(point <= halfSize))
                     {
                         int2 offsetedPoint = point + offset;
                         for (int y = min.y; y < max.y + 1; y++)
@@ -576,59 +882,175 @@ namespace ProjectDawn.Navigation
                 }
 
                 return entry;
+#endif
+            }
+#if AGENTS_NAVIGATION_AABB_TREE
+            /// <summary>
+            /// Query agents that intersect with the line.
+            /// </summary>
+            public QueryLineEnumerator QueryLine(float3 from, float3 to, NavigationLayers layers = NavigationLayers.Everything)
+            {
+                var handles = new UnsafeStack<UnsafeBHVTree<AABB, int>.Handle>(16, Allocator.Temp);
+                handles.Push(m_Tree->Root);
+                return new QueryLineEnumerator
+                {
+                    data = (AgentSpatialPartitioningSystem.Singleton*) UnsafeUtility.AddressOf(ref this),
+                    from = from,
+                    to = to,
+                    layers = layers,
+                    handles = handles,
+                };
+            }
+
+            public struct QueryLineEnumerator :
+                IEnumerator<(Entity entity, AgentBody body, AgentShape shape, LocalTransform transform)>,
+                IDisposable
+            {
+                internal AgentSpatialPartitioningSystem.Singleton* data;
+                internal float3 from;
+                internal float3 to;
+                internal NavigationLayers layers;
+                internal UnsafeStack<UnsafeBHVTree<AABB, int>.Handle> handles;
+
+                public (Entity entity, AgentBody body, AgentShape shape, LocalTransform transform) Current { get; private set; }
+
+                object IEnumerator.Current => throw new NotImplementedException();
+
+                public void Dispose()
+                {
+                    handles.Dispose();
+                }
+
+                public QueryLineEnumerator GetEnumerator()
+                {
+                    return this;
+                }
+
+                public bool MoveNext()
+                {
+                    while (handles.TryPop(out var handle))
+                    {
+                        var node = data->m_Tree->GetNode(handle);
+
+                        if (!node.Volume.Overlap(from, to))
+                            continue;
+
+                        if (node.IsLeaf)
+                        {
+                            var index = node.Value;
+                            if (!layers.Any(data->m_Agents[index].Layers))
+                                continue;
+                            Current = (data->m_Entities[index], data->m_Bodies[index], data->m_Shapes[index], data->m_Transforms[index]);
+                            return true;
+                        }
+                        else
+                        {
+                            handles.Push(node.LeftChild);
+                            handles.Push(node.RightChild);
+                        }
+                    }
+                    return false;
+                }
+
+                public void Reset()
+                {
+                    handles.Clear();
+                    handles.Push(data->m_Tree->Root);
+                }
             }
 
             /// <summary>
-            /// Query partitions that intersect with the sphere.
+            /// Query agents that intersect with the line.
             /// </summary>
-            public int QuerySphereCells<T>(float3 center, float radius, T action) where T : unmanaged, ISpatialQueryVolume
+            public QueryAABBEnumerator QuerySphere(float3 center, float radius, NavigationLayers layers = NavigationLayers.Everything)
             {
-                int count = 0;
-
-                // Find min and max point in radius
-                int3 min = (int3) math.round((center - radius) / m_CellSize);
-                int3 max = (int3) math.round((center + radius) / m_CellSize) + 1;
-
-                for (int i = min.x; i < max.x; ++i)
+                var handles = new UnsafeStack<UnsafeBHVTree<AABB, int>.Handle>(16, Allocator.Temp);
+                handles.Push(m_Tree->Root);
+                var aabb = new AABB
                 {
-                    for (int j = min.y; j < max.y; ++j)
-                    {
-                        for (int k = min.z; k < max.z; ++k)
-                        {
-                            action.Execute(new float3(i, j, k) * m_CellSize, m_CellSize);
-                            count++;
-                        }
-                    }
-                }
-
-                return count;
+                    Min = center - radius,
+                    Max = center + radius,
+                };
+                return new QueryAABBEnumerator
+                {
+                    data = (AgentSpatialPartitioningSystem.Singleton*) UnsafeUtility.AddressOf(ref this),
+                    aabb = aabb,
+                    layers = layers,
+                    handles = handles,
+                };
             }
 
             /// <summary>
-            /// Query partitions that intersect with the cylinder.
+            /// Query agents that intersect with the line.
             /// </summary>
-            public int QueryCylinderCells<T>(float3 center, float radius, float height, T action) where T : unmanaged, ISpatialQueryVolume
+            public QueryAABBEnumerator QueryCylinder(float3 center, float radius, float height, NavigationLayers layers = NavigationLayers.Everything)
             {
-                int count = 0;
-
-                // Find min and max point in radius
-                int3 min = (int3) math.round((center - new float3(radius, 0, radius)) / m_CellSize);
-                int3 max = (int3) math.round((center + new float3(radius, height, radius)) / m_CellSize) + 1;
-
-                for (int i = min.x; i < max.x; ++i)
+                var handles = new UnsafeStack<UnsafeBHVTree<AABB, int>.Handle>(16, Allocator.Temp);
+                handles.Push(m_Tree->Root);
+                var aabb = new AABB
                 {
-                    for (int j = min.y; j < max.y; ++j)
+                    Min = center - new float3(radius, 0, radius),
+                    Max = center + new float3(radius, height, radius),
+                };
+                return new QueryAABBEnumerator
+                {
+                    data = (AgentSpatialPartitioningSystem.Singleton*) UnsafeUtility.AddressOf(ref this),
+                    aabb = aabb,
+                    layers = layers,
+                    handles = handles,
+                };
+            }
+
+            public struct QueryAABBEnumerator :
+                IEnumerator<(Entity entity, AgentBody body, AgentShape shape, LocalTransform transform)>,
+                IDisposable
+            {
+                internal AgentSpatialPartitioningSystem.Singleton* data;
+                internal AABB aabb;
+                internal NavigationLayers layers;
+                internal UnsafeStack<UnsafeBHVTree<AABB, int>.Handle> handles;
+
+                public (Entity entity, AgentBody body, AgentShape shape, LocalTransform transform) Current { get; private set; }
+
+                object IEnumerator.Current => throw new NotImplementedException();
+
+                public void Dispose() => handles.Dispose();
+
+                public QueryAABBEnumerator GetEnumerator() => this;
+
+                public bool MoveNext()
+                {
+                    while (handles.TryPop(out var handle))
                     {
-                        for (int k = min.z; k < max.z; ++k)
+                        var node = data->m_Tree->GetNode(handle);
+
+                        if (!node.Volume.Overlap(aabb))
+                            continue;
+
+                        if (node.IsLeaf)
                         {
-                            action.Execute(new float3(i, j, k) * m_CellSize, m_CellSize);
-                            count++;
+                            var index = node.Value;
+                            if (!layers.Any(data->m_Agents[index].Layers))
+                                continue;
+                            Current = (data->m_Entities[index], data->m_Bodies[index], data->m_Shapes[index], data->m_Transforms[index]);
+                            return true;
+                        }
+                        else
+                        {
+                            handles.Push(node.LeftChild);
+                            handles.Push(node.RightChild);
                         }
                     }
+                    return false;
                 }
 
-                return count;
+                public void Reset()
+                {
+                    handles.Clear();
+                    handles.Push(data->m_Tree->Root);
+                }
             }
+#endif
 
             unsafe struct FixedEntries
             {
@@ -699,10 +1121,208 @@ namespace ProjectDawn.Navigation
         void Execute(Entity entity, AgentBody body, AgentShape shape, LocalTransform transform);
     }
 
-    public interface ISpatialQueryVolume
+#if AGENTS_NAVIGATION_AABB_TREE
+    [WithNone(typeof(Spatial))]
+    [BurstCompile]
+    unsafe partial struct AddAABBTreeNodesJob : IJobEntity
     {
-        void Execute(float3 position, float3 size);
+        [NativeDisableUnsafePtrRestriction]
+        public UnsafeStack<int>* FreeIndices;
+        [NativeDisableUnsafePtrRestriction]
+        public UnsafeBHVTree<AABB, int>* Tree;
+        public NativeList<Entity> Entities;
+        public NativeList<Agent> Agents;
+        public NativeList<AgentBody> Bodies;
+        public NativeList<AgentShape> Shapes;
+        public NativeList<LocalTransform> Transforms;
+
+        public EntityCommandBuffer Ecb;
+
+        public float3 Padding;
+
+        void Execute(Entity entity, in Agent agent, in AgentBody body, in AgentShape shape, in LocalTransform transform)
+        {
+            if (!FreeIndices->TryPop(out int index))
+            {
+                index = Entities.Length;
+                Entities.Length++;
+                Agents.Length++;
+                Bodies.Length++;
+                Shapes.Length++;
+                Transforms.Length++;
+            }
+
+            var aabb = new AABB
+            {
+                Min = transform.Position - new float3(shape.Radius, 0, shape.Radius) - Padding,
+                Max = transform.Position + new float3(shape.Radius, shape.Height, shape.Radius) + Padding,
+            };
+            var handle = Tree->Add(aabb, index, true);
+            Ecb.AddComponent(entity, new Spatial { Handle = handle, Position = transform.Position });
+        }
     }
+
+    [BurstCompile]
+    unsafe partial struct UpdateAABBTreeNodesJob : IJobEntity
+    {
+        [NativeDisableUnsafePtrRestriction]
+        public UnsafeBHVTree<AABB, int>* Tree;
+        public NativeList<Entity> Entities;
+        public NativeList<Agent> Agents;
+        public NativeList<AgentBody> Bodies;
+        public NativeList<AgentShape> Shapes;
+        public NativeList<LocalTransform> Transforms;
+
+        public float3 Padding;
+
+        void Execute(Entity entity, ref Spatial spatial, in Agent agent, in AgentBody body, in AgentShape shape, in LocalTransform transform)
+        {
+            var index = Tree->GetNode(spatial.Handle).Value;
+
+            Entities[index] = entity;
+            Agents[index] = agent;
+            Bodies[index] = body;
+            Shapes[index] = shape;
+            Transforms[index] = transform;
+
+            // For moving objects it is best to have enlarged AABB to reduce frequency of changes and spread out cost
+            // As rarely all agents in frame move pass the enlarged size
+            // Source: https://box2d.org/files/ErinCatto_DynamicBVH_GDC2019.pdf
+            var delta = abs(transform.Position - spatial.Position);
+            if (all(delta < Padding))
+                return;
+
+            var aabb = new AABB
+            {
+                Min = transform.Position - new float3(shape.Radius, 0, shape.Radius) - Padding,
+                Max = transform.Position + new float3(shape.Radius, shape.Height, shape.Radius) + Padding,
+            };
+
+            // Re-add the best tactic in terms of tree quality and performance cost
+            // Source: https://box2d.org/files/ErinCatto_DynamicBVH_GDC2019.pdf
+            Tree->RemoveAt(spatial.Handle);
+            spatial.Handle = Tree->Add(aabb, index, rebalance:true);
+            spatial.Position = transform.Position;
+        }
+    }
+
+    [WithNone(typeof(Agent))]
+    [BurstCompile]
+    unsafe partial struct RemoveAABBTreeNodesJob : IJobEntity
+    {
+        [NativeDisableUnsafePtrRestriction]
+        public UnsafeStack<int>* FreeIndices;
+        [NativeDisableUnsafePtrRestriction]
+        public UnsafeBHVTree<AABB, int>* Tree;
+
+        public EntityCommandBuffer Ecb;
+
+        void Execute(Entity entity, ref Spatial spatial)
+        {
+            if (!spatial.Handle.IsValid)
+                return;
+            var index = Tree->GetNode(spatial.Handle).Value;
+            Tree->RemoveAt(spatial.Handle);
+            Ecb.RemoveComponent<Spatial>(entity);
+            FreeIndices->Push(index);
+            spatial.Handle = UnsafeBHVTree<AABB, int>.Handle.Null;
+        }
+    }
+
+    public struct AABB : IUnion<AABB>, ISurfaceArea<AABB>
+    {
+        public float3 Min;
+        public float3 Max;
+
+        public float SurfaceArea()
+        {
+            var d = Max - Min;
+            return 2.0f * (d.x * d.y + d.y * d.z + d.z * d.x);
+        }
+
+        public AABB Union(AABB value)
+        {
+            return new AABB
+            {
+                Min = min(Min, value.Min),
+                Max = max(Max, value.Max),
+            };
+        }
+
+        public bool Overlap(float3 lineStart, float3 lineEnd)
+        {
+            float3 dir = lineEnd - lineStart;
+            float tmin = (Min.x - lineStart.x) / dir.x;
+            float tmax = (Max.x - lineStart.x) / dir.x;
+
+            if (tmin > tmax)
+            {
+                float temp = tmin;
+                tmin = tmax;
+                tmax = temp;
+            }
+
+            float tymin = (Min.y - lineStart.y) / dir.y;
+            float tymax = (Max.y - lineStart.y) / dir.y;
+
+            if (tymin > tymax)
+            {
+                float temp = tymin;
+                tymin = tymax;
+                tymax = temp;
+            }
+
+            if ((tmin > tymax) || (tymin > tmax))
+                return false;
+
+            if (tymin > tmin)
+                tmin = tymin;
+
+            if (tymax < tmax)
+                tmax = tymax;
+
+            float tzmin = (Min.z - lineStart.z) / dir.z;
+            float tzmax = (Max.z - lineStart.z) / dir.z;
+
+            if (tzmin > tzmax)
+            {
+                float temp = tzmin;
+                tzmin = tzmax;
+                tzmax = temp;
+            }
+
+            if ((tmin > tzmax) || (tzmin > tmax))
+                return false;
+
+            if (tzmin > tmin)
+                tmin = tzmin;
+
+            if (tzmax < tmax)
+                tmax = tzmax;
+
+            return (tmin <= 1) && (tmax >= 0);
+        }
+
+        public bool Overlap(AABB value)
+        {
+            return all((Max > value.Min) & (Min <= value.Max));
+        }
+
+        public float DistanceToPoint(float3 point)
+        {
+            var center = (Max + Min) * 0.5f;
+            //var size = (Max - Min) * 0.5f;
+            var closePoint = abs(point - center);
+            return csum(closePoint);
+        }
+    }
+
+    internal struct Spatial : ICleanupComponentData
+    {
+        public UnsafeBHVTree<AABB, int>.Handle Handle;
+        public float3 Position;
+    }
+#endif
 
     [BurstCompile]
     partial struct CopyJob : IJobEntity
@@ -730,7 +1350,7 @@ namespace ProjectDawn.Navigation
         public float3 CellSize;
         void Execute([EntityIndexInQuery] int entityInQueryIndex, in Agent agent, in AgentBody body, in AgentShape shape, in LocalTransform transform)
         {
-            int3 cell = (int3) math.round((transform.Position) / CellSize);
+            int3 cell = (int3) round((transform.Position) / CellSize);
             Map.Add(cell, entityInQueryIndex);
         }
     }
@@ -749,8 +1369,8 @@ namespace ProjectDawn.Navigation
                 float height = shape.Height;
 
                 // Find min and max point in radius
-                int3 min = (int3) math.round((center - new float3(radius, 0, radius)) / CellSize);
-                int3 max = (int3) math.round((center + new float3(radius, height, radius)) / CellSize) + 1;
+                int3 min = (int3) round((center - new float3(radius, 0, radius)) / CellSize);
+                int3 max = (int3) round((center + new float3(radius, height, radius)) / CellSize) + 1;
 
                 int count = 0;
                 for (int i = min.x; i < max.x; ++i)
@@ -832,6 +1452,62 @@ namespace ProjectDawn.Navigation
             Bodies.Capacity = Capacity;
             Shapes.Capacity = Capacity;
             Transforms.Capacity = Capacity;
+        }
+    }
+
+    [System.Serializable]
+    public class SpatialPartitioningSubSettings : ISubSettings
+    {
+#if AGENTS_NAVIGATION_AABB_TREE
+        [SerializeField]
+        [Tooltip("Each agent's AABB is enlarged by this value. This is a performance optimization that reduces how frequently agents need to be updated in the AABB tree. Increasing this value reduces the cost of AABB tree updates but increases the cost of queries. It’s best to find a balance that works for your game.")]
+        float3 m_Padding = 0.4f;
+
+        /// <summary>
+        /// Each agent's AABB is enlarged by this value. This is a performance optimization that reduces how frequently agents need to be updated in the AABB tree.
+        /// Increasing this value reduces the cost of AABB tree updates but increases the cost of queries.
+        /// It’s best to find a balance that works for your game.
+        /// </summary>
+        public float3 Padding => m_Padding;
+
+#else
+        [SerializeField]
+        [Tooltip("The size of single cell.")]
+        float3 m_CellSize = 3;
+
+        [SerializeField]
+        [Tooltip("The maximum number of nearby neighbors will be checked to find closest.")]
+        QueryCheckMode m_QueryCheck = QueryCheckMode._32;
+
+        /// <summary>
+        /// The size of single cell.
+        /// </summary>
+        public float3 CellSize => m_CellSize;
+
+        /// <summary>
+        /// The maximum number of nearby neighbors will be checked to find closest.
+        /// </summary>
+        public int QueryChecks => (int)m_QueryCheck;
+#endif
+
+        [SerializeField]
+        [Range(0, 16), Tooltip("The maximum number of nearby neighbors to be included in the avoidance systems will be determined.")]
+        int m_QueryCapacity = 8;
+
+        /// <summary>
+        /// The maximum number of nearby neighbors to be included in the avoidance systems will be determined.
+        /// </summary>
+        public int QueryCapacity => m_QueryCapacity;
+
+        [SerializeField]
+        NavigationLayerNames m_Layers = new();
+
+        public string[] LayerNames => m_Layers.Names;
+
+        public enum QueryCheckMode : int
+        {
+            _16 = 16,
+            _32 = 32,
         }
     }
 }

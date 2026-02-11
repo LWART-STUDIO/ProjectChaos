@@ -14,7 +14,8 @@ namespace Game.Scripts.Client.Logic.Game
     {
        [SerializeField] private StateNode _lostState;
        [SerializeField] private StateNode _levelUpState;
-       private float _elapsedTime = float.MaxValue;
+       [SerializeField] private StateNode _passiveGrantState;
+       private SyncVar<float> _elapsedTime = new SyncVar<float>(float.MaxValue);
        private PlayerInGameUI _playerInGameUI=>Service<UIService>.Instance.GetPlayerInGameUI();
        private Coroutine _timerCoroutine;
        
@@ -22,23 +23,28 @@ namespace Game.Scripts.Client.Logic.Game
             base.Enter(asServer);
             if(!asServer)
                 return;
-            if (Mathf.Approximately(_elapsedTime, float.MaxValue))
+            if (Mathf.Approximately(_elapsedTime.value, float.MaxValue))
             {
                 ResetTimer();
             }
             _timerCoroutine =StartCoroutine(ProcessTimer());
             PlayerHealth.onPlayerDie += OnPlayerDie;
             LevelManager.onLevelChanged += OnLevelChange;
+            LevelManager.onPassiveGrant += OnPassiveGrant;
        }
-       [ObserversRpc(runLocally: true)]
+       [ServerRpc(requireOwnership:false)]
        public void ResetTimer()
        {
-           _elapsedTime = 0f;
+           _elapsedTime.value = 0f;
        }
 
        private void OnLevelChange(int obj)
        {
            machine.SetState(_levelUpState);
+       }
+       private void OnPassiveGrant()
+       {
+           machine.SetState(_passiveGrantState);
        }
 
        public override void Exit(bool asServer){
@@ -47,7 +53,19 @@ namespace Game.Scripts.Client.Logic.Game
                StopCoroutine(_timerCoroutine);
            PlayerHealth.onPlayerDie -= OnPlayerDie;
            LevelManager.onLevelChanged -= OnLevelChange;
+           LevelManager.onPassiveGrant -= OnPassiveGrant;
        }
+
+       private void OnDisable()
+       {
+           if(isServer)
+               StopCoroutine(_timerCoroutine);
+           PlayerHealth.onPlayerDie -= OnPlayerDie;
+           LevelManager.onLevelChanged -= OnLevelChange;
+           LevelManager.onPassiveGrant -= OnPassiveGrant;
+       }
+
+
 
        private void OnPlayerDie(PlayerID playerID)
        {
@@ -60,19 +78,22 @@ namespace Game.Scripts.Client.Logic.Game
        [ObserversRpc(runLocally: true)]
        private void UpdatePlayerTimer()
        {
-           _playerInGameUI.UpdateTimer(_elapsedTime);
-           GameStatisticCollector.UpdateTime(_elapsedTime);
+          
+           GameStatisticCollector.UpdateTime(_elapsedTime.value);
        }
-        [ObserversRpc(runLocally: true)]
+       [ObserversRpc(runLocally: true)]
        private void UpdateTime()
        {
-           _elapsedTime +=Time.deltaTime;
+           
+           _playerInGameUI.UpdateTimer(_elapsedTime);
        }
+       
 
        private IEnumerator ProcessTimer()
        {
            while (true)
            {
+               _elapsedTime.value +=Time.deltaTime;
                UpdateTime();
                UpdatePlayerTimer();
                yield return null;

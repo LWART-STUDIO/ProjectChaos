@@ -62,9 +62,11 @@ namespace ProjectDawn.Navigation
         /// <summary>
         /// Constraint agent to be on the surface. It is useful to disable then used with physics, to allow more freedom motion and precision.
         /// </summary>
-        public bool Grounded;
-        [System.Obsolete("Constrained is deprecated, please use Grounded.")]
-        public bool Constrained { get => Grounded; set => Grounded = value; }
+        public Grounded Grounded;
+        /// This option improves path quality at the expense of performance by using the string-pulling technique. This may be needed if your NavMesh surface is highly non-uniform (e.g., contains long triangles).
+        /// This happens because when the NavMesh calculates the cost of traveling between nodes, it uses the centers of edges, and with highly non-uniform surfaces, this can lead to errors.
+        /// </summary>
+        public bool OptimizePath;
         /// <summary>
         /// Maximum distance on each axis will be used when attempting to map the agent's position or destination onto navmesh.
         /// The higher the value, the bigger the performance cost.
@@ -94,7 +96,7 @@ namespace ProjectDawn.Navigation
             AreaMask = -1,
             AutoRepath = true,
             MappingExtent = 10,
-            Grounded = true,
+            Grounded = Grounded.XYZ,
         };
     }
 

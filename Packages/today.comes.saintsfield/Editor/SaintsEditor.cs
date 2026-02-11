@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -146,197 +145,6 @@ namespace SaintsField.Editor
         //     // return HelperGetRenderers(serializedPropertyDict, serializedObject, makeRenderer, target);
         // }
 
-        // wtf with C#'s list order unstable... it's a fucking but not a feature
-        public class MemberOrderComparer : IComparer<MemberInfo>, IComparer
-        {
-            private readonly IReadOnlyList<CodeAnalysisUtils.MemberContainer> _codeAnalysisMembers;
-
-            public MemberOrderComparer(IReadOnlyList<CodeAnalysisUtils.MemberContainer> codeAnalysisMembers)
-            {
-                _codeAnalysisMembers = codeAnalysisMembers;
-            }
-
-            public int Compare(MemberInfo a, MemberInfo b)
-            {
-                int length = _codeAnalysisMembers.Count;
-                if (length == 0)
-                {
-                    return 0;  // keep order
-                }
-
-                int aIndex = FindMemberIndex(a, _codeAnalysisMembers);
-                // Debug.Log($"MemberOrderComparer {a.Name} index {aIndex}");
-                int bIndex = FindMemberIndex(b, _codeAnalysisMembers);
-                // Debug.Log($"MemberOrderComparer {b.Name} index {bIndex}");
-
-                // if (aIndex == -1 || bIndex == -1)
-                // {
-                //     // Debug.Log($"{a.Name} -> {aIndex}; {b.Name} -> {bIndex} return 0");
-                //     return 0;
-                // }
-
-                if (aIndex == bIndex)
-                {
-                    return 0;
-                }
-                if (aIndex == -1)
-                {
-                    return 1;
-                }
-                if (bIndex == -1)
-                {
-                    return -1;
-                }
-
-                // Debug.Log($"MemberOrderComparer {a.Name} -> {aIndex}; {b.Name} -> {bIndex}");
-                return aIndex - bIndex;
-                // return bIndex - aIndex;
-            }
-
-            private static int FindMemberIndex(MemberInfo memberInfo,
-                IReadOnlyList<CodeAnalysisUtils.MemberContainer> codeAnalysisMembers)
-            {
-                // Debug.Log($"looking for member {memberInfo.Name}");
-
-                int fallbackIndex = -1;
-
-                for (int index = 0; index < codeAnalysisMembers.Count; index++)
-                {
-                    CodeAnalysisUtils.MemberContainer memberContainer = codeAnalysisMembers[index];
-
-                    if (memberContainer.Name != memberInfo.Name && RuntimeUtil.GetAutoPropertyName(memberContainer.Name) != memberInfo.Name)
-                    {
-                        // Debug.Log($"{memberInfo.Name} not found, continue");
-                        continue;
-                    }
-
-                    if(memberInfo.MemberType != MemberTypes.Method)  // field or property, just name is enough
-                    {
-                        // Debug.Log($"return {memberInfo.Name} as {index}");
-                        return index;
-                    }
-
-                    if (memberContainer.Type != CodeAnalysisUtils.MemberType.Method)
-                    {
-                        // Debug.Log($"{memberInfo.Name} not method ({memberContainer.Type}), continue");
-                        continue;
-                    }
-
-                    MethodInfo methodInfo = (MethodInfo)memberInfo;
-
-                    if (fallbackIndex == -1)
-                    {
-                        fallbackIndex = index;  // If nothing matches, use the first matched method order
-                    }
-
-                    // string methodInfoReturnTypeString = ReflectUtils.StringifyType(methodInfo.ReturnType);
-                    // if (methodInfoReturnTypeString != memberContainer.ReturnType)
-                    if (!TypeStringEqual(methodInfo.ReturnType, memberContainer.ReturnType))
-                    {
-                        // Debug.Log($"{memberInfo.Name} not matched return type {methodInfo.ReturnType}->{memberContainer.ReturnType}, continue");
-                        continue;
-                    }
-
-                    if (methodInfo.GetParameters().Length != memberContainer.Arguments.Count)
-                    {
-                        // Debug.Log($"{memberInfo.Name} not matched argument length {string.Join<ParameterInfo>(", ", methodInfo.GetParameters())}->{string.Join(", ", memberContainer.Arguments)}, continue");
-                        continue;
-                    }
-
-                    bool allMatch = true;
-                    ParameterInfo[] parameterInfos = methodInfo.GetParameters();
-                    // ReSharper disable once LoopCanBeConvertedToQuery
-                    for (int paramIndex = 0; paramIndex < parameterInfos.Length; paramIndex++)
-                    {
-                        // string methodInfoParamTypeString = ReflectUtils.StringifyType(parameterInfos[paramIndex].ParameterType);
-                        // string containerParamTypeString = memberContainer.Arguments[paramIndex];
-                        // Debug.Log($"[{paramIndex}] methodInfoParamTypeString={methodInfoParamTypeString}, containerParamTypeString={containerParamTypeString}");
-                        // if(methodInfoParamTypeString != containerParamTypeString)
-                        // ReSharper disable once InvertIf
-                        if(!TypeStringEqual(parameterInfos[paramIndex].ParameterType, memberContainer.Arguments[paramIndex]))
-                        {
-                            // Debug.Log($"{memberInfo.Name} [{paramIndex}] not matched argument {parameterInfos[paramIndex].ParameterType} -> {memberContainer.Arguments[paramIndex]}, continue");
-                            allMatch = false;
-                            break;
-                        }
-                    }
-
-                    if(allMatch)
-                    {
-                        // Debug.Log($"return {memberInfo.Name} as {index}");
-                        return index;
-                    }
-                }
-
-                return fallbackIndex;
-            }
-
-            public int Compare(object x, object y)
-            {
-                if (x is MemberInfo xM && y is MemberInfo yM)
-                {
-                    return Compare(xM, yM);
-                }
-
-                return 0;
-            }
-
-            private static bool TypeStringEqual(Type type, string str)
-            {
-                if (type.ToString() == str)
-                {
-                    return true;
-                }
-
-                if (type.IsArray)
-                {
-                    if (!str.EndsWith("[]"))
-                    {
-                        return false;
-                    }
-
-                    Type elementType = type.GetElementType();
-                    string subStr = str.Substring(0, str.Length - 2);
-                    // Debug.Log($"{elementType}, {subStr}");
-                    // ReSharper disable once ReplaceSubstringWithRangeIndexer
-                    return TypeStringEqual(elementType, subStr);
-                }
-
-                if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(List<>))
-                {
-                    if(str.StartsWith("List<") && str.EndsWith(">"))
-                    {
-                        string subStr = str.Substring("List<".Length, str.Length - "List<".Length - 1);
-                        Type elementType = type.GetGenericArguments()[0];
-                        return TypeStringEqual(elementType, subStr);
-                    }
-
-                    return false;
-                }
-
-                string reparsedTypeString = ReflectUtils.StringifyType(type);
-                if (reparsedTypeString == str)
-                {
-                    return true;
-                }
-
-                string prefixDot = $".{str}";
-                // Debug.Log($"Dot: {type} -> {prefixDot}: {type.ToString().EndsWith(prefixDot)}");
-                if (type.ToString().EndsWith(prefixDot))
-                {
-                    return true;
-                }
-
-                string prefixPlus = $"+{str}";
-                // ReSharper disable once ConvertIfStatementToReturnStatement
-                if (type.ToString().EndsWith(prefixPlus))
-                {
-                    return true;
-                }
-
-                return false;
-            }
-        }
 
         public static IEnumerable<SaintsFieldWithInfo> HelperGetSaintsFieldWithInfo(
             SerializedObject serializedObject,
@@ -377,6 +185,7 @@ namespace SaintsField.Editor
                 for (int inherentDepth = 0; inherentDepth < types.Count; inherentDepth++)
                 {
                     Type systemType = types[inherentDepth];
+                    // Debug.Log($"{inherentDepth}: {systemType}");
                     // if (systemType == typeof(UnityEngine.Component) ||
                     //     systemType == typeof(UnityEngine.ScriptableObject) ||
                     //     systemType == typeof(UnityEngine.MonoBehaviour))
@@ -411,27 +220,31 @@ namespace SaintsField.Editor
                     List<SaintsFieldWithInfo> thisDepthInfos = new List<SaintsFieldWithInfo>();
                     List<string> memberDepthIds = new List<string>();
 
+                    IComparer<MemberInfo> memberOrderComparer = MemberInfoComparerPreParsed.GetComparer(systemType);
+
 #if SAINTSFIELD_CODE_ANALYSIS
-                    IReadOnlyList<CodeAnalysisUtils.MemberContainer> codeAnalysisMembers = ScriptInfoUtils.GetMembersCorrectOrder(systemType);
-                    MemberOrderComparer memberOrderComparer = codeAnalysisMembers.Count > 0
-                        ? new MemberOrderComparer(codeAnalysisMembers)
-                        : null;
+                    memberOrderComparer ??= MemberInfoComparerCodeAnalysis.GetComparer(systemType);
 #endif
+
+                    memberOrderComparer ??= new MemberInfoComparerReflection();
+
 
                     MemberInfo[] members = systemType
                         .GetMembers(BindingFlags.Instance | BindingFlags.Static | BindingFlags.NonPublic |
                                     BindingFlags.Public | BindingFlags.DeclaredOnly);
 
-                    List<MemberInfo> memberLis =
-#if SAINTSFIELD_CODE_ANALYSIS
-                        (memberOrderComparer == null
-                            ? members.OrderBy(memberInfo => memberInfo.MetadataToken)
-                            : members.OrderBy(memberInfo => memberInfo, memberOrderComparer))
-#else
-                        // this is still not the correct order, but... a bit better
-                        members.OrderBy(memberInfo => memberInfo.MetadataToken)
-#endif
-                        .ToList();
+//                     List<MemberInfo> memberLis =
+// #if SAINTSFIELD_CODE_ANALYSIS
+//                         (memberOrderComparer == null
+//                             ? members.OrderBy(memberInfo => memberInfo.MetadataToken)
+//                             : members.OrderBy(memberInfo => memberInfo, memberOrderComparer))
+// #else
+//                         // this is still not the correct order, but... a bit better
+//                         members.OrderBy(memberInfo => memberInfo.MetadataToken)
+// #endif
+//                         .ToList();
+
+                    List<MemberInfo> memberLis = members.OrderBy(memberInfo => memberInfo, memberOrderComparer).ToList();
 
 // #if SAINTSFIELD_CODE_ANALYSIS
                     // memberLis.Sort((a, b) => MemberLisCompare(a, b, codeAnalysisMembers));
@@ -915,42 +728,50 @@ namespace SaintsField.Editor
         {
             IReadOnlyList<SaintsFieldWithInfo> fieldWithInfosSorted = HelperGetSaintsFieldWithInfo(serializedObject, serializedPropertyDict, targetParent, targetMemberInfo, targetMemberIndex, targets).ToArray();
 
-            // let's handle some HeaderGUI here... not a good idea but...
-            bool anyChange = false;
-            // target.GetType()
 
-            AbsComponentHeaderAttribute[] classAttributes = ReflectCache.GetCustomAttributes<AbsComponentHeaderAttribute>(targets[0].GetType());
-            foreach ((AbsComponentHeaderAttribute componentHeaderAttribute, int order) in classAttributes.WithIndex(-classAttributes.Length))
+            if(DrawHeaderGUI.EnsureInitLoad())
             {
-                bool added = DrawHeaderGUI.AddAttributeIfNot(
-                    componentHeaderAttribute,
-                    null,
-                    targets[0],
-                    order);
-                if (added)
-                {
-                    anyChange = true;
-                }
-            }
-            foreach ((SaintsFieldWithInfo saintsFieldWithInfo, int index) in fieldWithInfosSorted.WithIndex())
-            {
-                IReadOnlyList<IPlayaAttribute> playaAttributes = saintsFieldWithInfo.PlayaAttributes;
-                foreach (AbsComponentHeaderAttribute componentHeaderAttribute in playaAttributes.OfType<AbsComponentHeaderAttribute>())
+                // let's handle some HeaderGUI here... not a good idea but...
+                bool anyChange = false;
+                AbsComponentHeaderAttribute[] classAttributes =
+                    ReflectCache.GetCustomAttributes<AbsComponentHeaderAttribute>(targets[0].GetType());
+                foreach ((AbsComponentHeaderAttribute componentHeaderAttribute, int order) in classAttributes.WithIndex(
+                             -classAttributes.Length))
                 {
                     bool added = DrawHeaderGUI.AddAttributeIfNot(
                         componentHeaderAttribute,
-                        saintsFieldWithInfo.MethodInfo ?? (MemberInfo)saintsFieldWithInfo.FieldInfo ?? saintsFieldWithInfo.PropertyInfo,
+                        null,
                         targets[0],
-                        index);
+                        order);
                     if (added)
                     {
                         anyChange = true;
                     }
                 }
-            }
-            if (anyChange)
-            {
-                DrawHeaderGUI.RefreshAddAttributeIfNot(targets[0].GetType());
+
+                foreach ((SaintsFieldWithInfo saintsFieldWithInfo, int index) in fieldWithInfosSorted.WithIndex())
+                {
+                    IReadOnlyList<IPlayaAttribute> playaAttributes = saintsFieldWithInfo.PlayaAttributes;
+                    foreach (AbsComponentHeaderAttribute componentHeaderAttribute in playaAttributes
+                                 .OfType<AbsComponentHeaderAttribute>())
+                    {
+                        bool added = DrawHeaderGUI.AddAttributeIfNot(
+                            componentHeaderAttribute,
+                            saintsFieldWithInfo.MethodInfo ?? (MemberInfo)saintsFieldWithInfo.FieldInfo ??
+                            saintsFieldWithInfo.PropertyInfo,
+                            targets[0],
+                            index);
+                        if (added)
+                        {
+                            anyChange = true;
+                        }
+                    }
+                }
+
+                if (anyChange)
+                {
+                    DrawHeaderGUI.RefreshAddAttributeIfNot(targets[0].GetType());
+                }
             }
 
             IReadOnlyList<RendererGroupInfo> chainedGroups = ChainSaintsFieldWithInfo(fieldWithInfosSorted, serializedObject, makeRenderer);
@@ -1076,10 +897,13 @@ namespace SaintsField.Editor
                             {
                                 if (endGroupBy.StartsWith("."))
                                 {
-                                    string closeGroup = JoinGroupBy(keepGroupingInfo.AbsGroupBy, endGroupBy);
-                                    if(closeGroup.Contains('/'))
+                                    IReadOnlyList<string> closeGroupParts = JoinGroupBy(RuntimeUtil.SeparatePath(keepGroupingInfo.AbsGroupBy).ToArray(), RuntimeUtil.SeparatePath(endGroupBy).ToArray());
+                                    // string closeGroup;
+                                    // if(closeGroup.Contains('/'))
+                                    if(closeGroupParts.Count >= 2)
                                     {
-                                        List<string> splitCloseGroup = closeGroup.Split('/').ToList();
+                                        // List<string> splitCloseGroup = closeGroup.Split('/').ToList();
+                                        List<string> splitCloseGroup = new List<string>(closeGroupParts);
                                         splitCloseGroup.RemoveAt(splitCloseGroup.Count - 1);
                                         string openGroupTo = string.Join("/", splitCloseGroup);
                                         if (!rootToRendererGroupInfo.TryGetValue(openGroupTo,
@@ -1101,13 +925,13 @@ namespace SaintsField.Editor
                                         stopGrouping = !useGroupInfo.Config.KeepGrouping;
 
 #if SAINTSFIELD_DEBUG && SAINTSFIELD_DEBUG_SAINTS_EDITOR_LAYOUT
-                                        Debug.Log($"Layout close, {closeGroup}->{openGroupTo}: {keepGroupingInfo?.AbsGroupBy}");
+                                        Debug.Log($"Layout close, {string.Join('/', closeGroupParts)}->{openGroupTo}: {keepGroupingInfo?.AbsGroupBy}");
 #endif
                                     }
                                     else
                                     {
 #if SAINTSFIELD_DEBUG && SAINTSFIELD_DEBUG_SAINTS_EDITOR_LAYOUT
-                                        Debug.Log($"Layout close, {closeGroup}: null");
+                                        Debug.Log($"Layout close, {string.Join('/', closeGroupParts)}: null");
 #endif
                                         useGroupInfo = null;
                                         stopGrouping = true;
@@ -1120,7 +944,8 @@ namespace SaintsField.Editor
                                     string parentGroupBy;
                                     if (endGroupBy.Contains('/'))
                                     {
-                                        List<string> endGroupBySplit = endGroupBy.Split('/').ToList();
+                                        // List<string> endGroupBySplit = endGroupBy.Split('/').ToList();
+                                        List<string> endGroupBySplit = RuntimeUtil.SeparatePath(endGroupBy).ToList();
                                         endGroupBySplit.RemoveAt(endGroupBySplit.Count - 1);
                                         parentGroupBy = string.Join("/", endGroupBySplit);
                                     }
@@ -1165,7 +990,8 @@ namespace SaintsField.Editor
                                 string preGroupBy = keepGroupingInfo?.AbsGroupBy ?? preAbsGroupBy;
                                 if(preGroupBy != null)
                                 {
-                                    groupBy = JoinGroupBy(preGroupBy, groupBy);
+                                    IReadOnlyList<string> joinGroupBy = JoinGroupBy(RuntimeUtil.SeparatePath(preGroupBy).ToArray(), RuntimeUtil.SeparatePath(groupBy).ToArray());
+                                    groupBy = string.Join('/', joinGroupBy);
                                 }
                             }
                             preAbsGroupBy = groupBy;
@@ -1327,7 +1153,7 @@ namespace SaintsField.Editor
         public static IEnumerable<IReadOnlyList<AbsRenderer>> HelperMakeRenderer(SerializedObject serializedObject, SaintsFieldWithInfo fieldWithInfo)
         {
 
-            (IEnumerable<SaintsFieldWithRenderer> pre, IEnumerable<SaintsFieldWithRenderer> post) = WrapAroundSaintsRenderer(fieldWithInfo, serializedObject);
+            // (IEnumerable<SaintsFieldWithRenderer> pre, IEnumerable<SaintsFieldWithRenderer> post) = WrapAroundSaintsRenderer(fieldWithInfo, serializedObject);
             switch (fieldWithInfo.RenderType)
             {
                 case SaintsRenderType.SerializedField:
@@ -1476,7 +1302,7 @@ namespace SaintsField.Editor
                     case OnValueChangedAttribute onValueChangedAttribute:
                     {
                         SerializedProperty prop = fieldWithInfo.SerializedProperty;
-                        if(prop.propertyType == SerializedPropertyType.Generic && prop.isArray)
+                        if(prop is { propertyType: SerializedPropertyType.Generic, isArray: true })
                         {
                             // yield return new SaintsFieldWithRenderer(onValueChangedAttribute, new OnValueChangedCollectionRenderer(onValueChangedAttribute, serializedObject, fieldWithInfo));
                             preRenderers.Add(new SaintsFieldWithRenderer(onValueChangedAttribute, new OnValueChangedCollectionRenderer(onValueChangedAttribute, serializedObject, fieldWithInfo)));
@@ -1596,7 +1422,8 @@ namespace SaintsField.Editor
                 return (newRoot, info);
             }
 
-            string[] groupByParts = path.Split('/');
+            // string[] groupByParts = path.Split('/');
+            string[] groupByParts = RuntimeUtil.SeparatePath(path).ToArray();
             string rootGroup = groupByParts[0];
             if (!rootToRendererGroupInfo.TryGetValue(rootGroup, out RendererGroupInfo accInfo))
             {
@@ -1642,11 +1469,14 @@ namespace SaintsField.Editor
             return (newRoot, accInfo);
         }
 
-        private static string JoinGroupBy(string layoutGroupByAcc, string curGroupBy)
+        // private static string JoinGroupBy(string layoutGroupByAcc, string curGroupBy)
+        private static IReadOnlyList<string> JoinGroupBy(IReadOnlyList<string> layoutGroupByAcc, IReadOnlyList<string> curGroupBy)
         {
-            List<string> ori = layoutGroupByAcc.Split('/').ToList();
+            // List<string> ori = layoutGroupByAcc.Split('/').ToList();
+            List<string> ori = new List<string>(layoutGroupByAcc);
 
-            foreach (string eachPart in curGroupBy.Split('/'))
+            // foreach (string eachPart in curGroupBy.Split('/'))
+            foreach (string eachPart in curGroupBy)
             {
                 switch (eachPart)
                 {
@@ -1665,22 +1495,9 @@ namespace SaintsField.Editor
                 }
             }
 
-            return ori.Count == 0? "": string.Join("/", ori);
+            // return ori.Count == 0? "": string.Join("/", ori);
+            return ori;
         }
-
-        // private static IEnumerable<(string parentGroupBy, string subGroupBy)> ChunkGroupBy(string longestGroupGroupBy)
-        // {
-        //     // e.g "a/b/c/d"
-        //     // first yield: "a/b/c", "a/b/c/d"
-        //     // then yield: "a/b", "a/b/c"
-        //     // then yield: "a", "a/b"
-        //     string[] groupChunk = longestGroupGroupBy.Split('/');
-        //
-        //     for (int i = groupChunk.Length - 1; i > 0; i--)
-        //     {
-        //         yield return (string.Join("/", groupChunk, 0, i), string.Join("/", groupChunk, 0, i + 1));
-        //     }
-        // }
 
         public static IEnumerable<string> GetSerializedProperties(SerializedObject serializedObject)
         {
@@ -1732,12 +1549,7 @@ namespace SaintsField.Editor
         //     return new VerticalGroup(layoutInfo);
         // }
 
-
-
-        public string GetRichLabel()
-        {
-            return _searchableShown ? "<icon=search.png/>" : "<color=gray><icon=search.png/>";
-        }
+        public bool IsSearchableOn() => _searchableShown;
 
         public virtual void OnEnable()
         {

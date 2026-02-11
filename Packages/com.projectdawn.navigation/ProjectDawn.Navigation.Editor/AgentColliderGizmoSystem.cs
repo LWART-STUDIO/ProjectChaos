@@ -17,8 +17,13 @@ namespace ProjectDawn.Navigation.Editor
     [UpdateBefore(typeof(AgentColliderSystem))]
     public partial struct AgentColliderGizmosSystem : ISystem
     {
+        void ISystem.OnCreate(ref SystemState state)
+        {
+            state.RequireForUpdate<AgentCollider>();
+        }
+
         [BurstCompile]
-        public void OnUpdate(ref SystemState state)
+        void ISystem.OnUpdate(ref SystemState state)
         {
             var gizmos = GetSingletonRW<GizmosSystem.Singleton>();
             var spatial = GetSingleton<AgentSpatialPartitioningSystem.Singleton>();
@@ -40,16 +45,6 @@ namespace ProjectDawn.Navigation.Editor
             {
                 var action = new DrawSpatialEntities { Gizmos = Gizmos, Position = transform.Position };
                 Spatial.QueryCylinder(transform.Position, shape.Radius, shape.Height, ref action);
-                Spatial.QueryCylinderCells(transform.Position, shape.Radius, shape.Height, new DrawSpatialBoxes { Gizmos = Gizmos });
-            }
-        }
-
-        struct DrawSpatialBoxes : ISpatialQueryVolume
-        {
-            public GizmosCommandBuffer Gizmos;
-            public void Execute(float3 position, float3 size)
-            {
-                Gizmos.DrawWireBox(position, size, new UnityEngine.Color(0, 0, 1, 0.4f));
             }
         }
 

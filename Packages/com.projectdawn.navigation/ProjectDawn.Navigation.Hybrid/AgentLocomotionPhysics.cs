@@ -1,8 +1,10 @@
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
+using ProjectDawn.Entities;
+using ProjectDawn.Navigation.Hybrid;
 
-namespace ProjectDawn.Navigation.Hybrid
+namespace ProjectDawn.Navigation.Sample.Scenarios
 {
     [RequireComponent(typeof(AgentAuthoring))]
     [RequireComponent(typeof(Rigidbody))]
@@ -23,7 +25,7 @@ namespace ProjectDawn.Navigation.Hybrid
             m_Rigidbody = GetComponent<Rigidbody>();
         }
 
-        void Update()
+        void FixedUpdate()
         {
             ref AgentBody body = ref Body;
 

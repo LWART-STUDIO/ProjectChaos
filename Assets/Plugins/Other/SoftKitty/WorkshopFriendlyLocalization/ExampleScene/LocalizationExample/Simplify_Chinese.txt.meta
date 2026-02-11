@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: fa53ead55879214488cb11dbfca4bbd9
+TextScriptImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 295704
+  packageName: Workshop Friendly Localization
+  packageVersion: 1.0
+  assetPath: Assets/SoftKitty/WorkshopFriendlyLocalization/ExampleScene/LocalizationExample/Simplify_Chinese.txt
+  uploadId: 690837

@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 0c3119110efabaf45a02eb9613365d23
+AssemblyDefinitionImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 269741
+  packageName: Saints Field
+  packageVersion: 5.8.4
+  assetPath: Packages/today.comes.saintsfield/Editor/Playa/ScriptableRenderer/SaintsField.Editor.ScriptableRenderer.asmdef
+  uploadId: 849606

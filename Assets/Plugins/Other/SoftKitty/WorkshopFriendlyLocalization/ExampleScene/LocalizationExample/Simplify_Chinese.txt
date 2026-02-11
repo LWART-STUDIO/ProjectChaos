@@ -1,0 +1,25 @@
+﻿开始使用
+1，打开“<color=#FFC754>Localization Tool</color>”。
+2，导航到当前的设置文件并删除它，然后返回“<color=#FFC754>LocalizationTool</color>”，点击“<color=#FFC754>Create</color>”按钮创建您自己的本地化设置资源。
+3，点击这两个按钮：第一个用于在当前场景中找到所有的Text/TMP组件，第二个用于在整个项目中找到预制件中的Text/TMP组件。您需要逐个打开场景，并使用第一个按钮找到场景中的所有Text/TMP组件。
+4，展开“<color=#FFC754>Text Components List</color>”查看刚刚找到的所有文本组件。点击“<color=#FFC754>Setup All</color>”按钮为它们配置本地化设置。
+5，点击此按钮将文本组件添加到您的本地化设置文件中。
+6，打开您的脚本，找到所有需要本地化的硬编码字符串。将每个字符串替换为<color=#A6D77D>Localization.GetString("Your string")</color>，如下示例所示：
+7，返回“<color=#FFC754>Localization Tool</color>”，点击“<color=#FFC754>Find all texts in the scripts</color>”按钮以定位您刚标记的字符串。然后点击“<color=#FFC754>Add all checked results to [Localization Texts] List</color>”按钮，将它们添加到您的本地化设置文件中。
+8，展开“<color=#FFC754>LocalizationFiles</color>”类别，然后点击按钮导航到设置文件中，设置您的默认语言。进入后，在Inspector中更改默认语言设置。
+9，设置本地化文件的相对路径。该路径是相对于您的<color=#A6D77D>Application.dataPath</color>。如果您希望构建时使用不同的路径，可以通过调用<color=#A6D77D>Localization.ReadLocalizationFiles(_path)</color>在代码中配置它。
+10，点击“<color=#FFC754>CreateDefaultLanguageFile</color>”按钮和“<color=#FFC754>CreateMetaFile</color>”按钮来创建基础的本地化文件。然后，您可以通过“<color=#FFC754>Add New Language</color>”字段添加其他语言。
+11，每当您将新文本添加到本地化列表时，本地化文件后面会显示一个绿色的“<color=#FFC754>Update</color>”按钮，点击它来更新您刚添加的新文本。
+12，在您的第一个场景中的脚本的Awake方法中添加这行代码：<color=#A6D77D>string[]languages=Localization.ReadLocalizationFiles(localizationPath);</color>这将返回语言名称作为字符串数组，您可以将其用作游戏中的语言选择选项。
+现在所有设置已完成，您可以将这些本地化文本文件发送给AI进行翻译。此外，玩家还可以通过修改现有的文本文件或创建自己的文件并将其放入同一文件夹，来协助本地化。系统将自动读取该文件夹中的所有文本文件，并使用文件名作为语言选项。
+“支持创意工坊的本地化工具”是您最好的选择！
+或者，如果您只想将文本交给AI并完成本地化工作，而无需额外的工作。
+如果您计划在Steam上发布游戏并希望让玩家帮助您进行本地化。
+如果您觉得这个资源对您的项目有帮助，请在AssetStore上给我一个评价！谢谢！
+已选择的语言：
+我们提供了
+英文
+简体中文
+日文
+德文
+种可选择的语言用于演示。

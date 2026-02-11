@@ -1,13 +1,16 @@
 using System.Collections.Generic;
 using PurrNet;
+using SaintsField;
 using UnityEngine;
 
 namespace Game.Scripts.Client.Logic.Player.Stats
 {
     public class PlayerStatsHolder : NetworkBehaviour
     {
-        [SerializeField] private List<RuntimeStat> _stats;
 
+        [FieldLabelText("$" + nameof(StatsLabels))]
+        [SerializeField] private List<RuntimeStat> _stats;
+        private string StatsLabels(RuntimeStat _, int index) => $"<color=gray>[{_.bonus.ToString()}]";
         private Dictionary<StatBonus, RuntimeStat> _statMap;
 
         private void Awake()

@@ -3,8 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using CompassNavigatorPro;
 using Game.Scripts.Client.Logic.Colectables;
+using Game.Scripts.Client.Logic.Collectables;
 using Game.Scripts.Client.UI.Game.World;
 using Game.Scripts.Services;
+using Game.Scripts.Services.Audio;
 using PurrNet;
 using SaintsField.Playa;
 using Sisus.Init;
@@ -15,6 +17,8 @@ namespace Game.Scripts.Client.Logic.Enemy
 {
     public class EnemyHealth : NetworkBehaviour
     {
+        [SerializeField] private List<PickUpItem> _itemsToDrop = new List<PickUpItem>();
+        [SerializeField] private int _rareValue;
         [SerializeField] private int _expFOrKill = 1;
         [SerializeField] private SyncVar< float> _health = new SyncVar<float>(100);
         [SerializeField] private SyncVar<float> _maxHealth = new SyncVar<float>(100);
@@ -121,16 +125,25 @@ namespace Game.Scripts.Client.Logic.Enemy
                 return;
             _dead = true;
             onEnemyKilled?.Invoke(this);
-            Service<ServiceInitor>.Instance.AudioService.PlaySoundInPlace("EnemyDeath",transform.position,true);
             DieFx();
             Destroy(gameObject,2f);
             SpawnExpOrb();
+            TrySpawnPickUpItem();
         }
+
         [ServerRpc(requireOwnership:false)]
         private void SpawnExpOrb()
         {
-            ExpOrb exp = NetworkManager.Instantiate(_expOrbPrefab, transform.position, Quaternion.identity);
+            ExpOrb exp = Instantiate(_expOrbPrefab, transform.position, Quaternion.identity);
             exp.SetUpExpServer(_expFOrKill);
+        }
+        [ServerRpc(requireOwnership:false)]
+        private void TrySpawnPickUpItem()
+        {
+            int value = Random.Range(0, _rareValue);
+            if(value!=0)
+                return;
+            PickUpItem newItem = Instantiate(_itemsToDrop[Random.Range(0,_itemsToDrop.Count)], transform.position, Quaternion.identity);
         }
 
 
@@ -167,6 +180,7 @@ namespace Game.Scripts.Client.Logic.Enemy
         [ObserversRpc(runLocally:true)]
         private void DieFx()
         {
+            AudioService.instance.PlaySoundInPlace("EnemyDeath",transform.position);
             _collider.enabled=false;
             _renderer?.SetActive(false);
             _ui.SetActive(false);
@@ -185,6 +199,11 @@ namespace Game.Scripts.Client.Logic.Enemy
                 hp = _hpCurve.Evaluate(t);
                 _hpByLevel[i] = hp;
             }
+        }
+
+        private void OnDisable()
+        {
+            StopAllCoroutines();
         }
     }
 }

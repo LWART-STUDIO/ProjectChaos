@@ -1,0 +1,25 @@
+﻿GETTING STARTED
+1. Öffnen Sie das <color=#FFC754>Localization Tool</color>.
+2. Navigieren Sie zur aktuellen Einstellungsdatei und löschen Sie diese, gehen Sie dann zurück zum <color=#FFC754>Localization Tool</color> und klicken Sie auf die Schaltfläche <color=#FFC754>Create</color>, um Ihre eigene Lokalisierungsdatei zu erstellen.
+3. Klicken Sie auf diese beiden Schaltflächen: Die erste findet alle Text/TMP-Komponenten in der aktuellen Szene, und die zweite findet sie in Prefabs im gesamten Projekt. Sie müssen jede Szene einzeln öffnen und die erste Schaltfläche verwenden, um alle Text/TMP-Komponenten in diesen Szenen zu lokalisieren.
+4. Erweitern Sie die <color=#FFC754>Text Components List</color>, um alle gefundenen Textkomponenten anzuzeigen. Klicken Sie auf die Schaltfläche <color=#FFC754>Setup All</color>, um sie für die Lokalisierung zu konfigurieren.
+5. Klicken Sie auf diese Schaltfläche, um die Textkomponenten in Ihre Einstellungsdatei zur Lokalisierung hinzuzufügen.
+6. Öffnen Sie Ihre Skripte und finden Sie alle hartkodierten Zeichenfolgen, die eine Lokalisierung erfordern. Ersetzen Sie jede Zeichenfolge durch <color=#A6D77D>Localization.GetString("Your string")</color> wie im folgenden Beispiel:
+7. Gehen Sie zurück zum <color=#FFC754>Localization Tool</color> und klicken Sie auf die Schaltfläche <color=#FFC754>Find all texts in the scripts</color>, um die Zeichenfolgen zu lokalisieren, die Sie gerade markiert haben. Danach klicken Sie auf die Schaltfläche <color=#FFC754>Add all checked results to [Localization Texts] List</color>, um sie in Ihre Lokalisierungseinstellungsdatei aufzunehmen.
+8. Erweitern Sie die Kategorie <color=#FFC754>Localization Files</color> und richten Sie Ihre Standardsprache ein, indem Sie auf die Schaltfläche klicken, um zur Einstellungsdatei zu navigieren. Ändern Sie anschließend die Standardeinstellung in der Inspector-Ansicht.
+9. Legen Sie den relativen Pfad für die Lokalisierungsdateien fest. Dieser Pfad bezieht sich auf Ihren <color=#A6D77D>Application.dataPath</color>. Wenn Sie einen anderen Pfad für das Build verwenden möchten, können Sie dies in Ihrem Code durch Aufrufen von <color=#A6D77D>Localization.ReadLocalizationFiles(_path)</color> festlegen.
+10. Klicken Sie auf die Schaltfläche <color=#FFC754>Create Default Language File</color> und auf die Schaltfläche <color=#FFC754>Create Meta File</color>, um die Basis-Lokalisierungsdateien zu generieren. Danach können Sie weitere Sprachen über das Feld <color=#FFC754>Add New Language</color> hinzufügen.
+11. Immer wenn Sie neue Texte zur Lokalisierungsliste hinzufügen, wird hinter den Lokalisierungsdateien ein grüner <color=#FFC754>Update</color>-Button angezeigt. Klicken Sie darauf, um die Dateien mit den neuen Texten zu aktualisieren, die Sie hinzugefügt haben.
+12. Fügen Sie diese Zeile dem Awake-Methodenblock in einem Skript in Ihrer ersten Szene hinzu: <color=#A6D77D>string[] languages = Localization.ReadLocalizationFiles(localizationPath);</color> Diese Methode gibt die Sprachennamen als Zeichenfolgenarray zurück, das Sie zur Befüllung der Sprachauswahloptionen in Ihrem Spiel verwenden können.
+Nun, da alles eingerichtet ist, können Sie diese Lokalisierungstextdateien an eine KI senden, um sie zu übersetzen. Zusätzlich können die Spieler zur Lokalisierung beitragen, indem sie die vorhandenen Textdateien bearbeiten oder ihre eigenen erstellen und in denselben Ordner legen. Das System wird automatisch alle Textdateien in diesem Ordner lesen und deren Dateinamen als Sprachoptionen verwenden.
+'Workshop Friendly Localization' ist die perfekte Lösung für Sie!
+Oder wenn Sie die Texte einfach an eine KI übergeben möchten, um die Lokalisierung ohne weiteren Aufwand zu erledigen.
+Wenn Sie planen, Ihr Spiel auf Steam zu veröffentlichen und möchten, dass Spieler bei der Lokalisierung helfen.
+Wenn Sie dieses Asset hilfreich für Ihr Projekt finden, hinterlassen Sie bitte eine Bewertung im AssetStore! Vielen Dank!
+Ausgewählte Sprache:
+Wir bieten
+Englisch
+Vereinfachtes Chinesisch
+Japanisch
+Deutsch
+wählbare Sprachen in der Demo.

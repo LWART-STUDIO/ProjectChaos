@@ -68,6 +68,9 @@ MonoBehaviour:
   _directChildren: []
   _networkRules: {fileID: 0}
   _visitiblityRules: {fileID: 0}
+  _itemsToDrop:
+  - {fileID: 3475860865530466843, guid: 3b83835b42d5f024fa76aa2c18769f1e, type: 3}
+  _rareValue: 150
   _expFOrKill: 1
   _health:
     _value: 100
@@ -137,7 +140,11 @@ MonoBehaviour:
   _agent: {fileID: -3207869756835835820}
   _agentShape: {fileID: 6867922400764534319}
   _sonar: {fileID: 4502848714000563896}
-  _spawnEffect: {fileID: -7828607461089824292}
+  _agentNavMeshAuthoring: {fileID: -7828607461089824292}
+  _spawnEffect: {fileID: 3321616509172381800}
+  stuckCheckInterval: 1.5
+  minMoveDistance: 0.3
+  navMeshDisableTime: 2
 --- !u!136 &5753413937424566927
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -39539,6 +39546,10 @@ PrefabInstance:
     - target: {fileID: 105238, guid: 68ba53a8493e94ec2b84b54871115f6a, type: 3}
       propertyPath: m_Name
       value: CompassPOI
+      objectReference: {fileID: 0}
+    - target: {fileID: 105238, guid: 68ba53a8493e94ec2b84b54871115f6a, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 407954, guid: 68ba53a8493e94ec2b84b54871115f6a, type: 3}
       propertyPath: m_LocalPosition.x

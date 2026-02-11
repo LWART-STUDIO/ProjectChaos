@@ -1,20 +1,36 @@
 using Unity.Entities;
-using Unity.Mathematics;
 using UnityEngine;
-using ProjectDawn.Navigation;
+using System.Collections.Generic;
+using static Unity.Entities.SystemAPI;
 
 namespace ProjectDawn.Navigation.Sample.Zerg
 {
     [RequireMatchingQueriesForUpdate]
     public partial class UnitDeathSystem : SystemBase
     {
+        static List<GameObject> GameObjectsToDestroy = new();
         protected override void OnUpdate()
         {
-            Entities.ForEach((Entity entity, Transform transform, in UnitDead unitDead) =>
+            var ecb = new EntityCommandBuffer(Unity.Collections.Allocator.Temp);
+            foreach (var (e, entity) in SystemAPI.Query<UnitDead>().WithEntityAccess())
             {
-                GameObject.Destroy(transform.gameObject);
-                EntityManager.DestroyEntity(entity);
-            }).WithStructuralChanges().WithoutBurst().Run();
+                ecb.DestroyEntity(entity);
+
+                if (ManagedAPI.HasComponent<Transform>(entity))
+                {
+                    var behaviour = ManagedAPI.GetComponent<Transform>(entity);
+                    GameObjectsToDestroy.Add(behaviour.gameObject);
+                }
+            }
+
+            if (GameObjectsToDestroy.Count > 0)
+            {
+                foreach (var gameObject in GameObjectsToDestroy)
+                {
+                    GameObject.Destroy(gameObject);
+                }
+                GameObjectsToDestroy.Clear();
+            }
         }
     }
 }

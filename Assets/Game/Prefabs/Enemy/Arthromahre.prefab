@@ -402,159 +402,159 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9060703235407567913, guid: 82d829c347b75054f8912722ec5e14ca, type: 3}
       propertyPath: '_damageByLevel.Array.data[1]'
-      value: 17.873161
+      value: 15.159021
       objectReference: {fileID: 0}
     - target: {fileID: 9060703235407567913, guid: 82d829c347b75054f8912722ec5e14ca, type: 3}
       propertyPath: '_damageByLevel.Array.data[2]'
-      value: 26.292976
+      value: 15.62523
       objectReference: {fileID: 0}
     - target: {fileID: 9060703235407567913, guid: 82d829c347b75054f8912722ec5e14ca, type: 3}
       propertyPath: '_damageByLevel.Array.data[3]'
-      value: 39.959946
+      value: 16.38234
       objectReference: {fileID: 0}
     - target: {fileID: 9060703235407567913, guid: 82d829c347b75054f8912722ec5e14ca, type: 3}
       propertyPath: '_damageByLevel.Array.data[4]'
-      value: 58.574574
+      value: 17.414066
       objectReference: {fileID: 0}
     - target: {fileID: 9060703235407567913, guid: 82d829c347b75054f8912722ec5e14ca, type: 3}
       propertyPath: '_damageByLevel.Array.data[5]'
-      value: 81.83736
+      value: 18.704126
       objectReference: {fileID: 0}
     - target: {fileID: 9060703235407567913, guid: 82d829c347b75054f8912722ec5e14ca, type: 3}
       propertyPath: '_damageByLevel.Array.data[6]'
-      value: 109.4488
+      value: 20.23623
       objectReference: {fileID: 0}
     - target: {fileID: 9060703235407567913, guid: 82d829c347b75054f8912722ec5e14ca, type: 3}
       propertyPath: '_damageByLevel.Array.data[7]'
-      value: 141.1094
+      value: 21.9941
       objectReference: {fileID: 0}
     - target: {fileID: 9060703235407567913, guid: 82d829c347b75054f8912722ec5e14ca, type: 3}
       propertyPath: '_damageByLevel.Array.data[8]'
-      value: 176.51965
+      value: 23.961445
       objectReference: {fileID: 0}
     - target: {fileID: 9060703235407567913, guid: 82d829c347b75054f8912722ec5e14ca, type: 3}
       propertyPath: '_damageByLevel.Array.data[9]'
-      value: 215.38008
+      value: 26.121984
       objectReference: {fileID: 0}
     - target: {fileID: 9060703235407567913, guid: 82d829c347b75054f8912722ec5e14ca, type: 3}
       propertyPath: '_damageByLevel.Array.data[10]'
-      value: 257.39117
+      value: 28.459433
       objectReference: {fileID: 0}
     - target: {fileID: 9060703235407567913, guid: 82d829c347b75054f8912722ec5e14ca, type: 3}
       propertyPath: '_damageByLevel.Array.data[11]'
-      value: 302.25342
+      value: 30.957502
       objectReference: {fileID: 0}
     - target: {fileID: 9060703235407567913, guid: 82d829c347b75054f8912722ec5e14ca, type: 3}
       propertyPath: '_damageByLevel.Array.data[12]'
-      value: 349.6673
+      value: 33.599907
       objectReference: {fileID: 0}
     - target: {fileID: 9060703235407567913, guid: 82d829c347b75054f8912722ec5e14ca, type: 3}
       propertyPath: '_damageByLevel.Array.data[13]'
-      value: 399.33334
+      value: 36.370373
       objectReference: {fileID: 0}
     - target: {fileID: 9060703235407567913, guid: 82d829c347b75054f8912722ec5e14ca, type: 3}
       propertyPath: '_damageByLevel.Array.data[14]'
-      value: 450.95206
+      value: 39.2526
       objectReference: {fileID: 0}
     - target: {fileID: 9060703235407567913, guid: 82d829c347b75054f8912722ec5e14ca, type: 3}
       propertyPath: '_damageByLevel.Array.data[15]'
-      value: 504.22397
+      value: 42.230312
       objectReference: {fileID: 0}
     - target: {fileID: 9060703235407567913, guid: 82d829c347b75054f8912722ec5e14ca, type: 3}
       propertyPath: '_damageByLevel.Array.data[16]'
-      value: 558.8495
+      value: 45.287224
       objectReference: {fileID: 0}
     - target: {fileID: 9060703235407567913, guid: 82d829c347b75054f8912722ec5e14ca, type: 3}
       propertyPath: '_damageByLevel.Array.data[17]'
-      value: 614.5292
+      value: 48.407055
       objectReference: {fileID: 0}
     - target: {fileID: 9060703235407567913, guid: 82d829c347b75054f8912722ec5e14ca, type: 3}
       propertyPath: '_damageByLevel.Array.data[18]'
-      value: 670.9636
+      value: 51.573513
       objectReference: {fileID: 0}
     - target: {fileID: 9060703235407567913, guid: 82d829c347b75054f8912722ec5e14ca, type: 3}
       propertyPath: '_damageByLevel.Array.data[19]'
-      value: 727.85315
+      value: 54.77031
       objectReference: {fileID: 0}
     - target: {fileID: 9060703235407567913, guid: 82d829c347b75054f8912722ec5e14ca, type: 3}
       propertyPath: '_damageByLevel.Array.data[20]'
-      value: 784.8984
+      value: 57.98117
       objectReference: {fileID: 0}
     - target: {fileID: 9060703235407567913, guid: 82d829c347b75054f8912722ec5e14ca, type: 3}
       propertyPath: '_damageByLevel.Array.data[21]'
-      value: 841.7998
+      value: 61.189804
       objectReference: {fileID: 0}
     - target: {fileID: 9060703235407567913, guid: 82d829c347b75054f8912722ec5e14ca, type: 3}
       propertyPath: '_damageByLevel.Array.data[22]'
-      value: 898.2579
+      value: 64.37993
       objectReference: {fileID: 0}
     - target: {fileID: 9060703235407567913, guid: 82d829c347b75054f8912722ec5e14ca, type: 3}
       propertyPath: '_damageByLevel.Array.data[23]'
-      value: 953.97296
+      value: 67.53526
       objectReference: {fileID: 0}
     - target: {fileID: 9060703235407567913, guid: 82d829c347b75054f8912722ec5e14ca, type: 3}
       propertyPath: '_damageByLevel.Array.data[24]'
-      value: 1008.646
+      value: 70.63951
       objectReference: {fileID: 0}
     - target: {fileID: 9060703235407567913, guid: 82d829c347b75054f8912722ec5e14ca, type: 3}
       propertyPath: '_damageByLevel.Array.data[25]'
-      value: 1061.9769
+      value: 73.67639
       objectReference: {fileID: 0}
     - target: {fileID: 9060703235407567913, guid: 82d829c347b75054f8912722ec5e14ca, type: 3}
       propertyPath: '_damageByLevel.Array.data[26]'
-      value: 1113.6667
+      value: 76.62963
       objectReference: {fileID: 0}
     - target: {fileID: 9060703235407567913, guid: 82d829c347b75054f8912722ec5e14ca, type: 3}
       propertyPath: '_damageByLevel.Array.data[27]'
-      value: 1163.4156
+      value: 79.482925
       objectReference: {fileID: 0}
     - target: {fileID: 9060703235407567913, guid: 82d829c347b75054f8912722ec5e14ca, type: 3}
       propertyPath: '_damageByLevel.Array.data[28]'
-      value: 1210.9242
+      value: 82.22001
       objectReference: {fileID: 0}
     - target: {fileID: 9060703235407567913, guid: 82d829c347b75054f8912722ec5e14ca, type: 3}
       propertyPath: '_damageByLevel.Array.data[29]'
-      value: 1255.893
+      value: 84.82459
       objectReference: {fileID: 0}
     - target: {fileID: 9060703235407567913, guid: 82d829c347b75054f8912722ec5e14ca, type: 3}
       propertyPath: '_damageByLevel.Array.data[30]'
-      value: 1298.0223
+      value: 87.28039
       objectReference: {fileID: 0}
     - target: {fileID: 9060703235407567913, guid: 82d829c347b75054f8912722ec5e14ca, type: 3}
       propertyPath: '_damageByLevel.Array.data[31]'
-      value: 1337.013
+      value: 89.5711
       objectReference: {fileID: 0}
     - target: {fileID: 9060703235407567913, guid: 82d829c347b75054f8912722ec5e14ca, type: 3}
       propertyPath: '_damageByLevel.Array.data[32]'
-      value: 1372.5651
+      value: 91.68045
       objectReference: {fileID: 0}
     - target: {fileID: 9060703235407567913, guid: 82d829c347b75054f8912722ec5e14ca, type: 3}
       propertyPath: '_damageByLevel.Array.data[33]'
-      value: 1404.3795
+      value: 93.59217
       objectReference: {fileID: 0}
     - target: {fileID: 9060703235407567913, guid: 82d829c347b75054f8912722ec5e14ca, type: 3}
       propertyPath: '_damageByLevel.Array.data[34]'
-      value: 1432.1569
+      value: 95.28996
       objectReference: {fileID: 0}
     - target: {fileID: 9060703235407567913, guid: 82d829c347b75054f8912722ec5e14ca, type: 3}
       propertyPath: '_damageByLevel.Array.data[35]'
-      value: 1455.5972
+      value: 96.75753
       objectReference: {fileID: 0}
     - target: {fileID: 9060703235407567913, guid: 82d829c347b75054f8912722ec5e14ca, type: 3}
       propertyPath: '_damageByLevel.Array.data[36]'
-      value: 1474.4011
+      value: 97.9786
       objectReference: {fileID: 0}
     - target: {fileID: 9060703235407567913, guid: 82d829c347b75054f8912722ec5e14ca, type: 3}
       propertyPath: '_damageByLevel.Array.data[37]'
-      value: 1488.2693
+      value: 98.9369
       objectReference: {fileID: 0}
     - target: {fileID: 9060703235407567913, guid: 82d829c347b75054f8912722ec5e14ca, type: 3}
       propertyPath: '_damageByLevel.Array.data[38]'
-      value: 1496.902
+      value: 99.61613
       objectReference: {fileID: 0}
     - target: {fileID: 9060703235407567913, guid: 82d829c347b75054f8912722ec5e14ca, type: 3}
       propertyPath: '_damageByLevel.Array.data[39]'
-      value: 1500
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 9060703235407567913, guid: 82d829c347b75054f8912722ec5e14ca, type: 3}
       propertyPath: _damageCurve.m_Curve.Array.data[0].value
@@ -562,7 +562,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9060703235407567913, guid: 82d829c347b75054f8912722ec5e14ca, type: 3}
       propertyPath: _damageCurve.m_Curve.Array.data[1].value
-      value: 1500
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 9060703235407567913, guid: 82d829c347b75054f8912722ec5e14ca, type: 3}
       propertyPath: _damageCurve.m_Curve.Array.data[0].outSlope

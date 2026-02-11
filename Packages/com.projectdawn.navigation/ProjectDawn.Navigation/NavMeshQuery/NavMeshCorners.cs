@@ -29,10 +29,15 @@ namespace ProjectDawn.Navigation
             var navmeshSystem = world.GetExistingSystem<NavMeshQuerySystem>();
             var navmesh = entityManager.GetComponentData<NavMeshQuerySystem.Singleton>(navmeshSystem);
 
+            if (!entityManager.HasBuffer<NavMeshNode>(m_Entity))
+            {
+                corners = default;
+                return false;
+            }
+
             var polygons = entityManager.GetBuffer<NavMeshNode>(m_Entity).AsNativeArray().Reinterpret<PolygonId>();
 
-            // Funnel requires at least two points start and end
-            if (polygons.Length > 2)
+            if (polygons.Length == 0)
             {
                 corners = default;
                 return false;

@@ -1,6 +1,11 @@
 using Unity.Entities;
 using UnityEngine;
 using ProjectDawn.Navigation.Hybrid;
+using Unity.Transforms;
+
+#if MODULE_ANIMATRON
+using ProjectDawn.Animation;
+#endif
 
 namespace ProjectDawn.Navigation.Sample.Zerg
 {
@@ -8,6 +13,9 @@ namespace ProjectDawn.Navigation.Sample.Zerg
     {
         public PlayerId Owner;
         public Animator Animator;
+#if MODULE_ANIMATRON
+        public AnimatronAuthoring Animatron;
+#endif
         public float MoveAnimationSpeed = 0.4f;
         public float Life = 100;
 
@@ -39,6 +47,19 @@ namespace ProjectDawn.Navigation.Sample.Zerg
 
             if (Animator)
                 world.EntityManager.AddComponentObject(m_Entity, Animator);
+#if MODULE_ANIMATRON
+            if (Animatron)
+            {
+                world.EntityManager.AddComponentData(m_Entity, new UnitAnimatron
+                {
+                    Attack = Animatron.FindAnimationIndex("Attack"),
+                    Move = Animatron.FindAnimationIndex("Move"),
+                    Idle = Animatron.FindAnimationIndex("Idle"),
+                    Animatron = Animatron.GetOrCreateEntity(),
+                });
+                //world.EntityManager.AddComponentData(Animatron.GetOrCreateEntity(), new Parent { Value = m_Entity });
+            }
+#endif
         }
 
         void OnDestroy()

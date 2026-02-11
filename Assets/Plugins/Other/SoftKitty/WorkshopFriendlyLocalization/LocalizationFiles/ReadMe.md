@@ -1,0 +1,1 @@
+This is the default Path for you to put your localization files, delete this file after you read.

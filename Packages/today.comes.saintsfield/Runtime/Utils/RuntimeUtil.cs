@@ -59,6 +59,10 @@ namespace SaintsField.Utils
 
         public static IEnumerable<string> SeparatePath(string path)
         {
+            if (string.IsNullOrEmpty(path))
+            {
+                yield break;
+            }
             List<RichTextParsedChunk> openTag = new List<RichTextParsedChunk>();
             List<RichTextParsedChunk> acc = new List<RichTextParsedChunk>();
             foreach (RichTextParsedChunk richTextParsedChunk in ParseRichXml(path))
@@ -227,7 +231,6 @@ namespace SaintsField.Utils
             }
         }
 
-        // ReSharper disable once MemberCanBePrivate.Global
         public static IEnumerable<RichTextParsedChunk> ParseRichXml(string richXml)
         {
             // Debug.Log($"get rich xml: {richXml}");

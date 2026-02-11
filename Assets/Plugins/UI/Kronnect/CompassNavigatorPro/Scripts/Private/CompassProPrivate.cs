@@ -226,10 +226,10 @@ namespace CompassNavigatorPro {
 
         void Init() {
 #if UNITY_EDITOR
-            PrefabInstanceStatus prefabInstanceStatus = PrefabUtility.GetPrefabInstanceStatus(gameObject);
+            /*PrefabInstanceStatus prefabInstanceStatus = PrefabUtility.GetPrefabInstanceStatus(gameObject);
             if (prefabInstanceStatus != PrefabInstanceStatus.NotAPrefab) {
                 PrefabUtility.UnpackPrefabInstance(gameObject, PrefabUnpackMode.Completely, InteractionMode.AutomatedAction);
-            }
+            }*/
 #endif
             Canvas.ForceUpdateCanvases();
             Invoke(nameof(CanvasRefresh), 0);

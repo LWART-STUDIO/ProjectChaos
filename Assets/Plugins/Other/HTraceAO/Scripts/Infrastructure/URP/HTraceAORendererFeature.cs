@@ -51,6 +51,8 @@ namespace HTraceAO.Scripts.Infrastructure.URP
 			Dispose();
 
 			var            stack          = VolumeManager.instance.stack;
+			if(stack==null)
+				return;
 			HTraceAOVolume hTraceAOVolume = stack.GetComponent<HTraceAOVolume>();
 			_previousAmbientOcclusionMode = hTraceAOVolume != null ? hTraceAOVolume.AmbientOcclusionMode.value : AmbientOcclusionMode.GTAO;
 			SettingsBuild(hTraceAOVolume);

@@ -13,6 +13,8 @@ namespace ProjectDawn.Navigation.Editor
         {
             public static readonly GUIContent SonarTimeHorizon = EditorGUIUtility.TrTextContent("Sonar Time Horizon", "Changes sonar avoidance radius to be based on velocity and also navmesh collision velocity accounts collision.");
             public static readonly GUIContent UseRegularUpdate = EditorGUIUtility.TrTextContent("Use Regular Update", "The enabled agents will use regular updates instead of fixed ones. Fixed updates provide a more deterministic motion and a lower possibility for agents to pass through.");
+            public static readonly GUIContent SpatialPartitioningMode = EditorGUIUtility.TrTextContent("Spatial Partitioning Mode", "");
+            public static readonly GUIContent LogVerbose = EditorGUIUtility.TrTextContent( "Log Verbose", "When enabled, this will log more information about pathing. It is best to disable it for the final release.");
             public static readonly GUIStyle lineStyle = new GUIStyle();
             public static readonly GUIStyle centerStyle = new GUIStyle();
 
@@ -84,12 +86,18 @@ namespace ProjectDawn.Navigation.Editor
 
             DrawHorizontalLine();
 
-            ScriptingDefineToggleField.Draw(Styles.SonarTimeHorizon, "EXPERIMENTAL_SONAR_TIME");
+            ScriptingDefineToggleField.DrawInverted(Styles.SonarTimeHorizon, "DISABLE_SONAR_HORIZON");
             Rect controlRect = EditorGUILayout.GetControlRect();
             controlRect.height = 20;
-            EditorGUI.HelpBox(controlRect, $"This feature should result better sonar avoidance, but for now it is experimental! Make sure commit changes, before turning it on.", MessageType.Info);
+            EditorGUI.HelpBox(controlRect, $"This feature should result better sonar avoidance! Make sure commit changes, before turning it on.", MessageType.Info);
+
+            ScriptingDefineToggleField.DrawInverted(Styles.LogVerbose, "AGENTS_NAVIGATION_LOG_NONE");
 
             ScriptingDefineToggleField.Draw(Styles.UseRegularUpdate, "AGENTS_NAVIGATION_REGULAR_UPDATE");
+
+            ScriptingDefinePopupField.Draw(Styles.SpatialPartitioningMode,
+                new string[] { "AGENTS_NAVIGATION_HASH_GRID", "AGENTS_NAVIGATION_AABB_TREE" },
+                new string[] { "Hash Grid", "AABB Tree" });
 
             GUILayout.Space(10);
 

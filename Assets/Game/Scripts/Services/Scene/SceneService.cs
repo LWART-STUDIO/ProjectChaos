@@ -1,8 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Game.Scripts.Client.Logic.Game;
 using Game.Scripts.Services.ResourceLoader;
 using Game.Scripts.Services.StaticService;
+using PurrNet;
 using Sisus.Init;
 using Systems.Services.SceneService;
 using UnityEngine;
@@ -10,7 +12,7 @@ using UnityEngine.SceneManagement;
 
 namespace Game.Scripts.Services.Scene
 {
-    [Service(typeof(SceneService))]
+    [Service(typeof(SceneService),FindFromScene =  true,LazyInit =  true)]
     public class SceneService : MonoBehaviour
     {
         private LoadingScreen _loadingScreen;
@@ -20,6 +22,8 @@ namespace Game.Scripts.Services.Scene
         private bool _sceneLoaded;
         public bool SceneLoaded=>_sceneLoaded;
         public event Action<SceneMapper> OnSceneLoaded;
+        [PurrScene,SerializeField] private List<string> _sceneNamesToLoad;
+        private bool _isLoadingScene;
         public void LocalAwake()
         {
             DontDestroyOnLoad(gameObject);
@@ -67,7 +71,7 @@ namespace Game.Scripts.Services.Scene
             ReloadScene(GetActiveSceneIndex());
         }
    
-        private IEnumerator GetSceneLoadProgress()
+        private IEnumerator GetSceneLoadProgress(int sceneIndexInBuildSettings)
         {
             _sceneLoaded = false;
             for (int i = 0; i < _loadingOperations.Count; i++)
@@ -87,6 +91,25 @@ namespace Game.Scripts.Services.Scene
                     yield return null;
                 }
             }
+            bool waitUntilFullLoad = true;
+            GameStateWarmUp gameStateWarmUp;
+            if(SceneMapper.Game ==(SceneMapper)sceneIndexInBuildSettings)
+                while (waitUntilFullLoad)
+                {
+                    gameStateWarmUp = FindAnyObjectByType<GameStateWarmUp>();
+                    if (gameStateWarmUp == null)
+                    {
+                        yield return null;
+                        continue;
+                    }
+                    if (!gameStateWarmUp.WarmUpComplete)
+                    {
+                        yield return null;
+                        continue;
+                    }
+                    break;
+                }
+                
             _sceneLoaded = true;
             _loadingScreenInstance.gameObject.SetActive(false);
             OnSceneLoaded?.Invoke(GetActiveScene());
@@ -125,20 +148,78 @@ namespace Game.Scripts.Services.Scene
             _loadingScreenInstance.gameObject.SetActive(true);
             _loadingOperations.Add(SceneManager.LoadSceneAsync(sceneIndexInBuildSettings,LoadSceneMode.Single));
               
-            StartCoroutine(GetSceneLoadProgress());
+            StartCoroutine(GetSceneLoadProgress(sceneIndexInBuildSettings));
         }
    
         public void LoadScene(int sceneIndexInBuildSettings)
         {
-            _sceneLoaded=false;
-            _loadingOperations = new List<AsyncOperation>();
+            if (_isLoadingScene)
+            {
+                return;
+            }
+
+            _isLoadingScene = true;
+            _sceneLoaded = false;
+
+            _loadingOperations.Clear();
             StopAllAudio();
-          // DOTween.KillAll();
-            if(sceneIndexInBuildSettings!=(int)SceneMapper.Game)
-                _loadingScreenInstance.gameObject.SetActive(true);
-            _loadingOperations.Add(SceneManager.LoadSceneAsync(sceneIndexInBuildSettings,LoadSceneMode.Single));
-               
-            StartCoroutine(GetSceneLoadProgress());
+
+            _loadingScreenInstance.gameObject.SetActive(true);
+
+            var asyncOp = SceneManager.LoadSceneAsync(
+                _sceneNamesToLoad[sceneIndexInBuildSettings],
+                LoadSceneMode.Single
+            );
+
+            asyncOp.allowSceneActivation = false;
+            _loadingOperations.Add(asyncOp);
+
+            StartCoroutine(TrackLoading(sceneIndexInBuildSettings, asyncOp));
+        }
+
+        private IEnumerator TrackLoading(int sceneIndex, AsyncOperation op)
+        {
+            // 1. Ждём загрузку в память
+            while (op.progress < 0.9f)
+            {
+                float progress = Mathf.Clamp01(op.progress / 0.9f) * 100f;
+                _loadingScreenInstance.SetCurrentProgress(progress);
+                yield return null;
+            }
+
+            // 2. Разрешаем активацию сцены
+            op.allowSceneActivation = true;
+
+            // 3. Ждём, пока сцена станет активной
+            while (!op.isDone)
+                yield return null;
+
+            // 4. Теперь объекты существуют
+            if ((SceneMapper)sceneIndex == SceneMapper.Game)
+                yield return WaitForGameWarmup();
+
+            _loadingScreenInstance.gameObject.SetActive(false);
+            _sceneLoaded = true;
+            _isLoadingScene = false;
+
+            OnSceneLoaded?.Invoke(GetActiveScene());
+        }
+
+
+        private IEnumerator WaitForGameWarmup()
+        {
+            GameStateWarmUp warmUp = null;
+
+            // ждём появления объекта
+            while (warmUp == null)
+            {
+                warmUp = FindAnyObjectByType<GameStateWarmUp>();
+                yield return null;
+            }
+
+            // ждём окончания прогрева
+            while (!warmUp.WarmUpComplete)
+                yield return null;
         }
 
         private void StopAllAudio()

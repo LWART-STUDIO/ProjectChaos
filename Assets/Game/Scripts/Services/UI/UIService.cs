@@ -1,8 +1,10 @@
 using System;
+using Game.Scripts.Client.Logic.Tree;
 using Game.Scripts.Client.UI;
 using Game.Scripts.Client.UI.Game;
 using Game.Scripts.Client.UI.Game.EndGamePanel;
 using Game.Scripts.Client.UI.Game.PlayerUI;
+using Game.Scripts.Services.Input;
 using Game.Scripts.Services.ResourceLoader;
 using Game.Scripts.Services.Scene;
 using Game.Scripts.Services.StaticService;
@@ -18,7 +20,7 @@ namespace Game.Scripts.Services.UI
     public class UIService : MonoBehaviour, IService
     {
         private ResourceLoaderService _resourceLoaderService => Service<ResourceLoaderService>.Instance;
-
+        private InputService _input => Service<InputService>.Instance;
         private GameCanvas _gameCanvas;
         private EscMenu _escMenu;
         private LevelUpPanel _levelUpPanel;
@@ -37,7 +39,8 @@ namespace Game.Scripts.Services.UI
         public void LocalAwake()
         {
             GetGameCanvas();
-            GetEscMenu();
+            //GetEscMenu();
+            
         }
 
         public void LocalStart()
@@ -47,13 +50,7 @@ namespace Game.Scripts.Services.UI
 
         public void LocalUpdate(float deltaTime)
         {
-            if (SceneManager.GetActiveScene().name == "MainMenu")
-                return;
-            /*if (Input.GetKeyDown(KeyCode.Escape))
-            {
-
-
-            }*/
+        
         }
 
         public void ExitToLobby()

@@ -2,12 +2,13 @@
 #if !AGENTS_NAVIGATION_FAKE_ASSEMBLY_REFERENCE
 using System;
 using Unity.Burst;
+using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Jobs;
 using Unity.Jobs.LowLevel.Unsafe;
 using Unity.Mathematics;
 
-namespace Unity.Collections
+namespace ProjectDawn.Collections
 {
     [BurstCompile]
     public unsafe static class UnsafeParallelMultiHashMapExt

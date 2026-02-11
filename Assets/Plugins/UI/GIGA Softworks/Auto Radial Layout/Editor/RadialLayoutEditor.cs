@@ -26,6 +26,7 @@ namespace GIGA.AutoRadialLayout.Editor
 		private static Color exColor;
 
 		// Serialized Properties
+		SerializedProperty s_extraLinks;
 		SerializedProperty s_autoRebuildMode;
 		SerializedProperty s_drawEditorGizmos;
 		SerializedProperty s_drawEditorGizmos_circleRadius;
@@ -67,6 +68,7 @@ namespace GIGA.AutoRadialLayout.Editor
 
 		private void OnEnable()
 		{
+			s_extraLinks = serializedObject.FindProperty("extraLinks");
 			s_autoRebuildMode = serializedObject.FindProperty("autoRebuildMode");
 			s_drawEditorGizmos = serializedObject.FindProperty("drawEditorGizmos");
 			s_drawEditorGizmos_circleRadius = serializedObject.FindProperty("drawEditorGizmos_circleRadius");
@@ -152,6 +154,18 @@ namespace GIGA.AutoRadialLayout.Editor
 				EndSelectorButtonGroup();
 			}
 
+			EditorGUILayout.Space(10);
+			EditorGUILayout.BeginHorizontal(style_header);
+			EditorGUILayout.LabelField("Extra Links", style_header);
+			EditorGUILayout.EndHorizontal();
+			EditorGUI.indentLevel++;
+			EditorGUILayout.PropertyField(
+				s_extraLinks,
+				new GUIContent("Extra Links", "Additional links between any nodes"),
+				true // ← ОБЯЗАТЕЛЬНО для List
+			);
+			EditorGUI.indentLevel--;
+
 			// Settings
 			EditorGUILayout.Space(10);
 			EditorGUILayout.BeginHorizontal(style_header);
@@ -159,6 +173,8 @@ namespace GIGA.AutoRadialLayout.Editor
 			EditorGUILayout.EndHorizontal();
 			EditorGUI.indentLevel++;
 
+
+		
 			EditorGUI.BeginDisabledGroup(isSubLayout);
 			if (!isSubLayout)
 			{

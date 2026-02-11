@@ -300,9 +300,9 @@ namespace CompassNavigatorPro {
             scene = SceneManager.GetActiveScene();
             if (id == 0) {
                 id = Guid.NewGuid().GetHashCode();
-                if (iconNonVisited == null) {
+                /*if (iconNonVisited == null) {
                     iconNonVisited = Resources.Load<Sprite>("CNPro/Sprites/compassIcon");
-                }
+                }*/
             }
             RegisterPOI();
         }

@@ -1,20 +1,11 @@
 fileFormatVersion: 2
-guid: 2d6951d9a4d85ca40a17b75d35e899db
+guid: 078475d693b05e54ebd421a249bf8f90
 ModelImporter:
   serializedVersion: 22200
-  internalIDToNameTable:
-  - first:
-      74: 4781951162920444690
-    second: Attack
-  - first:
-      74: -8612994791844490777
-    second: Run
-  - first:
-      74: -6163974202272359319
-    second: Stand
+  internalIDToNameTable: []
   externalObjects: {}
   materials:
-    materialImportMode: 1
+    materialImportMode: 2
     materialName: 0
     materialSearch: 1
     materialLocation: 1
@@ -43,8 +34,8 @@ ModelImporter:
     clipAnimations:
     - serializedVersion: 16
       name: Run
-      takeName: Armature|ArmatureAction
-      internalID: 0
+      takeName: Armature|Armature|Armature|ArmatureAction
+      internalID: 6065333994261340666
       firstFrame: 0
       lastFrame: 40
       wrapMode: 0
@@ -71,9 +62,9 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: Stand
-      takeName: Armature|ArmatureAction
-      internalID: 0
+      name: Idle
+      takeName: Armature|Armature|Armature|ArmatureAction
+      internalID: 7649625319074749762
       firstFrame: 50
       lastFrame: 89
       wrapMode: 0
@@ -101,8 +92,8 @@ ModelImporter:
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
       name: Attack
-      takeName: Armature|ArmatureAction
-      internalID: 4781951162920444690
+      takeName: Armature|Armature|Armature|ArmatureAction
+      internalID: 5625390475202290671
       firstFrame: 100
       lastFrame: 123
       wrapMode: 0
@@ -136,11 +127,12 @@ ModelImporter:
     addColliders: 0
     useSRGBMaterialColor: 1
     sortHierarchyByName: 1
+    importPhysicalCameras: 1
     importVisibility: 1
     importBlendShapes: 1
     importCameras: 1
     importLights: 1
-    nodeNameCollisionStrategy: 0
+    nodeNameCollisionStrategy: 1
     fileIdsGeneration: 2
     swapUVChannels: 0
     generateSecondaryUV: 0
@@ -195,9 +187,9 @@ ModelImporter:
   animationType: 2
   humanoidOversampling: 1
   avatarSetup: 1
-  addHumanoidExtraRootOnlyWhenUsingAvatar: 0
-  importBlendShapeDeformPercent: 0
-  remapMaterialsIfMaterialImportModeIsNone: 1
+  addHumanoidExtraRootOnlyWhenUsingAvatar: 1
+  importBlendShapeDeformPercent: 1
+  remapMaterialsIfMaterialImportModeIsNone: 0
   additionalBone: 0
   userData: 
   assetBundleName: 

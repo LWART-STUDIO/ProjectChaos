@@ -49,7 +49,7 @@ namespace ProjectDawn.Navigation.Hybrid
         void OnDisable()
         {
             var world = World.DefaultGameObjectInjectionWorld;
-            if (world == null)
+            if (world == null || m_Entity == Entity.Null)
                 return;
 
             var manager = world.EntityManager;

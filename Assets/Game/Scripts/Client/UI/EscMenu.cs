@@ -1,6 +1,7 @@
 using System;
 using Game.Scripts.Client.Logic.Player;
 using Game.Scripts.Server;
+using Game.Scripts.Services.Input;
 using Game.Scripts.Services.UI;
 using Michsky.MUIP;
 using Sisus.Init;
@@ -14,6 +15,7 @@ namespace Game.Scripts.Client.UI
         private UIService _uiService => Service<UIService>.Instance;
         private PlayerInputActions _inputActions;
         private bool _opened => _modalWindowManager.isOn;
+        private InputService _input => Service<InputService>.Instance;
 
         private void Start()
         {
@@ -24,6 +26,8 @@ namespace Game.Scripts.Client.UI
 
         private void Update()
         {
+            if(_input.InputBlocked)
+                return;
             if (_inputActions.Menu.EscMenu.WasPressedThisFrame())
             {
                 if (!_opened)
@@ -41,6 +45,7 @@ namespace Game.Scripts.Client.UI
                 connectionStarter.LeaveLobby();
             }
             _uiService.ExitToMenu();
+            LeaveLobbyHandler.LeaveAnyLobby();
         }
         public void ExitToLobby()
         {
@@ -64,6 +69,13 @@ namespace Game.Scripts.Client.UI
             _modalWindowManager.OpenWindow();
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
+        }
+
+        private void OnDestroy()
+        {
+            _inputActions.Disable();
+            _inputActions.Dispose();
+            
         }
     }
 }

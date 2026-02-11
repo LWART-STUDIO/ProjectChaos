@@ -1,5 +1,7 @@
 fileFormatVersion: 2
 guid: a52d97676acd08c4d9dad68f19e19352
+labels:
+- NiloToonBakeSmoothNormalTSIntoUV8
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []

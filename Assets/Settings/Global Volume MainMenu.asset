@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 374cf1a1ce1f4aadaf356dc22a113a88, type: 3}
   m_Name: HTraceAOVolume
   m_EditorClassIdentifier: HTraceAO::HTraceAO.Scripts.Infrastructure.URP.HTraceAOVolume
-  active: 1
+  active: 0
   Enable:
     m_OverrideState: 1
     m_Value: 1
@@ -260,7 +260,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7880558378da751419d22aa98ac79aa9, type: 3}
   m_Name: Beautify
   m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::Beautify.Universal.Beautify
-  active: 1
+  active: 0
   disabled:
     m_OverrideState: 1
     m_Value: 0
